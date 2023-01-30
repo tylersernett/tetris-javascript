@@ -6,7 +6,7 @@ let startX = 4;
 let startY = 0;
 let blockDimension = 21;
 //initialize 2D array with format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
-let coordinateArray = [...Array(gBArrayHeight)].map(() => Array(gBArrayWidth)).fill(0);
+let coordinateArray = [...Array(gBArrayHeight)].map(() => Array(gBArrayWidth).fill(0));
 
 /*  T block: [[1,0],[0,1],[1,1],[2,1]]
     0   1   2   3
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', SetupCanvas);
 function CreateCoordArray() {
     let i = 0, j = 0;
     let yTop = 9, yBottom = 446, blockSpacing = 1 + blockDimension + 1;
-    let xLeft = 11, xRight = 264
+    let xLeft = 11, xRight = 264;
     for (let y = yTop; y <= yBottom; y += blockSpacing) {
         for (let x = xLeft; x <= xRight; x += blockSpacing) {
             coordinateArray[i][j] = new Coordinates(x, y);
@@ -59,7 +59,7 @@ function SetupCanvas() {
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
     canvas.width = 936;
-    canvash.height = 956;
+    canvas.height = 956;
 
     ctx.scale(2, 2); //zoom in
 
