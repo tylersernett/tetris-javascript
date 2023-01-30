@@ -141,3 +141,9 @@ function CreateTetrominos() {
     // Z
     tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
 }
+
+function CreateTetromino() {
+    let randomTetromino = Math.floor(Math.random() * tetrominos.length)
+    curTetromino = tetrominos[randomTetromino];
+    curTetrominoColor = tetrominoColors[randomTetromino];
+}
