@@ -39,3 +39,18 @@ function CreateCoordArray() {
         i = 0;
     }
 }
+
+function SetupCanvas () {
+    canvas = document.getElementById('my-canvas');
+    ctx = canvas.getContext('2d');
+    canvas.width = 936;
+    canvash.height = 956;
+
+    ctx.scale(2,2); //zoom in
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = 'black';
+    ctx.strokeRect(8, 8, 280, 462);
+}
