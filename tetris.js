@@ -322,7 +322,7 @@ function CheckForCompletedRows() {
         }
     }
     if (rowsToDelete > 0) {
-        score += RowClearBonus(rowsToDelete);
+        score += RowClearBonus(rowsToDelete) * level;
         ctx.fillStyle = 'white';
         ctx.fillRect(310, 109, 140, 19);
         ctx.fillStyle = 'black';
@@ -332,7 +332,13 @@ function CheckForCompletedRows() {
 }
 
 function RowClearBonus(rows) {
-
+    switch (rows){
+        case 1: return   40; break;
+        case 2: return  100; break;
+        case 3: return  300; break;
+        case 4: return 1200; break;
+        default: return 0;
+    }
 }
 
 function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
