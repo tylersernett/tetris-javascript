@@ -153,6 +153,13 @@ function MoveTetrominoDown() {
     }
 }
 
+//auto-move piece down once per second
+window.setInterval(function(){
+    if(winOrLose != "Game Over"){
+        MoveTetrominoDown();
+    }
+  }, 1000);
+
 function VerticalCollision() {
     // copy tetromino and move "fake" version down
     let tetrominoCopy = curTetromino;
