@@ -124,3 +124,20 @@ function DeleteTetromino() {
         ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
     }
 }
+
+function CreateTetrominos() {
+    // T 
+    tetrominos.push([[1, 0], [0, 1], [1, 1], [2, 1]]);
+    // I
+    tetrominos.push([[0, 0], [1, 0], [2, 0], [3, 0]]);
+    // J
+    tetrominos.push([[0, 0], [0, 1], [1, 1], [2, 1]]);
+    // Square
+    tetrominos.push([[0, 0], [1, 0], [0, 1], [1, 1]]);
+    // L
+    tetrominos.push([[2, 0], [0, 1], [1, 1], [2, 1]]);
+    // S
+    tetrominos.push([[1, 0], [2, 0], [0, 1], [1, 1]]);
+    // Z
+    tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
+}
