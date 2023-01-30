@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', SetupCanvas);
 //populate coordArray
 function CreateCoordArray() {
     let i = 0, j = 0;
-    let yTop = 9, yBottom = 446, blockSpacing = 1+blockDimension+1;
+    let yTop = 9, yBottom = 446, blockSpacing = 1 + blockDimension + 1;
     let xLeft = 11, xRight = 264
     for (let y = yTop; y <= yBottom; y += blockSpacing) {
         for (let x = xLeft; x <= xRight; x += blockSpacing) {
@@ -55,13 +55,13 @@ function CreateCoordArray() {
     }
 }
 
-function SetupCanvas () {
+function SetupCanvas() {
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
     canvas.width = 936;
     canvash.height = 956;
 
-    ctx.scale(2,2); //zoom in
+    ctx.scale(2, 2); //zoom in
 
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -78,11 +78,11 @@ function SetupCanvas () {
 }
 
 function DrawTetromino() {
-    for(let i = 0; i < curTetromino.length; i++) {
+    for (let i = 0; i < curTetromino.length; i++) {
         let x = curTetromino[i][0] + startX;
         let y = curTetromino[i][1] + startY;
         gameBoardArray[x][y] = 1; //tell gameboard that black is present at coordinates
-        
+
         //transcribe xy info to coordinateArray pixels
         let coorX = coordinateArray[x][y].x;
         let coorY = coordinateArray[x][y].y;
@@ -93,21 +93,34 @@ function DrawTetromino() {
     }
 }
 
-function HandleKeyPress(key){
-    if(key.keyCode === 65) { //"a" - left
+function HandleKeyPress(key) {
+    if (key.keyCode === 65) { //A
         direction = DIRECTION.LEFT;
         DeleteTetromino();
         startX--;
         DrawTetromino();
-    } else if (key.keyCode === 68) {
+    } else if (key.keyCode === 68) { //D
         direction = DIRECTION.RIGHT;
         DeleteTetromino();
         startX++;
         DrawTetromino();
-    } else if (key.keycode === 83) {
+    } else if (key.keycode === 83) { //S
         direction = DIRECTION.DOWN;
         DeleteTetromino();
         startY++;
         DrawTetromino();
+    }
+}
+
+function DeleteTetromino() {
+    for (let i = 0; i < curTetromino.length; i++) {
+        let x = curTetromino[i][0] + startX;
+        let y = curTetromino[i][1] + startY;
+        gameBoardArray[x][y] = 0;
+        let coorX = coordinateArray[x][y].x;
+        let coorY = coordinateArray[x][y].y;
+
+        ctx.fillStyle = 'white';
+        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
     }
 }
