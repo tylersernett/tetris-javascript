@@ -332,15 +332,40 @@ function CheckForCompletedRows() {
 }
 
 function RowClearBonus(rows) {
-    switch (rows){
-        case 1: return   40; break;
-        case 2: return  100; break;
-        case 3: return  300; break;
+    switch (rows) {
+        case 1: return 40; break;
+        case 2: return 100; break;
+        case 3: return 300; break;
         case 4: return 1200; break;
         default: return 0;
     }
 }
 
 function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
+    for (let i = startOfDeletion - 1; i >= 0; i--) {
+        for (let x = 0; x < gBArrayWidth; x++) {
+            let y2 = i + rowsToDelete;
+            let squareColor = stoppedShapeArray[x][i];
+            let nextSquareColor = stoppedShapeArray[x][y2];
 
+            if (typeof squareColor === 'string') {
+                nextSquareColor = squareColor;
+                gameBoardArray[x][y2] = 1; // Put block into GBA
+                stoppedShapeArray[x][y2] = squareColor; // Draw color into stopped
+
+                let coorX = coordinateArray[x][y2].x;
+                let coorY = coordinateArray[x][y2].y;
+                ctx.fillStyle = nextSquareColor;
+                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+
+                squareColor = 0;
+                gameBoardArray[x][i] = 0; // Clear the spot in GBA
+                stoppedShapeArray[x][i] = 0; // Clear the spot in SSA
+                coorX = coordinateArray[x][i].x;
+                coorY = coordinateArray[x][i].y;
+                ctx.fillStyle = 'white';
+                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+            }
+        }
+    }
 }
