@@ -53,4 +53,14 @@ function SetupCanvas () {
 
     ctx.strokeStyle = 'black';
     ctx.strokeRect(8, 8, 280, 462);
+
+    CreateCoordArray();
+    DrawTetromino();
+}
+
+function DrawTetromino() {
+    for(let i = 0; i < curTetromino.length; i++) {
+        let x = curTetromino[i][0] + startX;
+        let y = curTetromino[i][1] + startY;
+    }
 }
