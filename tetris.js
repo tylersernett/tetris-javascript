@@ -241,8 +241,16 @@ function HorizontalCollision() {
     return collision;
 }
 
-function CheckForCompletedRows() {
-
+function HittingTheWall() {
+    for (let i = 0; i < curTetromino.length; i++) {
+        let newX = curTetromino[i][0] + startX;
+        if (newX <= 0 && direction === DIRECTION.LEFT) {
+            return true;
+        } else if (newX >= gBArrayWidth - 1 && direction === DIRECTION.RIGHT) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function DeleteTetromino() {
@@ -281,14 +289,52 @@ function CreateTetromino() {
     curTetrominoColor = tetrominoColors[randomTetromino];
 }
 
-function HittingTheWall() {
-    for (let i = 0; i < curTetromino.length; i++) {
-        let newX = curTetromino[i][0] + startX;
-        if (newX <= 0 && direction === DIRECTION.LEFT) {
-            return true;
-        } else if (newX >= gBArrayWidth - 1 && direction === DIRECTION.RIGHT) {
-            return true;
+function CheckForCompletedRows() {
+    let rowsToDelete = 0;
+    let startOfDeletion = 0;
+    for (let y = 0; y < gBArrayHeight; y++) {
+        let completed = true;
+        for (let x = 0; x < gBArrayWidth; x++) {
+            let square = stoppedShapeArray[x][y]
+            //if anything *not* a string shows up, it's not completed
+            if (square === 0 || typeof square === 'undefined') {
+                completed = false;
+                break;
+            }
+        }
+
+        if (completed) {
+            //shift down the rows
+            if (startOfDeletion === 0) { startOfDeletion = y; }
+            rowsToDelete++;
+
+            for (let i = 0; i < gBArrayWidth; i++) {
+                // Update the arrays by zero'ing out previous squares
+                stoppedShapeArray[i][y] = 0;
+                gameBoardArray[i][y] = 0;
+                // Look for the x & y values in the lookup table
+                let coorX = coordinateArray[i][y].x;
+                let coorY = coordinateArray[i][y].y;
+                // Draw the square as white
+                ctx.fillStyle = 'white';
+                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+            }
         }
     }
-    return false;
+    if (rowsToDelete > 0) {
+        score += RowClearBonus(rowsToDelete);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(310, 109, 140, 19);
+        ctx.fillStyle = 'black';
+        ctx.fillText(score.toString(), 310, 127);
+        MoveAllRowsDown(rowsToDelete, startOfDeletion);
+    }
+}
+
+function RowClearBonus(rows) {
+
+}
+
+function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
+
 }
