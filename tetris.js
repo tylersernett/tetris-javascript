@@ -96,14 +96,18 @@ function DrawTetromino() {
 function HandleKeyPress(key) {
     if (key.keyCode === 65) { //A
         direction = DIRECTION.LEFT;
-        DeleteTetromino();
-        startX--;
-        DrawTetromino();
+        if (!HittingTheWall()) {
+            DeleteTetromino();
+            startX--;
+            DrawTetromino();
+        }
     } else if (key.keyCode === 68) { //D
         direction = DIRECTION.RIGHT;
-        DeleteTetromino();
-        startX++;
-        DrawTetromino();
+        if (!HittingTheWall()) {
+            DeleteTetromino();
+            startX++;
+            DrawTetromino();
+        }
     } else if (key.keycode === 83) { //S
         direction = DIRECTION.DOWN;
         DeleteTetromino();
@@ -146,4 +150,16 @@ function CreateTetromino() {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length)
     curTetromino = tetrominos[randomTetromino];
     curTetrominoColor = tetrominoColors[randomTetromino];
+}
+
+function HittingTheWall() {
+    for (let i = 0; i < curTetromino.length; i++) {
+        let newX = curTetromino[i][0] + startX;
+        if (newX <= 0 && direction === DIRECTION.LEFT) {
+            return true;
+        } else if (newX >= gBArrayWidth - 1 && direction === DIRECTION.RIGHT) {
+            return true;
+        }
+    }
+    return false;
 }
