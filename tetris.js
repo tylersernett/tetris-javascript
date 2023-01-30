@@ -138,6 +138,8 @@ function HandleKeyPress(key) {
             }
         } else if (key.keyCode === 83) { //S
             MoveTetrominoDown();
+        } else if (key.keyCode === 69) { //E
+            RotateTetromino();
         }
     }
 }
@@ -368,4 +370,48 @@ function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
             }
         }
     }
+}
+
+function RotateTetromino() {
+    let newRotation = new Array();
+    let tetrominoCopy = curTetromino;
+    let curTetrominoBackup;
+
+    for (let i = 0; i < tetrominoCopy.length; i++) {
+        // clone (avoid reference error)
+        curTetrominoBackup = [...curTetromino];
+
+        //orient new rotation based on x value of last square
+        let x = tetrominoCopy[i][0];
+        let y = tetrominoCopy[i][1];
+        let newX = (GetRightmostSquareX() - y);
+        let newY = x;
+        newRotation.push([newX, newY]);
+    }
+    DeleteTetromino();
+
+    // Try to draw the new Tetromino rotation
+    try {
+        curTetromino = newRotation;
+        DrawTetromino();
+    }
+    // If outside bounds error, draw backup instead
+    catch (error) {
+        if (error instanceof TypeError) {
+            curTetromino = curTetrominoBackup;
+            DeleteTetromino();
+            DrawTetromino();
+        }
+    }
+}
+
+//get the right-most x-coordinate
+function GetRightmostSquareX() {
+    let lastX = 0;
+    for (let i = 0; i < curTetromino.length; i++) {
+        let square = curTetromino[i];
+        if (square[0] > lastX)
+            lastX = square[0];
+    }
+    return lastX;
 }
