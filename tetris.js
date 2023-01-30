@@ -69,6 +69,10 @@ function SetupCanvas () {
     ctx.strokeStyle = 'black';
     ctx.strokeRect(8, 8, 280, 462);
 
+    document.addEventListener('keydown', HandleKeyPress);
+    CreateTetrominos();
+    CreateTetromino();
+
     CreateCoordArray();
     DrawTetromino();
 }
@@ -78,9 +82,32 @@ function DrawTetromino() {
         let x = curTetromino[i][0] + startX;
         let y = curTetromino[i][1] + startY;
         gameBoardArray[x][y] = 1; //tell gameboard that black is present at coordinates
+        
+        //transcribe xy info to coordinateArray pixels
         let coorX = coordinateArray[x][y].x;
         let coorY = coordinateArray[x][y].y;
+
+        //draw the square
         ctx.fillStyle = curTetrominoColor;
         ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+    }
+}
+
+function HandleKeyPress(key){
+    if(key.keyCode === 65) { //"a" - left
+        direction = DIRECTION.LEFT;
+        DeleteTetromino();
+        startX--;
+        DrawTetromino();
+    } else if (key.keyCode === 68) {
+        direction = DIRECTION.RIGHT;
+        DeleteTetromino();
+        startX++;
+        DrawTetromino();
+    } else if (key.keycode === 83) {
+        direction = DIRECTION.DOWN;
+        DeleteTetromino();
+        startY++;
+        DrawTetromino();
     }
 }
