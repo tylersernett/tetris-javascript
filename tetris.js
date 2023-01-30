@@ -121,36 +121,37 @@ function DrawTetromino() {
 }
 
 function HandleKeyPress(key) {
-    console.log(key);
-    if (key.keyCode === 65) { //A
-        direction = DIRECTION.LEFT;
-        if (!HittingTheWall()) {
-            DeleteTetromino();
-            startX--;
-            DrawTetromino();
+    if (winOrLose != "Game Over") {
+        if (key.keyCode === 65) { //A
+            direction = DIRECTION.LEFT;
+            if (!HittingTheWall() && !HorizontalCollision()) {
+                DeleteTetromino();
+                startX--;
+                DrawTetromino();
+            }
+        } else if (key.keyCode === 68) { //D
+            direction = DIRECTION.RIGHT;
+            if (!HittingTheWall() && !HorizontalCollision()) {
+                DeleteTetromino();
+                startX++;
+                DrawTetromino();
+            }
+        } else if (key.keyCode === 83) { //S
+            MoveTetrominoDown();
         }
-    } else if (key.keyCode === 68) { //D
-        direction = DIRECTION.RIGHT;
-        if (!HittingTheWall()) {
-            DeleteTetromino();
-            startX++;
-            DrawTetromino();
-        }
-    } else if (key.keyCode === 83) { //S
-        MoveTetrominoDown();
     }
 }
 
 function MoveTetrominoDown() {
     direction = DIRECTION.DOWN;
-    if (!HittingVerticalCollision()) {
+    if (!VerticalCollision()) {
         DeleteTetromino();
         startY++;
         DrawTetromino();
     }
 }
 
-function HittingVerticalCollision() {
+function VerticalCollision() {
     // copy tetromino and move "fake" version down
     let tetrominoCopy = curTetromino;
     let collision = false;
@@ -166,7 +167,8 @@ function HittingVerticalCollision() {
             y++;
         }
 
-        // Check for collision w/ previously set piece
+        // Check for collision w/ previously set piece 1 square below
+        //(stoppedShapeArray will hold color string if occupied)
         if (typeof stoppedShapeArray[x][y + 1] === 'string') {
             DeleteTetromino();
             // Increment to put into place, then draw self
@@ -186,8 +188,10 @@ function HittingVerticalCollision() {
         // Check for game over and if so set game over text
         if (startY <= 2) {
             winOrLose = "Game Over";
+            //draw white rectangle over previous string
             ctx.fillStyle = 'white';
             ctx.fillRect(310, 242, 140, 30);
+
             ctx.fillStyle = 'black';
             ctx.fillText(winOrLose, 310, 261);
         } else {
@@ -210,6 +214,31 @@ function HittingVerticalCollision() {
         }
 
     }
+}
+
+function HorizontalCollision() {
+    // copy tetromino and move "fake" version down
+    let tetrominoCopy = curTetromino;
+    let collision = false;
+    // Cycle through all Tetromino squares
+    for (let i = 0; i < tetrominoCopy.length; i++) {
+        let square = tetrominoCopy[i];
+        let x = square[0] + startX;
+        let y = square[1] + startY;
+
+        if (direction === DIRECTION.LEFT) {
+            x--;
+        } else if (direction === DIRECTION.RIGHT) {
+            x++;
+        }
+
+        //stoppedShapeArray will hold color string if occupied
+        if (typeof stoppedShapeArray[x][y] === 'string') {
+            collision = true;
+            break;
+        }
+    }
+    return collision;
 }
 
 function CheckForCompletedRows() {
