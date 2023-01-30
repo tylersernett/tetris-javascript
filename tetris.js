@@ -1,15 +1,16 @@
 let canvas;
 let ctx;
-let gBArrayHeight = 20;
-let gBArrayWidth = 12;
-let startX = 4;
-let startY = 0;
-let score = 0;
-let level = 1;
-let winOrLose = "Playing";
+let gBArrayHeight = 20, gBArrayWidth = 12;
+let startXDefault = 4, startX = startXDefault;
+let startYDefault = 0, startY = startYDefault;
 let blockDimension = 21;
-//initialize 2D array with format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
+let score = 0, level = 1;
+let winOrLose = "Playing";
+//stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
 let coordinateArray = [...Array(gBArrayHeight)].map(() => Array(gBArrayWidth).fill(0));
+//stores currently controlled block
+let gameBoardArray = [...Array(gBArrayHeight)].map(() => Array(gBArrayWidth)).fill(0);
+//stores static blocks
 let stoppedShapeArray = [...Array(gBArrayHeight)].map(() => Array(gBArrayWidth).fill(0));
 
 /*  T block: [[1,0],[0,1],[1,1],[2,1]]
@@ -24,7 +25,6 @@ let tetrominos = [];
 let tetrominoColors = ['purple', 'cyan', 'blue', 'yellow', 'orange', 'green', 'red'];
 let curTetrominoColor;
 
-let gameBoardArray = [...Array(gBArrayHeight)].map(() => Array(gBArrayWidth)).fill(0);
 
 let DIRECTION = {
     IDLE: 0,
@@ -121,6 +121,7 @@ function DrawTetromino() {
 }
 
 function HandleKeyPress(key) {
+    console.log(key);
     if (key.keyCode === 65) { //A
         direction = DIRECTION.LEFT;
         if (!HittingTheWall()) {
@@ -135,12 +136,84 @@ function HandleKeyPress(key) {
             startX++;
             DrawTetromino();
         }
-    } else if (key.keycode === 83) { //S
-        direction = DIRECTION.DOWN;
+    } else if (key.keyCode === 83) { //S
+        MoveTetrominoDown();
+    }
+}
+
+function MoveTetrominoDown() {
+    direction = DIRECTION.DOWN;
+    if (!HittingVerticalCollision()) {
         DeleteTetromino();
         startY++;
         DrawTetromino();
     }
+}
+
+function HittingVerticalCollision() {
+    // copy tetromino and move "fake" version down
+    let tetrominoCopy = curTetromino;
+    let collision = false;
+
+    // Cycle through all Tetromino squares
+    for (let i = 0; i < tetrominoCopy.length; i++) {
+        let square = tetrominoCopy[i];
+        let x = square[0] + startX;
+        let y = square[1] + startY;
+
+        // If moving down, increment y to check for a collison
+        if (direction === DIRECTION.DOWN) {
+            y++;
+        }
+
+        // Check for collision w/ previously set piece
+        if (typeof stoppedShapeArray[x][y + 1] === 'string') {
+            DeleteTetromino();
+            // Increment to put into place, then draw self
+            startY++;
+            DrawTetromino();
+            collision = true;
+            break;
+        }
+
+        if (y >= gBArrayHeight) { //if touching floor...
+            collision = true;
+            break;
+        }
+    }
+
+    if (collision) {
+        // Check for game over and if so set game over text
+        if (startY <= 2) {
+            winOrLose = "Game Over";
+            ctx.fillStyle = 'white';
+            ctx.fillRect(310, 242, 140, 30);
+            ctx.fillStyle = 'black';
+            ctx.fillText(winOrLose, 310, 261);
+        } else {
+            // Add stopped Tetromino to stopped shape array
+            for (let i = 0; i < tetrominoCopy.length; i++) {
+                let square = tetrominoCopy[i];
+                let x = square[0] + startX;
+                let y = square[1] + startY;
+                // Add the current Tetromino color
+                stoppedShapeArray[x][y] = curTetrominoColor;
+            }
+
+            CheckForCompletedRows();
+            // Create the next Tetromino, draw it, and reset direction
+            CreateTetromino();
+            direction = DIRECTION.IDLE;
+            startX = startXDefault;
+            startY = startYDefault;
+            DrawTetromino();
+        }
+
+    }
+}
+
+function CheckForCompletedRows() {
+
 }
 
 function DeleteTetromino() {
