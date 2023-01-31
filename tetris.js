@@ -272,13 +272,14 @@ function CreateTetrominos() {
     // T 
     //OLD tetrominos.push([[1, 0], [0, 1], [1, 1], [2, 1]]);
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
+    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }]);
     // I
     //OLDtetrominos.push([[0, 0], [1, 0], [2, 0], [3, 0]]);
     tetrominos.push([[[3, 2], [0, 2], [1, 2], [2, 2]], [[2, 0], [2, 1], [2, 2], [2, 3]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 1 }, { left: -2, right: 1, down: 0 }])
     // J
-
+    tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [0, 2], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [0, 0]], [[1, 0], [2, 0], [1, 1], [1, 2]]]);
+    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
     //OLDtetrominos.push([[0, 0], [0, 1], [1, 1], [2, 1]]);
     // Square
     tetrominos.push([[[0, 0], [1, 0], [0, 1], [1, 1]]]);
@@ -430,3 +431,4 @@ function GetRightmostSquareX() {
 
 //TODO: assign other rotations
 //https://strategywiki.org/wiki/Tetris/Rotation_systems
+//test 'up' clearances  (can you rotate when there's a 'cliff' above?)
