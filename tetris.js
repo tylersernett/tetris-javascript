@@ -125,14 +125,14 @@ function HandleKeyPress(key) {
     if (winOrLose != "Game Over") {
         if (key.keyCode === 65) { //A
             direction = DIRECTION.LEFT;
-            if (!HittingTheWall(-1) && !HorizontalCollision(-1)) {
+            if (!HorizontalCollision(-1)) {
                 DeleteTetromino();
                 startX--;
                 DrawTetromino();
             }
         } else if (key.keyCode === 68) { //D
             direction = DIRECTION.RIGHT;
-            if (!HittingTheWall(1) && !HorizontalCollision(1)) {
+            if (!HorizontalCollision(1)) {
                 DeleteTetromino();
                 startX++;
                 DrawTetromino();
@@ -162,7 +162,7 @@ window.setInterval(function () {
 }, 1000);
 
 function VerticalCollision(val) {
-    if (direction === 0) { return; }
+    if (direction === 0) { return false; }
     // copy tetromino and move "fake" version down
     let tetrominoCopy = curTetromino[rotation];
     let collision = false;
@@ -224,7 +224,7 @@ function VerticalCollision(val) {
             startY = startYDefault;
             DrawTetromino();
         }
-
+        return true;
     }
 }
 
@@ -239,18 +239,13 @@ function HorizontalCollision(val) {
         let x = square[0] + startX;
         let y = square[1] + startY;
 
-        // if (direction === DIRECTION.LEFT) {
-        //     x--;
-        // } else if (direction === DIRECTION.RIGHT) {
-        //     x++;
-        // }
-
         x += val;
 
         if (x > gBArrayWidth - 1 || x < 0) {
             collision = true;
             break;
         }
+
         //stoppedShapeArray will hold color string if occupied
         if (typeof stoppedShapeArray[x][y] === 'string') {
             collision = true;
@@ -258,22 +253,6 @@ function HorizontalCollision(val) {
         }
     }
     return collision;
-}
-
-function HittingTheWall(val) {
-    return false;
-    for (let i = 0; i < curTetromino[rotation].length; i++) {
-        let newX = curTetromino[rotation][i][0] + startX;
-        if (newX + val < 0 || newX + val > gBArrayWidth - 1) {
-            return true;
-        }
-        // if (newX <= 0 && direction === DIRECTION.LEFT) {
-        //     return true;
-        // } else if (newX >= gBArrayWidth - 1 && direction === DIRECTION.RIGHT) {
-        //     return true;
-        // }
-    }
-    return false;
 }
 
 function DeleteTetromino() {
