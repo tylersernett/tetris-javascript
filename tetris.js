@@ -25,7 +25,7 @@ let stoppedShapeArray = new Array(gBArrayWidth).fill(0).map(() => new Array(gBAr
 let curTetromino = [[1, 0], [0, 1], [1, 1], [2, 1]]
 
 let tetrominos = [];
-let tetrominoColors = ['purple', 'cyan', 'blue', 'yellow', 'orange', 'green', 'red'];
+let tetrominoColors = ['fuchsia', 'turquoise', 'royalblue', 'gold', 'darkorange', 'lime', 'crimson'];
 let curTetrominoColor;
 
 let DIRECTION = {
@@ -180,6 +180,8 @@ window.setInterval(function () {
 //TODO: track line clearances
 //TODO: increase level as more lines are cleared
 //TODO: create algorithm that makes faster drops as level increases
+//TODO: show nextblock
+//TODO: change controls to arrows, allow reverse rotation
 
 //-------------\\
 //  COLLISIONS  \\
