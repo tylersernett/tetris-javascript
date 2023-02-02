@@ -290,7 +290,8 @@ function CreateTetrominos() {
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
     // S
-    
+    tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
+    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
     // Z
     //tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
     
