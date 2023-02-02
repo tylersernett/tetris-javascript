@@ -155,11 +155,43 @@ function MoveTetrominoDown() {
 }
 
 //auto-move piece down once per second
+/*
 window.setInterval(function () {
     if (winOrLose != "Game Over") {
         MoveTetrominoDown();
+        console.log('tickdown', startX, startY)
     }
 }, 1000);
+*/
+
+function RotationCollision() {
+    let tetrominoCopy = curTetromino[(rotation + 1) % curTetromino.length];
+    let collision = false;
+
+    // Cycle through all Tetromino squares
+    for (let i = 0; i < tetrominoCopy.length; i++) {
+        let square = tetrominoCopy[i];
+        let x = square[0] + startX;
+        let y = square[1] + startY;
+
+        if (x > gBArrayWidth - 1 || x < 0) { //if on wall edges
+            collision = true;
+            console.log('rot col wall')
+            break;
+        }
+        if (y >= gBArrayHeight) { //if touching floor...
+            collision = true;
+            console.log('rot col floor')
+            break;
+        }
+        if (typeof stoppedShapeArray[x][y] === 'string') { //if touching another piece
+            collision = true;
+            console.log('rot col piece')
+            break;
+        }
+    }
+    return collision;
+}
 
 function VerticalCollision(val) {
     if (direction === 0) { return false; }
@@ -174,19 +206,20 @@ function VerticalCollision(val) {
         let y = square[1] + startY;
 
         // If moving down, increment y to check for a collison
-        // if (direction === DIRECTION.DOWN) {
-        //     y++;
-        // }
-        y += val
+        if (direction === DIRECTION.DOWN) {
+            y++;
+        }
+        //y += val
 
         // Check for collision w/ previously set piece 1 square below
         //(stoppedShapeArray will hold color string if occupied)
         if (typeof stoppedShapeArray[x][y + 1] === 'string') {
-            DeleteTetromino();
+            DeleteTetromino(); // delete old drawing
             // Increment to put into place, then draw self
             startY++;
             DrawTetromino();
             collision = true;
+            console.log('vert col lock')
             break;
         }
 
@@ -198,7 +231,7 @@ function VerticalCollision(val) {
 
     if (collision) {
         // Check for game over and if so set game over text
-        if (startY <= 2) {
+        if (startY <= 1) {
             winOrLose = "Game Over";
             //draw white rectangle over previous string
             ctx.fillStyle = 'white';
@@ -219,9 +252,6 @@ function VerticalCollision(val) {
             CheckForCompletedRows();
             // Create the next Tetromino, draw it, and reset direction
             CreateTetromino();
-            direction = DIRECTION.IDLE;
-            startX = startXDefault;
-            startY = startYDefault;
             DrawTetromino();
         }
         return true;
@@ -249,6 +279,12 @@ function HorizontalCollision(val) {
         //stoppedShapeArray will hold color string if occupied
         if (typeof stoppedShapeArray[x][y] === 'string') {
             collision = true;
+            //bug test:
+            let coorX = coordinateArray[x][y].x;
+            let coorY = coordinateArray[x][y].y;
+            ctx.fillStyle = 'red';
+            ctx.fillRect(coorX - 2, coorY + 2, blockDimension, blockDimension);
+            //bug //
             break;
         }
     }
@@ -269,6 +305,7 @@ function DeleteTetromino() {
 }
 
 function CreateTetrominos() {
+    /*
     // T 
     //OLD tetrominos.push([[1, 0], [0, 1], [1, 1], [2, 1]]);
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
@@ -287,19 +324,23 @@ function CreateTetrominos() {
     
     // L
     //OLDtetrominos.push([[2, 0], [0, 1], [1, 1], [2, 1]]);
-    tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
+    tetrominos.push([[[0, 1], [1, 1], [2, 1], [0, 2]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
+    */
     // S
     tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
     // Z
     //tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
-    tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [1, 2]]]);
+    tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
-    
+
 }
 
 function CreateTetromino() {
+    direction = DIRECTION.IDLE;
+    startX = startXDefault;
+    startY = startYDefault;
     rotation = 0;
     let randomTetromino = Math.floor(Math.random() * tetrominos.length)
     curTetromino = tetrominos[randomTetromino];
@@ -368,7 +409,7 @@ function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
 
             if (typeof squareColor === 'string') {
                 nextSquareColor = squareColor;
-                gameBoardArray[x][y2] = 1; // Put block into GBA
+                gameBoardArray[x][y2] = 1; // Put block into GBArray
                 stoppedShapeArray[x][y2] = squareColor; // Draw color into stopped
 
                 let coorX = coordinateArray[x][y2].x;
@@ -389,51 +430,32 @@ function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
 }
 
 function RotateTetromino() {
-    let curTetrominoBackup = [...curTetromino];
-    let tempRotation = rotation;
-
-    //check if there's clearance for rotation
-    let rotationCheck = curRotationClearances[rotation];
-    if (!HorizontalCollision(rotationCheck.left)
-        && !HorizontalCollision(rotationCheck.right)
-        && !VerticalCollision(rotationCheck.down)
-    ) {
+    if (!RotationCollision()) {
         DeleteTetromino();
         rotation++;
         rotation = rotation % curTetromino.length; //keep inside Array bounds
         DrawTetromino();
+        console.log('rot', startX, startY)
+        // VerticalCollision(1);
     }
-    // Try to draw the new Tetromino rotation
-    try {
-        //curTetromino = newRotation;
-
-        // DeleteTetromino();
-        DrawTetromino();
-    }
-    // If outside bounds error, draw backup instead
-    catch (error) {
-        if (error instanceof TypeError) {
-
-            console.error("ERR: ", error);
-            curTetromino = curTetrominoBackup;
-            rotation = tempRotation;
-            DeleteTetromino();
-            DrawTetromino();
-        }
-    }
-}
-
-//get the right-most x-coordinate
-function GetRightmostSquareX() {
-    let lastX = 0;
-    for (let i = 0; i < curTetromino.length; i++) {
-        let square = curTetromino[i];
-        if (square[0] > lastX)
-            lastX = square[0];
-    }
-    return lastX;
 }
 
 //TODO: assign other rotations
 //https://strategywiki.org/wiki/Tetris/Rotation_systems
 //test 'up' clearances  (can you rotate when there's a 'cliff' above?)
+
+//bug: s block clipped through t block
+/*
+
+      [t]   [s][s]
+   [t][t][s][s]
+
+s block clipping through when in "s" horizontal orientation?
+and
+z block can clip through when rotating 
+
+leftmost s tail clips through when rotating
+rightmost z tail clips ''      ''    ''
+
+SE s tail clipped through in vertical orientation
+*/
