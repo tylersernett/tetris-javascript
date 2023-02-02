@@ -128,33 +128,40 @@ function CreateTetrominos() {
 //---------------\\
 function HandleKeyPress(key) {
     if (winOrLose != "Game Over") {
-        if (key.keyCode === 65) { //A
+        if (key.keyCode === 37) { //<-- 
             direction = DIRECTION.LEFT;
             if (!HorizontalCollision(-1)) {
                 DeleteTetromino();
                 startX--;
                 DrawTetromino();
             }
-        } else if (key.keyCode === 68) { //D
+        } else if (key.keyCode === 39) { // -->
             direction = DIRECTION.RIGHT;
             if (!HorizontalCollision(1)) {
                 DeleteTetromino();
                 startX++;
                 DrawTetromino();
             }
-        } else if (key.keyCode === 83) { //S
+        } else if (key.keyCode === 40) { // down arrow
             MoveTetrominoDown();
-        } else if (key.keyCode === 69) { //E
-            RotateTetromino();
+        } else if (key.keyCode === 88) { //x
+            RotateTetromino(1);
+        } else if (key.keyCode === 90) { //z
+            RotateTetromino(-1);
         }
     }
 }
 
-function RotateTetromino() {
-    if (!RotationCollision()) {
+function mod(n, m) {
+    return ((n % m) + m) % m;
+  }
+
+function RotateTetromino(val) {
+    if (!RotationCollision(val)) {
         DeleteTetromino();
-        rotation++;
-        rotation = rotation % curTetromino.length; //keep inside Array bounds
+        rotation += val;
+        rotation = mod(rotation, curTetromino.length); //keep inside Array bounds
+        console.log(rotation)
         DrawTetromino();
         console.log('rot', startX, startY)
     }
@@ -198,8 +205,8 @@ function PieceCollision(x,y){
 }
 
 //creates a rotated copy and checks if it fits
-function RotationCollision() {
-    let tetrominoCopy = curTetromino[(rotation + 1) % curTetromino.length];
+function RotationCollision(val) {
+    let tetrominoCopy = curTetromino[mod((rotation + val) , curTetromino.length)];
     let collision = false;
 
     // Cycle through all Tetromino squares
@@ -419,9 +426,9 @@ function RowClearBonus(rows) {
 }
 
 function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
-    for (let i = startOfDeletion - 1; i >= 0; i--) {
+    for (let i = startOfDeletion - 1; i >= 0; i--) { //starts at bottom and moves up
         for (let x = 0; x < gBArrayWidth; x++) {
-            let y2 = i + rowsToDelete;
+            let y2 = i + rowsToDelete; //NOT THIS SIMPLE -- you need to track the indexes of the rows!
             let squareColor = stoppedShapeArray[x][i];
             let nextSquareColor = stoppedShapeArray[x][y2];
 
