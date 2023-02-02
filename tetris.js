@@ -284,14 +284,16 @@ function CreateTetrominos() {
     // Square
     tetrominos.push([[[0, 0], [1, 0], [0, 1], [1, 1]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }])
-    /*
+    
     // L
-    tetrominos.push([[2, 0], [0, 1], [1, 1], [2, 1]]);
+    //OLDtetrominos.push([[2, 0], [0, 1], [1, 1], [2, 1]]);
+    tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
+    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
     // S
-    tetrominos.push([[1, 0], [2, 0], [0, 1], [1, 1]]);
+    
     // Z
-    tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
-    */
+    //tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
+    
 }
 
 function CreateTetromino() {
