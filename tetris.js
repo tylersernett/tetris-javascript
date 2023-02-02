@@ -155,14 +155,22 @@ function MoveTetrominoDown() {
 }
 
 //auto-move piece down once per second
-/*
 window.setInterval(function () {
     if (winOrLose != "Game Over") {
         MoveTetrominoDown();
         console.log('tickdown', startX, startY)
     }
 }, 1000);
-*/
+
+function FloorCollision(y) {
+    return (y >= gBArrayHeight);
+}
+function WallCollision(x) {
+    return (x > gBArrayWidth - 1 || x < 0);
+}
+function PieceCollision(x,y){
+    return (typeof stoppedShapeArray[x][y] === 'string')
+}
 
 function RotationCollision() {
     let tetrominoCopy = curTetromino[(rotation + 1) % curTetromino.length];
@@ -174,17 +182,17 @@ function RotationCollision() {
         let x = square[0] + startX;
         let y = square[1] + startY;
 
-        if (x > gBArrayWidth - 1 || x < 0) { //if on wall edges
+        if (WallCollision(x)) { //if on wall edges
             collision = true;
             console.log('rot col wall')
             break;
         }
-        if (y >= gBArrayHeight) { //if touching floor...
+        if (FloorCollision(y)) { //if touching floor...
             collision = true;
             console.log('rot col floor')
             break;
         }
-        if (typeof stoppedShapeArray[x][y] === 'string') { //if touching another piece
+        if (PieceCollision(x,y)) { //if touching another piece
             collision = true;
             console.log('rot col piece')
             break;
@@ -205,6 +213,14 @@ function VerticalCollision(val) {
         let x = square[0] + startX;
         let y = square[1] + startY;
 
+        //check if there's anything ALREADY underneath (may happen during rotation)
+        if (PieceCollision(x, y+1)) {
+            //if so, confirm collision & lock into place
+            collision = true;
+            console.log('vert col lock init')
+            break;
+        }
+
         // If moving down, increment y to check for a collison
         if (direction === DIRECTION.DOWN) {
             y++;
@@ -213,17 +229,16 @@ function VerticalCollision(val) {
 
         // Check for collision w/ previously set piece 1 square below
         //(stoppedShapeArray will hold color string if occupied)
-        if (typeof stoppedShapeArray[x][y + 1] === 'string') {
-            DeleteTetromino(); // delete old drawing
-            // Increment to put into place, then draw self
-            startY++;
-            DrawTetromino();
+        if (PieceCollision(x, y+1)) {
+            DeleteTetromino();  // if so, delete old drawing
+            startY++;           // Increment to put into place,
+            DrawTetromino();    // then draw self
             collision = true;
             console.log('vert col lock')
             break;
         }
 
-        if (y >= gBArrayHeight) { //if touching floor...
+        if (FloorCollision(y)) { //if touching floor...
             collision = true;
             break;
         }
@@ -271,20 +286,14 @@ function HorizontalCollision(val) {
 
         x += val;
 
-        if (x > gBArrayWidth - 1 || x < 0) {
+        if (WallCollision(x)) {
             collision = true;
             break;
         }
 
         //stoppedShapeArray will hold color string if occupied
-        if (typeof stoppedShapeArray[x][y] === 'string') {
+        if (PieceCollision(x,y)) {
             collision = true;
-            //bug test:
-            let coorX = coordinateArray[x][y].x;
-            let coorY = coordinateArray[x][y].y;
-            ctx.fillStyle = 'red';
-            ctx.fillRect(coorX - 2, coorY + 2, blockDimension, blockDimension);
-            //bug //
             break;
         }
     }
@@ -305,36 +314,27 @@ function DeleteTetromino() {
 }
 
 function CreateTetrominos() {
-    /*
     // T 
-    //OLD tetrominos.push([[1, 0], [0, 1], [1, 1], [2, 1]]);
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }]);
     // I
-    //OLDtetrominos.push([[0, 0], [1, 0], [2, 0], [3, 0]]);
     tetrominos.push([[[3, 2], [0, 2], [1, 2], [2, 2]], [[2, 0], [2, 1], [2, 2], [2, 3]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 1 }, { left: -2, right: 1, down: 0 }])
     // J
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [0, 2], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [0, 0]], [[1, 0], [2, 0], [1, 1], [1, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
-    //OLDtetrominos.push([[0, 0], [0, 1], [1, 1], [2, 1]]);
     // Square
     tetrominos.push([[[0, 0], [1, 0], [0, 1], [1, 1]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }])
-    
     // L
-    //OLDtetrominos.push([[2, 0], [0, 1], [1, 1], [2, 1]]);
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [0, 2]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
-    */
     // S
     tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
     // Z
-    //tetrominos.push([[0, 0], [1, 0], [1, 1], [2, 1]]);
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
     rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
-
 }
 
 function CreateTetromino() {
@@ -439,23 +439,3 @@ function RotateTetromino() {
         // VerticalCollision(1);
     }
 }
-
-//TODO: assign other rotations
-//https://strategywiki.org/wiki/Tetris/Rotation_systems
-//test 'up' clearances  (can you rotate when there's a 'cliff' above?)
-
-//bug: s block clipped through t block
-/*
-
-      [t]   [s][s]
-   [t][t][s][s]
-
-s block clipping through when in "s" horizontal orientation?
-and
-z block can clip through when rotating 
-
-leftmost s tail clips through when rotating
-rightmost z tail clips ''      ''    ''
-
-SE s tail clipped through in vertical orientation
-*/
