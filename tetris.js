@@ -25,10 +25,8 @@ let stoppedShapeArray = new Array(gBArrayWidth).fill(0).map(() => new Array(gBAr
 let curTetromino = [[1, 0], [0, 1], [1, 1], [2, 1]]
 
 let tetrominos = [];
-let rotationClearance = [];
 let tetrominoColors = ['purple', 'cyan', 'blue', 'yellow', 'orange', 'green', 'red'];
 let curTetrominoColor;
-let curRotationClearances;
 
 let DIRECTION = {
     IDLE: 0,
@@ -111,25 +109,18 @@ function SetupCanvas() {
 function CreateTetrominos() {
     // T 
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }]);
     // I
     tetrominos.push([[[3, 2], [0, 2], [1, 2], [2, 2]], [[2, 0], [2, 1], [2, 2], [2, 3]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 1 }, { left: -2, right: 1, down: 0 }])
     // J
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [0, 2], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [0, 0]], [[1, 0], [2, 0], [1, 1], [1, 2]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
     // Square
     tetrominos.push([[[0, 0], [1, 0], [0, 1], [1, 1]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }])
     // L
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [0, 2]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: 0, right: 1, down: 0 }, { left: 0, right: 0, down: 1 }, { left: -1, right: 0, down: 0 }])
     // S
     tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
     // Z
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
-    rotationClearance.push([{ left: 0, right: 0, down: 0 }, { left: -1, right: 0, down: 0 },]);
 }
 
 //-------------\\
@@ -185,6 +176,10 @@ window.setInterval(function () {
         console.log('tickdown', startX, startY)
     }
 }, 1000);
+
+//TODO: track line clearances
+//TODO: increase level as more lines are cleared
+//TODO: create algorithm that makes faster drops as level increases
 
 //-------------\\
 //  COLLISIONS  \\
@@ -367,7 +362,6 @@ function CreateTetromino() {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length)
     curTetromino = tetrominos[randomTetromino];
     curTetrominoColor = tetrominoColors[randomTetromino];
-    curRotationClearances = rotationClearance[randomTetromino]
 }
 
 function CheckForCompletedRows() {
@@ -453,3 +447,11 @@ function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
 
 //bug: rowclear only checks CONSECUTIVE clears...but you can have staggered clears as well.
 //solve: check each row INDEPENDENTLY....not just a range
+
+//bug: i block clipped through square   
+/*    [i]
+      [i]
+      [i]
+   [s][i] 
+   [s][s]
+*/
