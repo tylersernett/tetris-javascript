@@ -8,3 +8,5 @@ body {
     margin-left: 10px;
     margin-top: 10px;
 }
+
+html, body {margin: 0; height: 100%; overflow: hidden}
