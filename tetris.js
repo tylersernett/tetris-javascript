@@ -50,7 +50,7 @@ function CreateCoordArray() {
     let xLeft = 11, xRight = 264;
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
-            coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row );
+            coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
         }
     }
 }
@@ -156,7 +156,7 @@ function HandleKeyPress(key) {
 
 function mod(n, m) {
     return ((n % m) + m) % m;
-  }
+}
 
 function RotateTetromino(val) {
     if (!RotationCollision(val)) {
@@ -183,7 +183,6 @@ window.setInterval(function () {
     }
 }, 1000);
 
-//TODO: fix line clearance bug (only handles consecutive)
 //TODO: track line clearances
 //TODO: increase level as more lines are cleared
 //TODO: create algorithm that makes faster drops as level increases
@@ -198,8 +197,7 @@ function FloorCollision(y) {
 function WallCollision(x) {
     return (x > gBArrayWidth - 1 || x < 0);
 }
-function PieceCollision(x,y){
-    console.log(stoppedShapeArray[y]);
+function PieceCollision(x, y) {
     //stoppedShapeArray will hold color string if occupied
     return (typeof stoppedShapeArray[y][x] === 'string')
 }
@@ -207,8 +205,7 @@ function PieceCollision(x,y){
 //creates a rotated copy and checks if it fits
 function RotationCollision(val) {
     //mod function: keep index within bounds of array
-    let tetrominoCopy = curTetromino[mod((rotation + val) , curTetromino.length)];
-    console.log(tetrominoCopy);
+    let tetrominoCopy = curTetromino[mod((rotation + val), curTetromino.length)];
     let collision = false;
 
     // Cycle through all Tetromino square blocks
@@ -216,8 +213,7 @@ function RotationCollision(val) {
         let square = tetrominoCopy[i];
         let x = square[0] + startX;
         let y = square[1] + startY;
-        console.log('rc', x,y)
-        if (WallCollision(x)) { 
+        if (WallCollision(x)) {
             collision = true;
             console.log('rot col wall')
             break;
@@ -227,7 +223,7 @@ function RotationCollision(val) {
             console.log('rot col floor')
             break;
         }
-        if (PieceCollision(x,y)) {
+        if (PieceCollision(x, y)) {
             collision = true;
             console.log('rot col piece')
             break;
@@ -243,7 +239,7 @@ function DebugPosition() {
         let y = square[1] + startY;
         console.log('x: ', x, 'y:', y);
     }
-    
+
 }
 
 //create a tetromino copy and see if it fits vertically
@@ -259,10 +255,10 @@ function VerticalCollision(val) {
         let y = square[1] + startY;
 
         //check if there's anything ALREADY underneath (may happen during rotation)
-        if (PieceCollision(x, y+1)) {
+        if (PieceCollision(x, y + 1)) {
             //if so, confirm collision & lock into place
             collision = true;
-            console.log('vert col lock init')
+            console.log('vert col notlocked init')
             break;
         }
 
@@ -271,20 +267,18 @@ function VerticalCollision(val) {
             y++;
         }
         // y += val
-        
+
         // Check for collision w/ previously set piece 1 square below
         //(stoppedShapeArray will hold color string if occupied)
-        //PieceCollision(x, y+1) for immediate stop...leave off +1 for some wiggle-time
-        console.log("STAR", y)
+        //PieceCollision(x, y+1) for immediate stop...leave off +1 for some sliding
+        //???: delete superfluous piececollision check???
         if (FloorCollision(y+1) || PieceCollision(x, y)) { //if touching floor...
-            console.log('vert floor hit')
             DeleteTetromino();  // if so, delete old drawing
             startY++;           // Increment to put into place,
             DrawTetromino();    // then draw self
             collision = true;
             break;
         }
-
     }
 
     if (collision) {
@@ -323,15 +317,13 @@ function HorizontalCollision(val) {
         let square = tetrominoCopy[i];
         let x = square[0] + startX;
         let y = square[1] + startY;
-        console.log('hc', x,y)
         x += val;
 
         if (WallCollision(x)) {
             collision = true;
             break;
         }
-
-        if (PieceCollision(x,y)) {
+        if (PieceCollision(x, y)) {
             collision = true;
             break;
         }
@@ -347,12 +339,11 @@ function DrawTetromino() {
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0] + startX;
         let y = curTetromino[rotation][i][1] + startY;
-
+        gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
+        
         //transcribe xy info to coordinateArray pixels
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
-        gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
-
         //draw the square
         ctx.fillStyle = curTetrominoColor;
         ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
@@ -385,45 +376,36 @@ function CreateTetromino() {
 
 function CheckForCompletedRows() {
     let rowsToDelete = 0;
-    let startOfDeletion = 0;
     for (let y = 0; y < gBArrayHeight; y++) {
-        let completed = true;
-        for (let x = 0; x < gBArrayWidth; x++) {
-            let square = stoppedShapeArray[y][x]
-            //if anything *not* a string shows up, it's not completed
-            if (square === 0 || typeof square === 'undefined') {
-                completed = false;
-                break;
-            }
+        let completed = false;
+        if (stoppedShapeArray[y].every(index => typeof index === 'string')) {
+            completed = true;
         }
 
         if (completed) {
-            //shift down the rows
-            if (startOfDeletion === 0) { startOfDeletion = y; }
             rowsToDelete++;
-
-            //grab the row, clear it out, and add it to the TOP of the array
+            //could add a check here for the greatest y value, then only redraw above that
             for (let i = 0; i < gBArrayWidth; i++) {
                 // Update the arrays by zero'ing out previously filled squares
-                stoppedShapeArray[y][x] = 'cleared'
                 stoppedShapeArray[y][i] = 0;
                 gameBoardArray[y][i] = 0;
-                // Look for the x & y values in the lookup table
-                let coorX = coordinateArray[y][i].x;
-                let coorY = coordinateArray[y][i].y;
-                // Draw the square as white
-                ctx.fillStyle = 'white';
-                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
             }
+            //grab the row, clear it out, and add it to the TOP of the array
+            let removedRowColors = stoppedShapeArray.splice(y, 1);
+            stoppedShapeArray.unshift(removedRowColors);
+            let removedRowGBA = gameBoardArray.splice(y, 1);
+            gameBoardArray.unshift(removedRowGBA);
         }
     }
     if (rowsToDelete > 0) {
         score += RowClearBonus(rowsToDelete) * level;
+        //clear old score
         ctx.fillStyle = 'white';
         ctx.fillRect(310, 109, 140, 19);
+        //draw new score
         ctx.fillStyle = 'black';
         ctx.fillText(score.toString(), 310, 127);
-        MoveAllRowsDown(rowsToDelete, startOfDeletion);
+        RedrawRows();
     }
 }
 
@@ -437,37 +419,20 @@ function RowClearBonus(rows) {
     }
 }
 
-function MoveAllRowsDown(rowsToDelete, startOfDeletion) {
-    for (let i = startOfDeletion - 1; i >= 0; i--) { //starts at bottom and moves up
-        for (let x = 0; x < gBArrayWidth; x++) {
-            let y2 = i + rowsToDelete; //NOT THIS SIMPLE -- you need to track the indexes of the rows!
-            let squareColor = stoppedShapeArray[x][i];
-            let nextSquareColor = stoppedShapeArray[x][y2];
-
-            if (typeof squareColor === 'string') {
-                nextSquareColor = squareColor;
-                gameBoardArray[x][y2] = 1; // Put block into GBArray
-                stoppedShapeArray[x][y2] = squareColor; // Draw color into stopped
-
-                let coorX = coordinateArray[x][y2].x;
-                let coorY = coordinateArray[x][y2].y;
-                ctx.fillStyle = nextSquareColor;
-                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
-
-                squareColor = 0;
-                gameBoardArray[x][i] = 0; // Clear the spot in GBA
-                stoppedShapeArray[x][i] = 0; // Clear the spot in SSA
-                coorX = coordinateArray[x][i].x;
-                coorY = coordinateArray[x][i].y;
-                ctx.fillStyle = 'white';
-                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+function RedrawRows() {
+    for (let row = 0; row < gBArrayHeight; row++ ) {
+        for (let col=0; col< gBArrayWidth; col++) {
+            let coorX = coordinateArray[row][col].x;
+            let coorY = coordinateArray[row][col].y;
+            if (typeof stoppedShapeArray[row][col] === 'string') {
+                ctx.fillStyle = stoppedShapeArray[row][col];
+            } else {
+                ctx.fillStyle = 'white'
             }
+            ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
         }
     }
 }
-
-//bug: rowclear only checks CONSECUTIVE clears...but you can have staggered clears as well.
-//solve: check each row INDEPENDENTLY....not just a range
 
 //bug: i block clipped through square   
 /*    [i]
