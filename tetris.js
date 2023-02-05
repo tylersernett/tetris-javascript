@@ -20,15 +20,6 @@ let tetrominos = [];
 let tetrominoColors = ['fuchsia', 'turquoise', 'royalblue', 'gold', 'darkorange', 'lime', 'crimson'];
 let curTetrominoColor;
 
-//??? delete directions?
-let DIRECTION = {
-    IDLE: 0,
-    DOWN: 1,
-    LEFT: 2,
-    RIGHT: 3,
-};
-let direction;
-
 class Coordinates {
     constructor(x, y) {
         this.x = x;
@@ -130,14 +121,12 @@ function CreateTetrominos() {
 function HandleKeyPress(key) {
     if (winOrLose != "Game Over") {
         if (key.keyCode === 37) { //<-- 
-            direction = DIRECTION.LEFT;
             if (!HorizontalCollision(-1)) {
                 DeleteTetromino();
                 startX--;
                 DrawTetromino();
             }
         } else if (key.keyCode === 39) { // -->
-            direction = DIRECTION.RIGHT;
             if (!HorizontalCollision(1)) {
                 DeleteTetromino();
                 startX++;
@@ -169,7 +158,6 @@ function RotateTetromino(val) {
 }
 
 function MoveTetrominoDown() {
-    direction = DIRECTION.DOWN;
     if (!VerticalCollision(1)) {
         DeleteTetromino();
         startY++;
@@ -245,7 +233,6 @@ function DebugPosition() {
 
 //create a tetromino copy and see if it fits vertically
 function VerticalCollision(val) {
-    if (direction === 0) { return false; }
     let tetrominoCopy = curTetromino[rotation];
     let collision = false;
 
@@ -263,10 +250,7 @@ function VerticalCollision(val) {
             break;
         }
 
-        // If moving down, increment y to check for a collison
-        // if (direction === DIRECTION.DOWN) {
-        //     y++;
-        // }
+        // moving down: increment y to check for a collison
         y += val
 
         // Check for collision w/ previously set piece 1 square below
@@ -366,7 +350,6 @@ function DeleteTetromino() {
 }
 
 function CreateTetromino() {
-    direction = DIRECTION.IDLE;
     startX = startXDefault;
     startY = startYDefault;
     rotation = 0;
