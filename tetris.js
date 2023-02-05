@@ -35,8 +35,6 @@ class Coordinates {
 document.addEventListener('DOMContentLoaded', SetupCanvas);
 
 //populate coordArray
-
-//[0][0], [0][1]
 function CreateCoordArray() {
     let yTop = 9, yBottom = 446, blockSpacing = 1 + blockDimension + 1;
     let xLeft = 11, xRight = 264;
@@ -243,11 +241,13 @@ function VerticalCollision(val) {
         let y = square[1] + startY;
 
         //check if there's anything ALREADY underneath (may happen during rotation)
-        if (PieceCollision(x, y + 1)) {
-            //if so, confirm collision & lock into place
-            collision = true;
-            console.log('vert col notlocked init')
-            break;
+        if (y < gBArrayHeight - 1 ) {
+            if (PieceCollision(x, y + 1)) {
+                //if so, confirm collision & lock into place
+                collision = true;
+                console.log('vert col notlocked init')
+                break;
+            }
         }
 
         // moving down: increment y to check for a collison
@@ -255,20 +255,20 @@ function VerticalCollision(val) {
 
         // Check for collision w/ previously set piece 1 square below
         //(stoppedShapeArray will hold color string if occupied)
-        //PieceCollision(x, y+1) for immediate stop...leave off +1 for some sliding
-        
-        if (FloorCollision(y+1) || PieceCollision(x, y)) { //???: delete superfluous piececollision check???
+        //FloorCollision(x, y+1) for immediate stop...leave off +1 for some sliding
+        if (FloorCollision(y)) { //???: delete superfluous piececollision check???
             DeleteTetromino();  // if so, delete old drawing
-            startY++;           // Increment to put into place,
+            //startY++;           // Increment to put into place,
             DrawTetromino();    // then draw self
             collision = true;
+            console.log('floor locked')
             break;
         }
     }
 
     if (collision) {
         // Check for game over and if so set game over text
-        if (startY <= 1) {
+        if (startY <= 0) {
             winOrLose = "Game Over";
             //draw white rectangle over previous string
             ctx.fillStyle = 'white';
@@ -325,7 +325,7 @@ function DrawTetromino() {
         let x = curTetromino[rotation][i][0] + startX;
         let y = curTetromino[rotation][i][1] + startY;
         gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
-        
+
         //transcribe xy info to coordinateArray pixels
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
@@ -405,8 +405,8 @@ function RowClearBonus(rows) {
 }
 
 function RedrawRows() {
-    for (let row = 0; row < gBArrayHeight; row++ ) {
-        for (let col=0; col< gBArrayWidth; col++) {
+    for (let row = 0; row < gBArrayHeight; row++) {
+        for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
             let coorY = coordinateArray[row][col].y;
             if (typeof stoppedShapeArray[row][col] === 'string') {
