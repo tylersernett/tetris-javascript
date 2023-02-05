@@ -170,11 +170,6 @@ window.setInterval(function () {
     }
 }, 1000);
 
-//TODO: track line clearances
-//TODO: increase level as more lines are cleared
-//TODO: create algorithm that makes faster drops as level increases
-//TODO: show nextblock
-
 //-------------\\
 //  COLLISIONS  \\
 //---------------\\
@@ -226,7 +221,6 @@ function DebugPosition() {
         let y = square[1] + startY;
         console.log('x: ', x, 'y:', y);
     }
-
 }
 
 //create a tetromino copy and see if it fits vertically
@@ -240,26 +234,11 @@ function VerticalCollision(val) {
         let x = square[0] + startX;
         let y = square[1] + startY;
 
-        //check if there's anything ALREADY underneath (may happen during rotation)
-        if (y < gBArrayHeight - 1 ) {
-            if (PieceCollision(x, y + 1)) {
-                //if so, confirm collision & lock into place
-                collision = true;
-                console.log('vert col notlocked init')
-                break;
-            }
-        }
-
         // moving down: increment y to check for a collison
         y += val
 
-        // Check for collision w/ previously set piece 1 square below
-        //(stoppedShapeArray will hold color string if occupied)
-        //FloorCollision(x, y+1) for immediate stop...leave off +1 for some sliding
-        if (FloorCollision(y)) { //???: delete superfluous piececollision check???
-            DeleteTetromino();  // if so, delete old drawing
-            //startY++;           // Increment to put into place,
-            DrawTetromino();    // then draw self
+        //FloorCollision(x, y+1) for immediate stop...leave off +1 for some "sliding"
+        if (FloorCollision(y) || PieceCollision(x, y)) { //always check FloorCollision first, or you may hit array bounds error
             collision = true;
             console.log('floor locked')
             break;
@@ -273,7 +252,7 @@ function VerticalCollision(val) {
             //draw white rectangle over previous string
             ctx.fillStyle = 'white';
             ctx.fillRect(310, 242, 140, 30);
-
+            //draw white game over text
             ctx.fillStyle = 'black';
             ctx.fillText(winOrLose, 310, 261);
         } else {
@@ -391,7 +370,7 @@ function CheckForCompletedRows() {
         ctx.fillText(score.toString(), 310, 127);
         RedrawRows();
     }
-    //console.log('check completion', stoppedShapeArray)
+    console.log('check completion', stoppedShapeArray)
 }
 
 function RowClearBonus(rows) {
@@ -405,6 +384,7 @@ function RowClearBonus(rows) {
 }
 
 function RedrawRows() {
+    // go through all cells in GBArray. Fill in occupied ones w/ color, fill in empty ones w/ white.
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
@@ -419,10 +399,10 @@ function RedrawRows() {
     }
 }
 
-//bug: i block clipped through square   
-/*    [i]
-      [i]
-      [i]
-   [s][i] 
-   [s][s]
-*/
+//bug: when near gameover, a new block may spawn on top of existing block, and gameplay continues, until the next 'tick down'
+//but this causes old block to be overwritten w white color, although it still exists
+
+//TODO: track line clearances
+//TODO: increase level as more lines are cleared
+//TODO: create algorithm that makes faster drops as level increases
+//TODO: show nextblock
