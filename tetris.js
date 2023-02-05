@@ -20,6 +20,7 @@ let tetrominos = [];
 let tetrominoColors = ['fuchsia', 'turquoise', 'royalblue', 'gold', 'darkorange', 'lime', 'crimson'];
 let curTetrominoColor;
 
+//??? delete directions?
 let DIRECTION = {
     IDLE: 0,
     DOWN: 1,
@@ -263,16 +264,16 @@ function VerticalCollision(val) {
         }
 
         // If moving down, increment y to check for a collison
-        if (direction === DIRECTION.DOWN) {
-            y++;
-        }
-        // y += val
+        // if (direction === DIRECTION.DOWN) {
+        //     y++;
+        // }
+        y += val
 
         // Check for collision w/ previously set piece 1 square below
         //(stoppedShapeArray will hold color string if occupied)
         //PieceCollision(x, y+1) for immediate stop...leave off +1 for some sliding
-        //???: delete superfluous piececollision check???
-        if (FloorCollision(y+1) || PieceCollision(x, y)) { //if touching floor...
+        
+        if (FloorCollision(y+1) || PieceCollision(x, y)) { //???: delete superfluous piececollision check???
             DeleteTetromino();  // if so, delete old drawing
             startY++;           // Increment to put into place,
             DrawTetromino();    // then draw self
@@ -392,9 +393,9 @@ function CheckForCompletedRows() {
             }
             //grab the row, clear it out, and add it to the TOP of the array
             let removedRowColors = stoppedShapeArray.splice(y, 1);
-            stoppedShapeArray.unshift(removedRowColors);
+            stoppedShapeArray.unshift(...removedRowColors);
             let removedRowGBA = gameBoardArray.splice(y, 1);
-            gameBoardArray.unshift(removedRowGBA);
+            gameBoardArray.unshift(...removedRowGBA);
         }
     }
     if (rowsToDelete > 0) {
@@ -407,6 +408,7 @@ function CheckForCompletedRows() {
         ctx.fillText(score.toString(), 310, 127);
         RedrawRows();
     }
+    //console.log('check completion', stoppedShapeArray)
 }
 
 function RowClearBonus(rows) {
