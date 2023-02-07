@@ -49,8 +49,8 @@ function CreateCoordArray() {
 function SetupCanvas() {
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
-    canvas.width = 936;
-    canvas.height = 956;
+    canvas.width = 500;//936;
+    canvas.height = 500;//956;
 
     ctx.scale(1.0, 1.0); //zoom in
 
@@ -375,6 +375,7 @@ function CheckForCompletedRows() {
         //draw new score
         ctx.fillStyle = 'black';
         ctx.fillText(score.toString(), 310, 127);
+        document.getElementById('score').innerHTML = score;
         RedrawRows();
     }
     console.log('check completion', stoppedShapeArray)
