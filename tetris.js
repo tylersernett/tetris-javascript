@@ -12,10 +12,10 @@ let winOrLose = "Playing";
 let coordinateArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
 //stores currently controlled block & static blocks as filled (1) or empty (0)
 let gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-//stores static block colors as strings
+//stores 'placed' block colors as strings
 let stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
 
-let curTetromino = [];//[[1, 0], [0, 1], [1, 1], [2, 1]]
+let curTetromino = [];
 let tetrominos = [];
 let tetrominoColors = ['fuchsia', 'turquoise', 'royalblue', 'gold', 'darkorange', 'lime', 'crimson'];
 let curTetrominoColor;
@@ -51,7 +51,7 @@ function SetupCanvas() {
     canvas.width = 936;
     canvas.height = 956;
 
-    ctx.scale(1, 1); //zoom in
+    ctx.scale(1.5, 1.5); //zoom in
 
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -315,6 +315,8 @@ function DrawTetromino() {
 }
 
 function DeleteTetromino() {
+    //white space needs a bit of a margin to handle non-integer ctx.scale drawing
+    let marg = 0.5;
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         //clear gameBoardArray:
         let x = curTetromino[rotation][i][0] + startX;
@@ -323,8 +325,8 @@ function DeleteTetromino() {
         //undraw:
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
-        ctx.fillStyle = 'white';
-        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+        ctx.fillStyle = 'white';      
+        ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
     }
 }
 
@@ -391,10 +393,13 @@ function RedrawRows() {
             let coorY = coordinateArray[row][col].y;
             if (typeof stoppedShapeArray[row][col] === 'string') {
                 ctx.fillStyle = stoppedShapeArray[row][col];
+                ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
             } else {
                 ctx.fillStyle = 'white'
+                //white space needs a bit of a margin to handle non-integer ctx.scale drawing
+                let marg = 0.5
+                ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
             }
-            ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
         }
     }
 }
@@ -406,3 +411,4 @@ function RedrawRows() {
 //TODO: increase level as more lines are cleared
 //TODO: create algorithm that makes faster drops as level increases
 //TODO: show nextblock
+//TODO: make responsive
