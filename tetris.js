@@ -7,6 +7,7 @@ let blockDimension = 21, blockMargin = 1;
 let rotation = 0;
 let score = 0, level = 1, lines = 0;
 let winOrLose = "Playing";
+let gravity, frames = 60;
 
 //stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
 let coordinateArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -168,11 +169,46 @@ function MoveTetrominoDown() {
 }
 
 //auto-move piece down once per second
-window.setInterval(function () {
-    if (winOrLose != "Game Over") {
-        MoveTetrominoDown();
+SetGravity();
+
+function SetGravity() {
+    let newFrames;
+    switch (level) {
+        case 1: newFrames = 48; break;
+        case 2: newFrames = 43; break;
+        case 3: newFrames = 38; break;
+        case 4: newFrames = 33; break;
+        case 5: newFrames = 28; break;
+        case 6: newFrames = 23; break;
+        case 7: newFrames = 18; break;
+        case 8: newFrames = 13; break;
+        case 9: newFrames = 8; break;
+        case 10: newFrames = 6; break;
+        case 11:
+        case 12:
+        case 13: newFrames = 5; break;
+        case 14:
+        case 15:
+        case 16: newFrames = 4; break;
+        case 17:
+        case 18:
+        case 19: newFrames = 3; break;
+        case 20: case 21: case 22: case 23: case 24: case 25: case 26: case 27: case 28:
+        case 29: newFrames = 2; break;
+        default: newFrames = 1; break;
     }
-}, 1000);
+    //only update the interval when there's a new speed
+    if (frames != newFrames) {
+        frames = newFrames;
+        gravitySpeed = newFrames / 60 * 1000;
+        clearInterval(gravity);
+        gravity = setInterval(function () {
+            if (winOrLose != "Game Over") {
+                MoveTetrominoDown();
+            }
+        }, gravitySpeed);
+    }
+}
 
 //-------------\\
 //  COLLISIONS  \\
@@ -372,6 +408,8 @@ function CheckForCompletedRows() {
         document.getElementById('lines').innerHTML = lines;
         level = Math.floor(lines / 10) + 1;
         document.getElementById('level').innerHTML = level;
+        SetGravity();
+        console.log(frames);
         //clear old score
         ctx.fillStyle = 'white';
         ctx.fillRect(310, 109, 140, 19);
@@ -416,8 +454,5 @@ function RedrawRows() {
 //bug: when near gameover, a new block may spawn on top of existing block, and gameplay continues, until the next 'tick down'
 //but this causes old block to be overwritten w white color, although it still exists
 
-//TODO: track line clearances
-//TODO: increase level as more lines are cleared
-//TODO: create algorithm that makes faster drops as level increases
 //TODO: show nextblock
 //TODO: make responsive
