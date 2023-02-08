@@ -2,12 +2,13 @@ html,
 body {
     margin: 0;
     height: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
     font-family: 'Silkscreen', monospace;
+    /* font-size: 1.25rem; */
 }
 
 body {
-    text-align: center;
+    /* text-align: center; */
     background: #fff;
 }
 
@@ -19,4 +20,33 @@ body {
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
+}
+
+.container {
+    display: flex;
+    /* flex-direction: column; */
+}
+
+h1{
+    margin: 0
+}
+
+h2{
+    margin: 0;
+    /* margin: 20px 0 0px 0; */
+}
+
+.text-number {
+    /* margin: 50px; */
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* .right-col {
+    position: absolute;
+    left: 340px;
+} */
+
+#next-title{
+    margin-bottom:110px;
 }

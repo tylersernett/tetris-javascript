@@ -3,10 +3,9 @@ let ctx;
 let gBArrayHeight = 20, gBArrayWidth = 12;
 let startXDefault = 4, startX = startXDefault;
 let startYDefault = 0, startY = startYDefault;
-let blockDimension = 21;
-let blockMargin = 1;
+let blockDimension = 21, blockMargin = 1;
 let rotation = 0;
-let score = 0, level = 1;
+let score = 0, level = 1, lines = 0;
 let winOrLose = "Playing";
 
 //stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
@@ -58,8 +57,8 @@ function SetupCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     //draw field border
-    let fieldWidth = blockMargin*4+(gBArrayWidth*(blockDimension+blockMargin*2))
-    let fieldHeight = blockMargin*2+(gBArrayHeight*(blockDimension+blockMargin*2))
+    let fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
+    let fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     ctx.strokeStyle = 'black';
     ctx.strokeRect(8, 8, fieldWidth, fieldHeight);
 
@@ -330,7 +329,7 @@ function DeleteTetromino() {
         //undraw:
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
-        ctx.fillStyle = 'white';      
+        ctx.fillStyle = 'white';
         ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
     }
 }
@@ -369,6 +368,8 @@ function CheckForCompletedRows() {
     }
     if (rowsToDelete > 0) {
         score += RowClearBonus(rowsToDelete) * level;
+        lines += rowsToDelete;
+        document.getElementById('lines').innerHTML = lines;
         //clear old score
         ctx.fillStyle = 'white';
         ctx.fillRect(310, 109, 140, 19);
