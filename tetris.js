@@ -1,6 +1,6 @@
 let canvas;
 let ctx;
-let gBArrayHeight = 20, gBArrayWidth = 12;
+let gBArrayHeight = 20, gBArrayWidth = 10;
 let startXDefault = 4, startX = startXDefault;
 let startYDefault = 0, startY = startYDefault;
 let blockDimension = 21, blockMargin = 1;
@@ -370,6 +370,8 @@ function CheckForCompletedRows() {
         score += RowClearBonus(rowsToDelete) * level;
         lines += rowsToDelete;
         document.getElementById('lines').innerHTML = lines;
+        level = Math.floor(lines / 10) + 1;
+        document.getElementById('level').innerHTML = level;
         //clear old score
         ctx.fillStyle = 'white';
         ctx.fillRect(310, 109, 140, 19);
