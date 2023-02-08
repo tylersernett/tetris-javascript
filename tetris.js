@@ -49,8 +49,8 @@ function CreateCoordArray() {
 function SetupCanvas() {
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
-    canvas.width = 500;//936;
-    canvas.height = 500;//956;
+    canvas.width = 500;
+    canvas.height = 500;
 
     ctx.scale(1.0, 1.0); //zoom in
 
@@ -71,13 +71,16 @@ function SetupCanvas() {
     DrawTetromino();
 }
 
-/*  T block: [[1,0],[0,1],[1,1],[2,1]]
-    0   1   2   3
-0 |   |xxx|   |   |
-1 |xxx|xxx|xxx|   |
-2 |   |   |   |   |
-*/
+
 function CreateTetrominos() {
+    /*  T block: [[0, 1], [1, 1], [2, 1], [1, 2]]
+
+                    0   1   2   3
+                0 |   |   |   |   |
+                1 |xxx|xxx|xxx|   |
+                2 |   |xxx|   |   |
+                3 |   |   |   |   |
+    */
     // T 
     tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
     // I
@@ -144,7 +147,7 @@ function MoveTetrominoDown() {
     }
 }
 
-//auto-move piece down once per second
+//auto-move piece down
 SetGravity();
 
 function SetGravity() {
@@ -173,6 +176,7 @@ function SetGravity() {
         case 29: newFrames = 2; break;
         default: newFrames = 1; break;
     }
+
     //only update the interval when there's a new speed
     if (frames != newFrames) {
         frames = newFrames;
@@ -203,7 +207,8 @@ function PieceCollision(x, y) {
 //creates a rotated copy and checks if it fits
 function RotationCollision(val) {
     //mod function: keep index within bounds of array
-    let tetrominoCopy = curTetromino[mod((rotation + val), curTetromino.length)];
+    let newRotation = rotation + val;
+    let tetrominoCopy = curTetromino[mod(newRotation, curTetromino.length)];
     let collision = false;
 
     // Cycle through all Tetromino square blocks
