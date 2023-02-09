@@ -323,6 +323,11 @@ function HorizontalCollision(val) {
 //  GAME LOGIC  \\
 //---------------\\
 function DrawNextTetromino() {
+    let whiteX = nextTetrominoCoordinateArray[0][0].x
+    let whiteY = nextTetrominoCoordinateArray[0][0].y
+    ctx.fillStyle = 'white';
+    ctx.fillRect(whiteX, whiteY, (1+blockDimension+1)*4, (1+blockDimension+1)*3);
+
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0];
         let y = curTetromino[rotation][i][1];
