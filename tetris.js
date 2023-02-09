@@ -18,10 +18,12 @@ let stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBA
 
 let nextTetrominoCoordinateArray = new Array(3).fill(0).map(() => new Array(4).fill(0));
 
-let curTetromino = [];
 let tetrominos = [];
 let tetrominoColors = ['fuchsia', 'turquoise', 'royalblue', 'gold', 'darkorange', 'lime', 'crimson'];
+let curTetromino = [];
 let curTetrominoColor;
+let nextTetromino = [];
+let nextTetrominoColor = undefined;
 
 class Coordinates {
     constructor(x, y) {
@@ -71,13 +73,12 @@ function SetupCanvas() {
     ctx.strokeRect(8, 8, fieldWidth, fieldHeight);
 
     document.addEventListener('keydown', HandleKeyPress);
-    CreateTetrominos();
-    CreateTetromino();
-
     CreateCoordArrays();
+    CreateTetrominos();
+    LoadRandomTetrominoIntoNext();
+    CreateTetromino();
     DrawTetromino();
 }
-
 
 function CreateTetrominos() {
     /*  T block: [[0, 1], [1, 1], [2, 1], [1, 2]]
@@ -328,13 +329,13 @@ function DrawNextTetromino() {
     ctx.fillStyle = 'white';
     ctx.fillRect(whiteX, whiteY, (1+blockDimension+1)*4, (1+blockDimension+1)*3);
 
-    for (let i = 0; i < curTetromino[rotation].length; i++) {
-        let x = curTetromino[rotation][i][0];
-        let y = curTetromino[rotation][i][1];
+    for (let i = 0; i < nextTetromino[rotation].length; i++) {
+        let x = nextTetromino[rotation][i][0];
+        let y = nextTetromino[rotation][i][1];
         let coorX = nextTetrominoCoordinateArray[y][x].x;
         let coorY = nextTetrominoCoordinateArray[y][x].y;
         //draw the square
-        ctx.fillStyle = curTetrominoColor;
+        ctx.fillStyle = nextTetrominoColor;
         ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
     }
 }
@@ -374,10 +375,20 @@ function CreateTetromino() {
     startX = startXDefault;
     startY = startYDefault;
     rotation = 0;
+    //run the 
+    // if (typeof nextTetrominoColor === 'undefined')  {
+    //     LoadRandomTetrominoIntoNext();
+    // }
+    curTetromino = nextTetromino;
+    curTetrominoColor = nextTetrominoColor;
+    LoadRandomTetrominoIntoNext();
+    DrawNextTetromino();
+}
+
+function LoadRandomTetrominoIntoNext() {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length)
-    curTetromino = tetrominos[randomTetromino];
-    curTetrominoColor = tetrominoColors[randomTetromino];
-    DrawNextTetromino()
+        nextTetromino = tetrominos[randomTetromino];
+        nextTetrominoColor = tetrominoColors[randomTetromino];
 }
 
 function CheckForCompletedRows() {
