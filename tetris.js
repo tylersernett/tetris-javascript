@@ -16,6 +16,8 @@ let gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArra
 //stores 'placed' block colors as strings
 let stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
 
+let nextTetrominoCoordinateArray = new Array(3).fill(0).map(() => new Array(4).fill(0));
+
 let curTetromino = [];
 let tetrominos = [];
 let tetrominoColors = ['fuchsia', 'turquoise', 'royalblue', 'gold', 'darkorange', 'lime', 'crimson'];
@@ -35,13 +37,18 @@ class Coordinates {
 //wait for page to load, then run SetupCanvas
 document.addEventListener('DOMContentLoaded', SetupCanvas);
 
-//populate coordArray
-function CreateCoordArray() {
-    let yTop = 9, yBottom = 446, blockSpacing = 1 + blockDimension + 1;
-    let xLeft = 11, xRight = 264;
+//populate coordArrays
+function CreateCoordArrays() {
+    let yTop = 9, xLeft = 11, blockSpacing = (1 + blockDimension + 1);
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
             coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
+        }
+    }
+    let nextLeft = 258, nextTop = 142;
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 4; col++) {
+            nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
         }
     }
 }
@@ -67,7 +74,7 @@ function SetupCanvas() {
     CreateTetrominos();
     CreateTetromino();
 
-    CreateCoordArray();
+    CreateCoordArrays();
     DrawTetromino();
 }
 
@@ -315,8 +322,19 @@ function HorizontalCollision(val) {
 //-------------\\
 //  GAME LOGIC  \\
 //---------------\\
+function DrawNextTetromino() {
+    for (let i = 0; i < curTetromino[rotation].length; i++) {
+        let x = curTetromino[rotation][i][0];
+        let y = curTetromino[rotation][i][1];
+        let coorX = nextTetrominoCoordinateArray[y][x].x;
+        let coorY = nextTetrominoCoordinateArray[y][x].y;
+        //draw the square
+        ctx.fillStyle = curTetrominoColor;
+        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+    }
+}
+
 function DrawTetromino() {
-    //queue block coords to draw, then draw them all
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0] + startX;
         let y = curTetromino[rotation][i][1] + startY;
@@ -354,6 +372,7 @@ function CreateTetromino() {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length)
     curTetromino = tetrominos[randomTetromino];
     curTetrominoColor = tetrominoColors[randomTetromino];
+    DrawNextTetromino()
 }
 
 function CheckForCompletedRows() {
