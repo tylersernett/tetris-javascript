@@ -37,7 +37,7 @@ class Coordinates {
 //---------------------\\
 
 //wait for page to load, then run SetupCanvas
-document.addEventListener('DOMContentLoaded', SetupCanvas);
+document.addEventListener('DOMContentLoaded', () => { CreateTetrominos(); SetupCanvas() });
 
 //populate coordArrays
 function CreateCoordArrays() {
@@ -56,13 +56,23 @@ function CreateCoordArrays() {
 }
 
 function SetupCanvas() {
+    score = 0, level = 1, lines = 0;
+    winOrLose = "Playing";
+    UpdateScores();
+    frames = 60;
+    SetGravity();
+    startX = startXDefault;
+    startY = startYDefault;
+        
+    gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
+    stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
     let fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
     let fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     let scale = 1;
-    canvas.width = (fieldWidth+(blockDimension + blockMargin * 2)*5)*scale;
-    canvas.height = (14 + fieldHeight)*scale;
+    canvas.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
+    canvas.height = (14 + fieldHeight) * scale;
 
     ctx.scale(scale, scale); //zoom in
 
@@ -75,9 +85,8 @@ function SetupCanvas() {
 
     document.addEventListener('keydown', HandleKeyPress);
     CreateCoordArrays();
-    CreateTetrominos();
     LoadRandomTetrominoIntoNext();
-    CreateTetromino();
+    CreateTetrominoFromNext();
     DrawTetromino();
 }
 
@@ -132,6 +141,10 @@ function HandleKeyPress(key) {
         } else if (key.keyCode === 38) { // up arrow
             DebugPosition();
         }
+    } else {
+        if (key.keyCode === 82) { // r
+            SetupCanvas();
+        }
     }
 }
 
@@ -157,7 +170,7 @@ function MoveTetrominoDown() {
 }
 
 //auto-move piece down
-SetGravity();
+// SetGravity();
 
 function SetGravity() {
     let newFrames;
@@ -293,7 +306,7 @@ function VerticalCollision(val) {
                 stoppedShapeArray[y][x] = curTetrominoColor;
             }
             CheckForCompletedRows();
-            CreateTetromino();
+            CreateTetrominoFromNext();
             DrawTetromino();
         }
         return true;
@@ -331,7 +344,7 @@ function DrawNextTetromino() {
     let whiteX = nextTetrominoCoordinateArray[0][0].x
     let whiteY = nextTetrominoCoordinateArray[0][0].y
     ctx.fillStyle = 'white';
-    ctx.fillRect(whiteX, whiteY, (1+blockDimension+1)*4, (1+blockDimension+1)*3);
+    ctx.fillRect(whiteX, whiteY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
 
     for (let i = 0; i < nextTetromino[rotation].length; i++) {
         let x = nextTetromino[rotation][i][0];
@@ -375,7 +388,7 @@ function DeleteTetromino() {
     }
 }
 
-function CreateTetromino() {
+function CreateTetrominoFromNext() {
     startX = startXDefault;
     startY = startYDefault;
     rotation = 0;
@@ -391,8 +404,8 @@ function CreateTetromino() {
 
 function LoadRandomTetrominoIntoNext() {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length)
-        nextTetromino = tetrominos[randomTetromino];
-        nextTetrominoColor = tetrominoColors[randomTetromino];
+    nextTetromino = tetrominos[randomTetromino];
+    nextTetrominoColor = tetrominoColors[randomTetromino];
 }
 
 function CheckForCompletedRows() {
@@ -423,12 +436,16 @@ function CheckForCompletedRows() {
         lines += rowsToDelete;
         level = Math.floor(lines / 10) + 1;
         SetGravity();
-        document.getElementById('score').innerHTML = score;
-        document.getElementById('lines').innerHTML = lines;
-        document.getElementById('level').innerHTML = level;
+        UpdateScores();
         RedrawRows();
     }
     console.log('check completion', stoppedShapeArray)
+}
+
+function UpdateScores() {
+    document.getElementById('score').innerHTML = score;
+    document.getElementById('lines').innerHTML = lines;
+    document.getElementById('level').innerHTML = level;
 }
 
 function RowClearBonus(rows) {
