@@ -47,7 +47,7 @@ function CreateCoordArrays() {
             coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
         }
     }
-    let nextLeft = 258, nextTop = 142;
+    let nextLeft = 258, nextTop = 123;
     for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 4; col++) {
             nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
@@ -58,17 +58,18 @@ function CreateCoordArrays() {
 function SetupCanvas() {
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
-    canvas.width = 500;
-    canvas.height = 500;
+    let fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
+    let fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
+    let scale = 1;
+    canvas.width = (fieldWidth+(blockDimension + blockMargin * 2)*5)*scale;
+    canvas.height = (14 + fieldHeight)*scale;
 
-    ctx.scale(1.0, 1.0); //zoom in
+    ctx.scale(scale, scale); //zoom in
 
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     //draw field border
-    let fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
-    let fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     ctx.strokeStyle = 'black';
     ctx.strokeRect(8, 8, fieldWidth, fieldHeight);
 
@@ -279,7 +280,10 @@ function VerticalCollision(val) {
         if (startY <= 0) {
             winOrLose = "Game Over";
             ctx.fillStyle = 'red';
-            ctx.fillText(winOrLose, 8, 8);
+            ctx.font = '21px Silkscreen';
+            ctx.sette
+            ctx.fillText(winOrLose, 26, 26);
+            ctx.fillText("Press R to Restart", 26, 50);
         } else {
             // Add stopped Tetromino color to stopped shape array
             for (let i = 0; i < tetrominoCopy.length; i++) {
@@ -459,6 +463,5 @@ function RedrawRows() {
 //bug: when near gameover, a new block may spawn on top of existing block, and gameplay continues, until the next 'tick down'
 //but this causes old block to be overwritten w white color, although it still exists
 
-//TODO: show nextblock
 //TODO: make responsive
 //TODO: add restart function
