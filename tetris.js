@@ -294,9 +294,10 @@ function VerticalCollision(val) {
             winOrLose = "Game Over";
             ctx.fillStyle = 'red';
             ctx.font = '21px Silkscreen';
-            ctx.sette
-            ctx.fillText(winOrLose, 26, 26);
-            ctx.fillText("Press R to Restart", 26, 50);
+            ctx.fillText(winOrLose, 24, 26);
+            ctx.fillStyle = 'black';
+            ctx.fillText("Press R", 24, 50);
+            ctx.fillText("to Restart", 24, 74);
         } else {
             // Add stopped Tetromino color to stopped shape array
             for (let i = 0; i < tetrominoCopy.length; i++) {
@@ -481,4 +482,3 @@ function RedrawRows() {
 //but this causes old block to be overwritten w white color, although it still exists
 
 //TODO: make responsive
-//TODO: add restart function
