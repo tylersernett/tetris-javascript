@@ -120,18 +120,10 @@ function CreateTetrominos() {
 //---------------\\
 function HandleKeyPress(key) {
     if (winOrLose != "Game Over") {
-        if (key.keyCode === 37) { //<-- 
-            if (!HorizontalCollision(-1)) {
-                DeleteTetromino();
-                startX--;
-                DrawTetromino();
-            }
-        } else if (key.keyCode === 39) { // -->
-            if (!HorizontalCollision(1)) {
-                DeleteTetromino();
-                startX++;
-                DrawTetromino();
-            }
+        if (key.keyCode === 37) { // left arrow
+            MoveTetrominoHoriztonal(-1);
+        } else if (key.keyCode === 39) { // right arrow
+            MoveTetrominoHoriztonal(1);
         } else if (key.keyCode === 40) { // down arrow
             MoveTetrominoDown();
         } else if (key.keyCode === 88) { //x
@@ -142,7 +134,7 @@ function HandleKeyPress(key) {
             DebugPosition();
         }
     } else {
-        if (key.keyCode === 82) { // r
+        if (key.keyCode === 82) { // r -- Restart
             SetupCanvas();
         }
     }
@@ -169,8 +161,13 @@ function MoveTetrominoDown() {
     }
 }
 
-//auto-move piece down
-// SetGravity();
+function MoveTetrominoHoriztonal(val) {
+    if (!HorizontalCollision(val)) {
+        DeleteTetromino();
+        startX += val;
+        DrawTetromino();
+    }
+}
 
 function SetGravity() {
     let newFrames;
@@ -283,7 +280,7 @@ function VerticalCollision(val) {
         //FloorCollision(x, y+1) for immediate stop...leave off +1 for some "sliding"
         if (FloorCollision(y) || PieceCollision(x, y)) { //always check FloorCollision first, or you may hit array bounds error
             collision = true;
-            console.log('floor locked')
+            console.log('collision locked')
             break;
         }
     }
@@ -482,3 +479,4 @@ function RedrawRows() {
 //but this causes old block to be overwritten w white color, although it still exists
 
 //TODO: make responsive
+//TODO: add mobile only buttons
