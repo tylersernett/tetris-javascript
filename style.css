@@ -39,14 +39,16 @@ h2{
 .text-number {
     /* margin: 50px; */
     font-size: 1.5em;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
-/* .right-col {
-    position: absolute;
-    left: 340px;
-} */
+.right-col {
+    transform: translateX(-100px)
+    /* position: absolute; */
+    /* left: 264px; */
+    /* top: 4px; */
+}
 
 #next-title{
-    margin-bottom:110px;
+    margin-bottom:66px;
 }
