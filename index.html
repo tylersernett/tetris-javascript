@@ -16,7 +16,9 @@
     <div class="container">
         <canvas id='my-canvas'></canvas>
         <div class="right-col">
-            <h1><nobr>JS-etris</nobr></h1>
+            <h1>
+                <nobr>JS-etris</nobr>
+            </h1>
 
             <h2 id="score-title">Score</h2>
             <div class='text-number' id="score">0</div>
@@ -40,12 +42,15 @@
         </div>
     </div>
     <div class="mobile-controls">
-        <button onmousedown="RotateTetromino(-1)">⟲</button>
-        <button onmousedown="RotateTetromino(1)">⟳</button>
-        <br />
-        <button onmousedown="MoveTetrominoHoriztonal(-1)">←</button>
-        <button onmousedown="MoveTetrominoDown()">↓</button>
-        <button onmousedown="MoveTetrominoHoriztonal(1)">→</button>
+        <div class="rot-controls">
+            <button class='rot-button' onclick="RotateTetromino(-1)">⟲</button>
+            <button class='rot-button' onclick="RotateTetromino(1)">⟳</button>
+        </div>
+        <div class="dir-controls">
+            <button class='dir-button' onclick="MoveTetrominoHoriztonal(-1)">←</button>
+            <button class='dir-button' onclick="MoveTetrominoDown()">↓</button>
+            <button class='dir-button' onclick="MoveTetrominoHoriztonal(1)">→</button>
+        </div>
     </div>
 </body>
 
