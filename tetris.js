@@ -47,7 +47,7 @@ function CreateCoordArrays() {
             coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
         }
     }
-    let nextLeft = 258, nextTop = 123;
+    let nextLeft = 258, nextTop = 113;
     for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 4; col++) {
             nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
@@ -63,6 +63,7 @@ function SetupCanvas() {
     SetGravity();
     startX = startXDefault;
     startY = startYDefault;
+    document.getElementById('restart-container').innerHTML = "";
         
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -289,6 +290,7 @@ function VerticalCollision(val) {
         // Check for game over and if so set game over text
         if (startY <= 0) {
             winOrLose = "Game Over";
+            document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
             ctx.fillStyle = 'red';
             ctx.font = '21px Silkscreen';
             ctx.fillText(winOrLose, 24, 26);
@@ -476,5 +478,3 @@ function RedrawRows() {
 
 //TODO: make responsive
 //TODO: game over check should iterate through each square, not just check startY
-//TODO: disable double tap zoom on mobile (bad button experience)
-//TODO: disable highlighting buttons
