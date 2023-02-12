@@ -390,10 +390,6 @@ function CreateTetrominoFromNext() {
     startX = startXDefault;
     startY = startYDefault;
     rotation = 0;
-    //run the 
-    // if (typeof nextTetrominoColor === 'undefined')  {
-    //     LoadRandomTetrominoIntoNext();
-    // }
     curTetromino = nextTetromino;
     curTetrominoColor = nextTetrominoColor;
     LoadRandomTetrominoIntoNext();
@@ -479,4 +475,6 @@ function RedrawRows() {
 //but this causes old block to be overwritten w white color, although it still exists
 
 //TODO: make responsive
-//TODO: add mobile only buttons
+//TODO: game over check should iterate through each square, not just check startY
+//TODO: disable double tap zoom on mobile (bad button experience)
+//TODO: disable highlighting buttons
