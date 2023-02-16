@@ -349,6 +349,7 @@ function DrawNextTetromino() {
 }
 
 function DrawTetromino() {
+    let gameOver = false;
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0] + startX;
         let y = curTetromino[rotation][i][1] + startY;
@@ -363,17 +364,19 @@ function DrawTetromino() {
 
         //Check for Game Over -- when two pieces overlap eachother
         if (PieceCollision(x, y)) {
+            gameOver = true;
             console.log('dead collision')
-            winOrLose = "Game Over";
-            document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
-            ctx.fillStyle = 'red';
-            ctx.font = '21px Silkscreen';
-            ctx.fillText(winOrLose, 24, 26);
-            ctx.fillStyle = textColor;
-            ctx.fillText("Press R", 24, 50);
-            ctx.fillText("to Restart", 24, 74);
-            break;
         }
+    }
+    if (gameOver) {
+        winOrLose = "Game Over";
+        document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
+        ctx.fillStyle = 'red';
+        ctx.font = '21px Silkscreen';
+        ctx.fillText(winOrLose, 24, 26);
+        ctx.fillStyle = textColor;
+        ctx.fillText("Press R", 24, 50);
+        ctx.fillText("to Restart", 24, 74);
     }
 }
 
@@ -478,9 +481,5 @@ function RedrawRows() {
     }
 }
 
-//bug: when near gameover, a new block may spawn on top of existing block, and gameplay continues, until the next 'tick down'
-//but this causes old block to be overwritten w white color, although it still exists
-
 //TODO: make responsive
-//TODO: game over check should iterate through each square, not just check startY
 //TODO: mobile button hold
