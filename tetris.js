@@ -9,6 +9,9 @@ let score = 0, level = 1, lines = 0;
 let winOrLose = "Playing";
 let gravity, frames = 60;
 
+let bgColor = 'white';
+let textColor = 'black';
+
 //stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
 let coordinateArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
 //stores currently controlled block & static blocks as filled (1) or empty (0)
@@ -64,7 +67,7 @@ function SetupCanvas() {
     startX = startXDefault;
     startY = startYDefault;
     document.getElementById('restart-container').innerHTML = "";
-        
+
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     canvas = document.getElementById('my-canvas');
@@ -77,11 +80,11 @@ function SetupCanvas() {
 
     ctx.scale(scale, scale); //zoom in
 
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     //draw field border
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = textColor;
     ctx.strokeRect(8, 8, fieldWidth, fieldHeight);
 
     document.addEventListener('keydown', HandleKeyPress);
@@ -294,7 +297,7 @@ function VerticalCollision(val) {
             ctx.fillStyle = 'red';
             ctx.font = '21px Silkscreen';
             ctx.fillText(winOrLose, 24, 26);
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = textColor;
             ctx.fillText("Press R", 24, 50);
             ctx.fillText("to Restart", 24, 74);
         } else {
@@ -341,10 +344,10 @@ function HorizontalCollision(val) {
 //  GAME LOGIC  \\
 //---------------\\
 function DrawNextTetromino() {
-    let whiteX = nextTetrominoCoordinateArray[0][0].x
-    let whiteY = nextTetrominoCoordinateArray[0][0].y
-    ctx.fillStyle = 'white';
-    ctx.fillRect(whiteX, whiteY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
+    let bgX = nextTetrominoCoordinateArray[0][0].x
+    let bgY = nextTetrominoCoordinateArray[0][0].y
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(bgX, bgY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
 
     for (let i = 0; i < nextTetromino[rotation].length; i++) {
         let x = nextTetromino[rotation][i][0];
@@ -383,7 +386,7 @@ function DeleteTetromino() {
         //undraw:
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = bgColor;
         ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
     }
 }
@@ -464,7 +467,7 @@ function RedrawRows() {
                 ctx.fillStyle = stoppedShapeArray[row][col];
                 ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
             } else {
-                ctx.fillStyle = 'white'
+                ctx.fillStyle = bgColor;
                 //white space needs a bit of a margin to handle non-integer ctx.scale drawing
                 let marg = 0.5
                 ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
@@ -478,3 +481,4 @@ function RedrawRows() {
 
 //TODO: make responsive
 //TODO: game over check should iterate through each square, not just check startY
+//TODO: mobile button hold
