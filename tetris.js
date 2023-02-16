@@ -290,28 +290,16 @@ function VerticalCollision(val) {
     }
 
     if (collision) {
-        // Check for game over and if so set game over text
-        if (startY <= 0) {
-            winOrLose = "Game Over";
-            document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
-            ctx.fillStyle = 'red';
-            ctx.font = '21px Silkscreen';
-            ctx.fillText(winOrLose, 24, 26);
-            ctx.fillStyle = textColor;
-            ctx.fillText("Press R", 24, 50);
-            ctx.fillText("to Restart", 24, 74);
-        } else {
-            // Add stopped Tetromino color to stopped shape array
-            for (let i = 0; i < tetrominoCopy.length; i++) {
-                let square = tetrominoCopy[i];
-                let x = square[0] + startX;
-                let y = square[1] + startY;
-                stoppedShapeArray[y][x] = curTetrominoColor;
-            }
-            CheckForCompletedRows();
-            CreateTetrominoFromNext();
-            DrawTetromino();
+        //move this loop up?
+        for (let i = 0; i < tetrominoCopy.length; i++) {
+            let square = tetrominoCopy[i];
+            let x = square[0] + startX;
+            let y = square[1] + startY;
+            stoppedShapeArray[y][x] = curTetrominoColor;
         }
+        CheckForCompletedRows();
+        CreateTetrominoFromNext();
+        DrawTetromino();
         return true;
     }
 }
@@ -372,6 +360,20 @@ function DrawTetromino() {
         //draw the square
         ctx.fillStyle = curTetrominoColor;
         ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+
+        //Check for Game Over -- when two pieces overlap eachother
+        if (PieceCollision(x, y)) {
+            console.log('dead collision')
+            winOrLose = "Game Over";
+            document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
+            ctx.fillStyle = 'red';
+            ctx.font = '21px Silkscreen';
+            ctx.fillText(winOrLose, 24, 26);
+            ctx.fillStyle = textColor;
+            ctx.fillText("Press R", 24, 50);
+            ctx.fillText("to Restart", 24, 74);
+            break;
+        }
     }
 }
 
