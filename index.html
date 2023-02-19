@@ -13,45 +13,47 @@
 </head>
 
 <body>
-    <div class="container">
-        <canvas id='my-canvas'></canvas>
-        <div class="right-col">
-            <h1>
-                JS-<div class="title-break"></div>etris
-            </h1>
+    <div class="full-container">
+        <div class="container">
+            <canvas id='my-canvas'></canvas>
+            <div class="right-col">
+                <h1>
+                    JS-<div class="title-break"></div>etris
+                </h1>
 
-            <h2 id="score-title">Score</h2>
-            <div class='text-number' id="score">0</div>
+                <h2 id="score-title">Score</h2>
+                <div class='text-number' id="score">0</div>
 
-            <h2 id="next-title">Next</h2>
+                <h2 id="next-title">Next</h2>
 
-            <h2>Level</h2>
-            <div class='text-number' id="level">1</div>
-            <h2>Lines</h2>
-            <div class='text-number' id="lines">0</div>
+                <h2>Level</h2>
+                <div class='text-number' id="level">1</div>
+                <h2>Lines</h2>
+                <div class='text-number' id="lines">0</div>
 
-            <h2 id="controls">Controls</h2>
-            <div class="text-controls">
-                ←: move left<br />
-                →: move right<br />
-                ↓: move down<br />
-                z: rotate CCW<br />
-                x: rotate CW
+                <h2 id="controls">Controls</h2>
+                <div class="text-controls">
+                    ←: move left<br />
+                    →: move right<br />
+                    ↓: move down<br />
+                    z: rotate CCW<br />
+                    x: rotate CW
+                </div>
+                <div id="restart-container">
+                </div>
+
             </div>
-            <div id="restart-container">
+        </div>
+        <div class="mobile-controls">
+            <div class="rot-controls">
+                <button class='rot-button' onclick="RotateTetromino(-1)">⟲</button>
+                <button class='rot-button' onclick="RotateTetromino(1)">⟳</button>
             </div>
-
-        </div>
-    </div> 
-    <div class="mobile-controls">
-        <div class="rot-controls">
-            <button class='rot-button' onclick="RotateTetromino(-1)">⟲</button>
-            <button class='rot-button' onclick="RotateTetromino(1)">⟳</button>
-        </div>
-        <div class="dir-controls">
-            <button class='dir-button' onclick="MoveTetrominoHoriztonal(-1)">←</button>
-            <button class='dir-button' onclick="MoveTetrominoDown()">↓</button>
-            <button class='dir-button' onclick="MoveTetrominoHoriztonal(1)">→</button>
+            <div class="dir-controls">
+                <button class='dir-button' onclick="MoveTetrominoHoriztonal(-1)">←</button>
+                <button class='dir-button' onclick="MoveTetrominoDown()">↓</button>
+                <button class='dir-button' onclick="MoveTetrominoHoriztonal(1)">→</button>
+            </div>
         </div>
     </div>
 </body>
