@@ -41,16 +41,20 @@ class Coordinates {
 
 //wait for page to load, then run SetupCanvas
 document.addEventListener('DOMContentLoaded', () => { CreateTetrominos(); SetupCanvas() });
-
+// window.onload = window.onresize = function() {
+//     let canvas = document.getElementById('my-canvas');
+//     canvas.width = window.innerWidth * 0.8;
+//     canvas.height = window.innerHeight * 0.8;
+// }
 //populate coordArrays
 function CreateCoordArrays() {
-    let yTop = 9, xLeft = 11, blockSpacing = (1 + blockDimension + 1);
+    let yTop = 1, xLeft = 3, blockSpacing = (1 + blockDimension + 1);
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
             coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
         }
     }
-    let nextLeft = 258, nextTop = 113;
+    let nextLeft = xLeft+247, nextTop = yTop+104;
     for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 4; col++) {
             nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
@@ -85,7 +89,7 @@ function SetupCanvas() {
 
     //draw field border
     ctx.strokeStyle = textColor;
-    ctx.strokeRect(8, 8, fieldWidth, fieldHeight);
+    ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
 
     document.addEventListener('keydown', HandleKeyPress);
     CreateCoordArrays();

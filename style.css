@@ -14,12 +14,20 @@ body {
 
 #my-canvas {
     background: #fff;
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
     margin-top: 10px;
     /* pixel perfect drawing: */
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
+    /* border: 1px red solid; */
+}
+
+.full-container {
+    width: 530px;
+    margin: auto;
+    /* border: 1px green solid; */
 }
 
 .container {
@@ -51,6 +59,9 @@ h2 {
 .mobile-controls {
     margin-left: 5px;
     margin-right: 5px;
+    /* text-align: center; */
+    /* margin: auto; */
+    width: 349px;
 }
 
 button {
@@ -86,9 +97,9 @@ button {
     min-height: 60px;
 }
 
-#restart-container{
-    /* display: flex; */
-}
+/* #restart-container{
+    display: flex;
+} */
 
 .restart-button {
     /* position:absolute; */
@@ -122,5 +133,10 @@ button {
 
     .text-controls {
         display: none;
+    }
+
+    .full-container {
+        width: 360px;
+        margin: auto;
     }
 }
