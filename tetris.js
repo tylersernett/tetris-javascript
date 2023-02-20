@@ -117,9 +117,11 @@ function drawCurTetromino() {
     }
 }
 
-let hspeed = 0, vspeed = 0, rspeed = 0;
+let hspeed = 0, vspeed = 0, frameCount = 0;
 
 function updateGame() {
+    frameCount++;
+    // console.log(frameCount);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     //draw field border
     ctx.strokeStyle = textColor;
@@ -131,12 +133,11 @@ function updateGame() {
     if (vspeed != 0) {
         MoveTetrominoDown();
     }
-    if (rspeed != 0) {
-        RotateTetromino(rspeed);
-    }
+    // if (rspeed != 0) {
+    //     RotateTetromino(rspeed);
+    // }
     drawCurTetromino();
-    //x += dx;
-    //y += dy;
+
     RedrawRows();
     DrawNextTetromino();
 }
@@ -172,24 +173,25 @@ function CreateTetrominos() {
 //  MOVEMENT    \\
 //---------------\\
 function HandleKeyPress(key) {
-    if (key.repeat) { return }
+    console.log(key)
+    // if (key.repeat) { return }
     // console.log(key);
     if (winOrLose != "Game Over") {
         if (key.keyCode === 37) { // left arrow
             hspeed = -1;
-            //MoveTetrominoHoriztonal(-1);
+            // MoveTetrominoHoriztonal(-1);
         } else if (key.keyCode === 39) { // right arrow
             hspeed = 1;
-            //MoveTetrominoHoriztonal(1);
+            // MoveTetrominoHoriztonal(1);
         } else if (key.keyCode === 40) { // down arrow
             vspeed = 1;
-            //MoveTetrominoDown();
+            // MoveTetrominoDown();
         } else if (key.keyCode === 88) { //x
             rspeed = 1;
-            // RotateTetromino(1);
+            RotateTetromino(1);
         } else if (key.keyCode === 90) { //z
             rspeed = -1;
-            // RotateTetromino(-1);
+            RotateTetromino(-1);
         } else if (key.keyCode === 38) { // up arrow
             DebugPosition();
         }
