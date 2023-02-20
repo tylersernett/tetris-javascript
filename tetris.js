@@ -117,29 +117,43 @@ function drawCurTetromino() {
     }
 }
 
-let hspeed = 0, vspeed = 0, frameCount = 0;
-
+let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
+let horizontalMovementLimit = 6;
+let verticalMovementLimit = 3;
+let rotationMovementLimit = 6;
+let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
+let lastFrameWithVerticalMovement = -verticalMovementLimit;
+let lastFrameWithRotationMovement = -rotationMovementLimit
 function updateGame() {
-    frameCount++;
-    // console.log(frameCount);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     //draw field border
     ctx.strokeStyle = textColor;
     ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
-    console.log(hspeed);
+
+    //control how fast button "holds" are registered
     if (hspeed != 0) {
-        MoveTetrominoHoriztonal(hspeed);
+        if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
+            MoveTetrominoHoriztonal(hspeed);
+            lastFrameWithHorizontalMovement = frameCount;
+        }
     }
     if (vspeed != 0) {
-        MoveTetrominoDown();
+        if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
+            MoveTetrominoDown();
+            lastFrameWithVerticalMovement = frameCount;
+        }
     }
     // if (rspeed != 0) {
+    //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
     //     RotateTetromino(rspeed);
+    //     lastFrameWithRotationMovement = frameCount;
+    //     }
     // }
-    drawCurTetromino();
 
+    drawCurTetromino();
     RedrawRows();
     DrawNextTetromino();
+    frameCount++;
 }
 
 setInterval(updateGame, 1000 / 60);
