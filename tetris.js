@@ -62,6 +62,8 @@ function CreateCoordArrays() {
     }
 }
 
+let fieldWidth, fieldHeight;
+
 function SetupCanvas() {
     score = 0, level = 1, lines = 0;
     winOrLose = "Playing";
@@ -76,8 +78,8 @@ function SetupCanvas() {
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     canvas = document.getElementById('my-canvas');
     ctx = canvas.getContext('2d');
-    let fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
-    let fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
+    fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
+    fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     let scale = 1;
     canvas.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
     canvas.height = (14 + fieldHeight) * scale;
@@ -87,12 +89,10 @@ function SetupCanvas() {
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    //draw field border
-    ctx.strokeStyle = textColor;
-    ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
+
 
     document.addEventListener('keydown', HandleKeyPress);
-    document.addEventListener("keyup", keyUpHandler, false);
+    document.addEventListener('keyup', keyUpHandler, false);
     CreateCoordArrays();
     LoadRandomTetrominoIntoNext();
     CreateTetrominoFromNext();
@@ -121,7 +121,9 @@ let hspeed = 0, vspeed = 0, rspeed = 0;
 
 function updateGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    //draw field border
+    ctx.strokeStyle = textColor;
+    ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
     console.log(hspeed);
     if (hspeed != 0) {
         MoveTetrominoHoriztonal(hspeed);
@@ -136,6 +138,7 @@ function updateGame() {
     //x += dx;
     //y += dy;
     RedrawRows();
+    DrawNextTetromino();
 }
 
 setInterval(updateGame, 1000 / 60);
@@ -169,6 +172,7 @@ function CreateTetrominos() {
 //  MOVEMENT    \\
 //---------------\\
 function HandleKeyPress(key) {
+    if (key.repeat) { return }
     // console.log(key);
     if (winOrLose != "Game Over") {
         if (key.keyCode === 37) { // left arrow
@@ -265,16 +269,16 @@ function SetGravity() {
     }
 
     //only update the interval when there's a new speed
-    // if (frames != newFrames) {
-    //     frames = newFrames;
-    //     gravitySpeed = newFrames / 60 * 1000;
-    //     clearInterval(gravity);
-    //     gravity = setInterval(function () {
-    //         if (winOrLose != "Game Over") {
-    //             MoveTetrominoDown();
-    //         }
-    //     }, gravitySpeed);
-    // }
+    if (frames != newFrames) {
+        frames = newFrames;
+        gravitySpeed = newFrames / 60 * 1000;
+        clearInterval(gravity);
+        gravity = setInterval(function () {
+            if (winOrLose != "Game Over") {
+                MoveTetrominoDown();
+            }
+        }, gravitySpeed);
+    }
 }
 
 //-------------\\
@@ -401,9 +405,10 @@ function DrawNextTetromino() {
     ctx.fillStyle = bgColor;
     ctx.fillRect(bgX, bgY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
 
-    for (let i = 0; i < nextTetromino[rotation].length; i++) {
-        let x = nextTetromino[rotation][i][0];
-        let y = nextTetromino[rotation][i][1];
+    //use [0][ ][ ] for defaultRotation
+    for (let i = 0; i < nextTetromino[0].length; i++) {
+        let x = nextTetromino[0][i][0];
+        let y = nextTetromino[0][i][1];
         let coorX = nextTetrominoCoordinateArray[y][x].x;
         let coorY = nextTetrominoCoordinateArray[y][x].y;
         //draw the square
