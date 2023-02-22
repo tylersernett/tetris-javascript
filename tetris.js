@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => { CreateTetrominos(); SetupC
 //     canvas.width = window.innerWidth * 0.8;
 //     canvas.height = window.innerHeight * 0.8;
 // }
+
 //populate coordArrays
 function CreateCoordArrays() {
     let yTop = 1, xLeft = 3, blockSpacing = (1 + blockDimension + 1);
@@ -89,19 +90,15 @@ function SetupCanvas() {
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-
-
     document.addEventListener('keydown', HandleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
     CreateCoordArrays();
     LoadRandomTetrominoIntoNext();
     CreateTetrominoFromNext();
     //DrawTetromino();
-
-    //create interval loop
 }
 
-function drawCurTetromino() {
+function DrawCurTetromino() {
 
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0] + startX;
@@ -118,45 +115,47 @@ function drawCurTetromino() {
 }
 
 let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
-let horizontalMovementLimit = 6;
-let verticalMovementLimit = 3;
-let rotationMovementLimit = 6;
+let horizontalMovementLimit = 6, verticalMovementLimit = 3, rotationMovementLimit = 6;
 let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
-function updateGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //draw field border
-    ctx.strokeStyle = textColor;
-    ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
+function UpdateGame() {
+    if (winOrLose != "Game Over") {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //draw field border
+        ctx.strokeStyle = textColor;
+        ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
 
-    //control how fast button "holds" are registered
-    if (hspeed != 0) {
-        if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
-            MoveTetrominoHoriztonal(hspeed);
-            lastFrameWithHorizontalMovement = frameCount;
+        console.log(hspeed);
+        //control how fast button "holds" are registered
+        if (hspeed != 0) {
+            if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
+                MoveTetrominoHoriztonal(hspeed);
+                lastFrameWithHorizontalMovement = frameCount;
+            }
         }
-    }
-    if (vspeed != 0) {
-        if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
-            MoveTetrominoDown();
-            lastFrameWithVerticalMovement = frameCount;
+        if (vspeed != 0) {
+            if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
+                MoveTetrominoDown();
+                lastFrameWithVerticalMovement = frameCount;
+            }
         }
-    }
-    // if (rspeed != 0) {
-    //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
-    //     RotateTetromino(rspeed);
-    //     lastFrameWithRotationMovement = frameCount;
-    //     }
-    // }
+        // if (rspeed != 0) {
+        //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
+        //     RotateTetromino(rspeed);
+        //     lastFrameWithRotationMovement = frameCount;
+        //     }
+        // }
 
-    drawCurTetromino();
-    RedrawRows();
-    DrawNextTetromino();
-    frameCount++;
+        DrawCurTetromino();
+        //DrawTetromino;
+        RedrawRows();
+        DrawNextTetromino();
+        frameCount++;
+    }
 }
 
-setInterval(updateGame, 1000 / 60);
+setInterval(UpdateGame, 1000 / frames);
 
 function CreateTetrominos() {
     /*  T block: [[0, 1], [1, 1], [2, 1], [1, 2]]
@@ -445,7 +444,7 @@ function DrawTetromino() {
         let coorY = coordinateArray[y][x].y;
         //draw the square
         ctx.fillStyle = curTetrominoColor;
-        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
 
         //Check for Game Over -- when two pieces overlap eachother
         if (PieceCollision(x, y)) {
@@ -548,7 +547,7 @@ function RowClearBonus(rows) {
 }
 
 function RedrawRows() {
-    // go through all cells in GBArray. Fill in occupied ones w/ color, fill in empty ones w/ white.
+    // go through all cells in GBArray. Fill in occupied ones w/ color
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
@@ -556,15 +555,11 @@ function RedrawRows() {
             if (typeof stoppedShapeArray[row][col] === 'string') {
                 ctx.fillStyle = stoppedShapeArray[row][col];
                 ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
-                // } else {
-                //     ctx.fillStyle = bgColor;
-                //     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
-                //     let marg = 0.5
-                //     ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
             }
         }
     }
 }
 
 //TODO: make responsive
-//TODO: mobile button hold
+//TODO: break down-button-hold when new tetromino appears?
+//TODO: consolidate 2 drawTet functions
