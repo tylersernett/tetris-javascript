@@ -18,3 +18,12 @@ solution: copy vertical/horizontal collision check idea
  - check lines individually
  - if line needs clear, zero out array, then unshift it up to top of gameboard
  - then redraw gameboard
+
+
+ ### Key 'hold' not registered
+
+ solution: 
+ - use game loop
+
+ issue: keys are rapid-firing
+ solution: frameCount
