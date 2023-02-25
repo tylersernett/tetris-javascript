@@ -98,8 +98,9 @@ function SetupCanvas() {
     //DrawTetromino();
 }
 
-function DrawCurTetromino() {
-
+function DrawCurTetrominoAndCheckGameOver() {
+    console.log("drawCur")
+    let gameOver = false;
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0] + startX;
         let y = curTetromino[rotation][i][1] + startY;
@@ -110,7 +111,24 @@ function DrawCurTetromino() {
         let coorY = coordinateArray[y][x].y;
         //draw the square
         ctx.fillStyle = curTetrominoColor;
-        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
+        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
+
+        //Check for Game Over -- when two pieces overlap eachother
+        if (PieceCollision(x, y)) {
+            gameOver = true;
+            console.log('dead collision')
+        }
+    }
+    //return gameOver;
+    if (gameOver) {
+        winOrLose = "Game Over";
+        document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
+        ctx.fillStyle = 'red';
+        ctx.font = '21px Silkscreen';
+        ctx.fillText(winOrLose, 24, 26);
+        ctx.fillStyle = textColor;
+        ctx.fillText("Press R", 24, 50);
+        ctx.fillText("to Restart", 24, 74);
     }
 }
 
@@ -126,7 +144,6 @@ function UpdateGame() {
         ctx.strokeStyle = textColor;
         ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
 
-        console.log(hspeed);
         //control how fast button "holds" are registered
         if (hspeed != 0) {
             if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
@@ -147,7 +164,7 @@ function UpdateGame() {
         //     }
         // }
 
-        DrawCurTetromino();
+        DrawCurTetrominoAndCheckGameOver();
         //DrawTetromino;
         RedrawRows();
         DrawNextTetromino();
@@ -234,7 +251,8 @@ function RotateTetromino(val) {
         DeleteTetromino();
         rotation += val;
         rotation = mod(rotation, curTetromino.length); //keep inside Array bounds
-        DrawTetromino();
+        //DrawTetromino();
+        DrawCurTetrominoAndCheckGameOver();
     }
 }
 
@@ -243,7 +261,8 @@ function MoveTetrominoDown() {
         if (!VerticalCollision(1)) {
             DeleteTetromino();
             startY++;
-            DrawTetromino();
+            //DrawTetromino();
+            DrawCurTetrominoAndCheckGameOver();
         }
     }
 }
@@ -252,7 +271,8 @@ function MoveTetrominoHoriztonal(val) {
     if (!HorizontalCollision(val)) {
         DeleteTetromino();
         startX += val;
-        DrawTetromino();
+        //DrawTetromino();
+        DrawCurTetrominoAndCheckGameOver();
     }
 }
 
@@ -382,7 +402,8 @@ function VerticalCollision(val) {
         }
         CheckForCompletedRows();
         CreateTetrominoFromNext();
-        DrawTetromino();
+        //DrawTetromino();
+        DrawCurTetrominoAndCheckGameOver();
         return true;
     }
 }
@@ -432,37 +453,22 @@ function DrawNextTetromino() {
     }
 }
 
+/*
 function DrawTetromino() {
-    let gameOver = false;
-    for (let i = 0; i < curTetromino[rotation].length; i++) {
-        let x = curTetromino[rotation][i][0] + startX;
-        let y = curTetromino[rotation][i][1] + startY;
-        gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
-
-        //transcribe xy info to coordinateArray pixels
-        let coorX = coordinateArray[y][x].x;
-        let coorY = coordinateArray[y][x].y;
-        //draw the square
-        ctx.fillStyle = curTetrominoColor;
-        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
-
-        //Check for Game Over -- when two pieces overlap eachother
-        if (PieceCollision(x, y)) {
-            gameOver = true;
-            console.log('dead collision')
-        }
-    }
-    if (gameOver) {
-        winOrLose = "Game Over";
-        document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
-        ctx.fillStyle = 'red';
-        ctx.font = '21px Silkscreen';
-        ctx.fillText(winOrLose, 24, 26);
-        ctx.fillStyle = textColor;
-        ctx.fillText("Press R", 24, 50);
-        ctx.fillText("to Restart", 24, 74);
-    }
+    //console.log("drawOld")
+    let gameOver = DrawCurTetrominoAndCheckGameOver();
+    // if (gameOver) {
+    //     winOrLose = "Game Over";
+    //     document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
+    //     ctx.fillStyle = 'red';
+    //     ctx.font = '21px Silkscreen';
+    //     ctx.fillText(winOrLose, 24, 26);
+    //     ctx.fillStyle = textColor;
+    //     ctx.fillText("Press R", 24, 50);
+    //     ctx.fillText("to Restart", 24, 74);
+    // }
 }
+*/
 
 function DeleteTetromino() {
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
@@ -563,3 +569,4 @@ function RedrawRows() {
 //TODO: make responsive
 //TODO: break down-button-hold when new tetromino appears?
 //TODO: consolidate 2 drawTet functions
+//TODO: delete interval on gameover
