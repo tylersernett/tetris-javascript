@@ -64,7 +64,6 @@ function CreateCoordArrays() {
 }
 
 let fieldWidth, fieldHeight;
-
 function SetupCanvas() {
     score = 0, level = 1, lines = 0;
     winOrLose = "Playing";
@@ -96,40 +95,6 @@ function SetupCanvas() {
     LoadRandomTetrominoIntoNext();
     CreateTetrominoFromNext();
     //DrawTetromino();
-}
-
-function DrawCurTetrominoAndCheckGameOver() {
-    console.log("drawCur")
-    let gameOver = false;
-    for (let i = 0; i < curTetromino[rotation].length; i++) {
-        let x = curTetromino[rotation][i][0] + startX;
-        let y = curTetromino[rotation][i][1] + startY;
-        gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
-
-        //transcribe xy info to coordinateArray pixels
-        let coorX = coordinateArray[y][x].x;
-        let coorY = coordinateArray[y][x].y;
-        //draw the square
-        ctx.fillStyle = curTetrominoColor;
-        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
-
-        //Check for Game Over -- when two pieces overlap eachother
-        if (PieceCollision(x, y)) {
-            gameOver = true;
-            console.log('dead collision')
-        }
-    }
-    //return gameOver;
-    if (gameOver) {
-        winOrLose = "Game Over";
-        document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
-        ctx.fillStyle = 'red';
-        ctx.font = '21px Silkscreen';
-        ctx.fillText(winOrLose, 24, 26);
-        ctx.fillStyle = textColor;
-        ctx.fillText("Press R", 24, 50);
-        ctx.fillText("to Restart", 24, 74);
-    }
 }
 
 let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
@@ -435,7 +400,42 @@ function HorizontalCollision(val) {
 //-------------\\
 //  GAME LOGIC  \\
 //---------------\\
+
+function DrawCurTetrominoAndCheckGameOver() {
+    let gameOver = false;
+    for (let i = 0; i < curTetromino[rotation].length; i++) {
+        let x = curTetromino[rotation][i][0] + startX;
+        let y = curTetromino[rotation][i][1] + startY;
+        gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
+
+        //transcribe xy info to coordinateArray pixels
+        let coorX = coordinateArray[y][x].x;
+        let coorY = coordinateArray[y][x].y;
+        //draw the square
+        ctx.fillStyle = curTetrominoColor;
+        ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
+
+        //Check for Game Over -- when two pieces overlap eachother
+        if (PieceCollision(x, y)) {
+            gameOver = true;
+            console.log('dead collision')
+        }
+    }
+
+    if (gameOver) {
+        winOrLose = "Game Over";
+        document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
+        ctx.fillStyle = 'red';
+        ctx.font = '21px Silkscreen';
+        ctx.fillText(winOrLose, 24, 26);
+        ctx.fillStyle = textColor;
+        ctx.fillText("Press R", 24, 50);
+        ctx.fillText("to Restart", 24, 74);
+    }
+}
+
 function DrawNextTetromino() {
+    //draw white rectangle over old piece
     let bgX = nextTetrominoCoordinateArray[0][0].x
     let bgY = nextTetrominoCoordinateArray[0][0].y
     ctx.fillStyle = bgColor;
@@ -452,23 +452,6 @@ function DrawNextTetromino() {
         ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
     }
 }
-
-/*
-function DrawTetromino() {
-    //console.log("drawOld")
-    let gameOver = DrawCurTetrominoAndCheckGameOver();
-    // if (gameOver) {
-    //     winOrLose = "Game Over";
-    //     document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
-    //     ctx.fillStyle = 'red';
-    //     ctx.font = '21px Silkscreen';
-    //     ctx.fillText(winOrLose, 24, 26);
-    //     ctx.fillStyle = textColor;
-    //     ctx.fillText("Press R", 24, 50);
-    //     ctx.fillText("to Restart", 24, 74);
-    // }
-}
-*/
 
 function DeleteTetromino() {
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
@@ -568,5 +551,4 @@ function RedrawRows() {
 
 //TODO: make responsive
 //TODO: break down-button-hold when new tetromino appears?
-//TODO: consolidate 2 drawTet functions
 //TODO: delete interval on gameover
