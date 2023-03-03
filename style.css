@@ -42,6 +42,16 @@ h2 {
     margin: 0;
 }
 
+.game-over {
+    font-size: 1.5rem;
+    position: absolute;
+    left: -205px;
+    color: red;
+    background: white; /* Fallback for older browsers without RGBA-support */
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid black;
+}
+
 .text-number {
     font-size: 1.5rem;
     margin-top: -5px;
@@ -97,16 +107,28 @@ button {
     text-overflow: ellipsis;
     transition: all .14s ease-out;
     white-space: nowrap;
+    /* box-shadow: 2px 2px 0 #000; */
 }
 
 button:hover {
     box-shadow: 2px 2px 0 #000;
     transform: translate(-2px, -2px);
+    /* background-color: #f8f8f8; */
 }
 
-button:focus-visible {
-    outline-offset: 1px;
+/* button:active {
+    box-shadow: 0px 0px 0 #000;
+    transform: translate(2px, 2px);
+} */
+
+.shadowed {
+    box-shadow: 2px 2px 0 #000;
+    transform: translate(-2px, -2px);
 }
+
+/* button:focus-visible {
+    outline-offset: 1px;
+} */
 
 .rot-controls {
     display: flex;
