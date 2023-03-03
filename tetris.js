@@ -95,7 +95,7 @@ function SetupCanvas() {
     fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     let scale = 1;
     canvas.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
-    canvas.height = (10 + fieldHeight) * scale;
+    canvas.height = (5 + fieldHeight) * scale;
 
     ctx.scale(scale, scale); //zoom in
 
