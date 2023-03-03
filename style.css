@@ -5,7 +5,6 @@ body {
     /* overflow: hidden; */
     font-family: 'Silkscreen', monospace;
     /* font-size: 1.25rem; */
-    color: #000;
 }
 
 body {
@@ -84,6 +83,7 @@ button {
     background: 0 0;
     border: 1px solid #000;
     /* border-radius: 4px; */
+    color:black;
     cursor: pointer;
     display: inline-flex;
     flex-shrink: 0;
