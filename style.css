@@ -110,6 +110,11 @@ button {
     /* flex: 1 1 0; */
 }
 
+.block-renders{
+    position: absolute;
+    left: -100%;
+}
+
 /* BIG */
 @media only screen and (min-width: 601px) {
     .mobile-controls {
