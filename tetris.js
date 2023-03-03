@@ -85,6 +85,7 @@ function SetupCanvas() {
     startX = startXDefault;
     startY = startYDefault;
     //document.getElementById('restart-container').innerHTML = "";
+    document.getElementById('game-over').style.visibility = "hidden";
 
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -442,12 +443,7 @@ function DrawCurTetrominoAndCheckGameOver() {
     if (gameOver) {
         winOrLose = "Game Over";
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
-        ctx.fillStyle = 'red';
-        ctx.font = '21px Silkscreen';
-        ctx.fillText(winOrLose, 24, 26);
-        ctx.fillStyle = textColor;
-        ctx.fillText("Press R", 24, 50);
-        ctx.fillText("to Restart", 24, 74);
+        document.getElementById('game-over').style.visibility = "visible";
     }
 }
 
@@ -573,3 +569,4 @@ function RedrawRows() {
 //TODO: make responsive
 //TODO: break down-button-hold when new tetromino appears?
 //TODO: delete interval on gameover
+//TODO: add high score database
