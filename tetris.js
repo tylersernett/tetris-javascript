@@ -84,7 +84,7 @@ function SetupCanvas() {
     SetGravity();
     startX = startXDefault;
     startY = startYDefault;
-    document.getElementById('restart-container').innerHTML = "";
+    //document.getElementById('restart-container').innerHTML = "";
 
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -110,7 +110,7 @@ function SetupCanvas() {
 }
 
 let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
-let horizontalMovementLimit = 6, verticalMovementLimit = 3, rotationMovementLimit = 6;
+let horizontalMovementLimit = 6, verticalMovementLimit = 3.5, rotationMovementLimit = 6;
 let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
@@ -441,7 +441,7 @@ function DrawCurTetrominoAndCheckGameOver() {
 
     if (gameOver) {
         winOrLose = "Game Over";
-        document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
+        //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         ctx.fillStyle = 'red';
         ctx.font = '21px Silkscreen';
         ctx.fillText(winOrLose, 24, 26);
