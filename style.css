@@ -48,6 +48,10 @@ h2 {
     margin-bottom: 5px;
 }
 
+.text-controls {
+    margin-bottom: 5px;
+}
+
 .right-col {
     transform: translateX(-112px);
 }
@@ -62,16 +66,16 @@ h2 {
     /* text-align: center; */
     /* margin: auto; */
     width: 349px;
-}
-
-button {
-    touch-action: manipulation;
     /* Safari */
     -webkit-user-select: none;
     /* IE 10 and IE 11 */
     -ms-user-select: none;
     /* Standard syntax */
     user-select: none;
+}
+
+button {
+    touch-action: manipulation;
 
     outline: 0;
     /* grid-gap: 8px; */
@@ -96,9 +100,10 @@ button {
 
 button:hover {
     box-shadow: 2px 2px 0 #000;
-    transform: translate(-2px,-2px);
+    transform: translate(-2px, -2px);
 }
-button:focus-visible{
+
+button:focus-visible {
     outline-offset: 1px;
 }
 
@@ -130,7 +135,7 @@ button:focus-visible{
 } */
 
 .restart-button {
-    /* position:absolute; */
+    position: fixed;
     font-family: 'Silkscreen', monospace;
     font-size: 1rem;
     /* min-height: 60px; */
@@ -138,7 +143,8 @@ button:focus-visible{
     /* flex: 1 1 0; */
 }
 
-.block-renders{
+/* keep these off screen */
+.block-renders {
     position: absolute;
     top: -100%;
 }
