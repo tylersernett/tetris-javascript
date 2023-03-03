@@ -57,7 +57,7 @@ function CreateCoordArrays() {
             coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
         }
     }
-    let nextLeft = xLeft + 247, nextTop = yTop + 104;
+    let nextLeft = xLeft + 247 - 6, nextTop = yTop + 104;
     for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 4; col++) {
             nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
@@ -94,7 +94,7 @@ function SetupCanvas() {
     fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     let scale = 1;
     canvas.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
-    canvas.height = (14 + fieldHeight) * scale;
+    canvas.height = (10 + fieldHeight) * scale;
 
     ctx.scale(scale, scale); //zoom in
 
@@ -121,7 +121,10 @@ function UpdateGame() {
         ctx.fillRect(0, 0, fieldWidth, fieldHeight)
         //draw field border
         ctx.strokeStyle = textColor;
-        ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
+        
+        ctx.strokeRect(0+0.5, 0+0.5, fieldWidth-1, fieldHeight-1); //offset by half pixel to prevent transparency issue
+        //ctx.lineWidth = 2;
+        //ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
 
         //control how fast button "holds" are registered
         if (hspeed != 0) {
