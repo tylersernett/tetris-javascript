@@ -8,6 +8,7 @@ let rotation = 0;
 let score = 0, level = 1, lines = 0;
 let winOrLose = "Playing";
 let gravity, frames = 60;
+let downPressAllowed;
 
 let bgColor = '#f8f8f8';
 let textColor = 'black';
@@ -75,7 +76,7 @@ function SetupCanvas() {
     blockL = document.getElementById('block-l');
     blockS = document.getElementById('block-s');
     blockZ = document.getElementById('block-z');
-    tetrominoColors=[blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
+    tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
     score = 0, level = 1, lines = 0;
     winOrLose = "Playing";
@@ -84,7 +85,6 @@ function SetupCanvas() {
     SetGravity();
     startX = startXDefault;
     startY = startYDefault;
-    //document.getElementById('restart-container').innerHTML = "";
     document.getElementById('game-over').style.visibility = "hidden";
 
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -107,11 +107,11 @@ function SetupCanvas() {
     CreateCoordArrays();
     LoadRandomTetrominoIntoNext();
     CreateTetrominoFromNext();
-    //DrawTetromino();
+    downPressAllowed = true;
 }
 
 let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
-let horizontalMovementLimit = 6, verticalMovementLimit = 3.5, rotationMovementLimit = 6;
+let horizontalMovementLimit = 6, verticalMovementLimit = 2, rotationMovementLimit = 6;
 let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
@@ -122,8 +122,8 @@ function UpdateGame() {
         ctx.fillRect(0, 0, fieldWidth, fieldHeight)
         //draw field border
         ctx.strokeStyle = textColor;
-        
-        ctx.strokeRect(0+0.5, 0+0.5, fieldWidth-1, fieldHeight-1); //offset by half pixel to prevent transparency issue
+
+        ctx.strokeRect(0 + 0.5, 0 + 0.5, fieldWidth - 1, fieldHeight - 1); //offset by half pixel to prevent transparency issue
         //ctx.lineWidth = 2;
         //ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
 
@@ -136,8 +136,10 @@ function UpdateGame() {
         }
         if (vspeed != 0) {
             if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
-                MoveTetrominoDown();
-                lastFrameWithVerticalMovement = frameCount;
+                if (downPressAllowed) { //assist behavior where down is accidentally not released (if you press, then slide without releasing over it)
+                    MoveTetrominoDown();
+                    lastFrameWithVerticalMovement = frameCount;
+                }
             }
         }
         // if (rspeed != 0) {
@@ -186,10 +188,7 @@ function CreateTetrominos() {
 //  MOVEMENT    \\
 //---------------\\
 function HandleKeyPress(key) {
-    console.log(key)
-    // if (key.repeat) { return }
-    // console.log(key);
-    if (winOrLose != "Game Over") {
+    if (winOrLose != "Game Over") { //!!! this check is a bit redundant, can clean up later
         if (key.keyCode === 37) { // left arrow
             hspeed = -1;
             // MoveTetrominoHoriztonal(-1);
@@ -197,8 +196,7 @@ function HandleKeyPress(key) {
             hspeed = 1;
             // MoveTetrominoHoriztonal(1);
         } else if (key.keyCode === 40) { // down arrow
-            vspeed = 1;
-            // MoveTetrominoDown();
+            HandleDownPress();
         } else if (key.keyCode === 88) { //x
             rspeed = 1;
             RotateTetromino(1);
@@ -219,7 +217,7 @@ function keyUpHandler(key) {
     if (key.keyCode === 37 || key.keyCode === 39) {
         hspeed = 0;
     } else if (key.keyCode === 40) {
-        vspeed = 0;
+        HandleDownRelease();
     } else if ((key.keyCode === 88) || key.keyCode === 90) {
         rspeed = 0;
     }
@@ -229,13 +227,24 @@ function mod(n, m) {
     return ((n % m) + m) % m;
 }
 
+function HandleDownPress() {
+    vspeed = 1;
+}
+
+function HandleDownRelease() {
+    vspeed = 0;
+    downPressAllowed = true;
+}
+
 function RotateTetromino(val) {
-    if (!RotationCollision(val)) {
-        DeleteTetromino();
-        rotation += val;
-        rotation = mod(rotation, curTetromino.length); //keep inside Array bounds
-        //DrawTetromino();
-        DrawCurTetrominoAndCheckGameOver();
+    if (winOrLose != "Game Over") {
+        if (!RotationCollision(val)) {
+            DeleteTetromino();
+            rotation += val;
+            rotation = mod(rotation, curTetromino.length); //keep inside Array bounds
+            //DrawTetromino();
+            DrawCurTetrominoAndCheckGameOver();
+        }
     }
 }
 
@@ -310,7 +319,7 @@ function WallCollision(x) {
 }
 function PieceCollision(x, y) {
     //stoppedShapeArray will hold color string if occupied
-    return ( stoppedShapeArray[y][x] !== 0)
+    return (stoppedShapeArray[y][x] !== 0)
 }
 
 //creates a rotated copy and checks if it fits
@@ -432,7 +441,7 @@ function DrawCurTetrominoAndCheckGameOver() {
         //draw the square
         //ctx.fillStyle = curTetrominoColor;
         //ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
-        ctx.drawImage(curTetrominoColor,coorX,coorY)
+        ctx.drawImage(curTetrominoColor, coorX, coorY)
         //Check for Game Over -- when two pieces overlap eachother
         if (PieceCollision(x, y)) {
             gameOver = true;
@@ -454,7 +463,7 @@ function DrawNextTetromino() {
     ctx.fillStyle = "white";
     ctx.fillRect(bgX, bgY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
 
-    
+
     for (let i = 0; i < nextTetromino[0].length; i++) {
         //use [0][ ][ ] for defaultRotation - no need to draw any other kind of rotation for the Next-block view.
         let x = nextTetromino[0][i][0];
@@ -462,7 +471,7 @@ function DrawNextTetromino() {
         let coorX = nextTetrominoCoordinateArray[y][x].x;
         let coorY = nextTetrominoCoordinateArray[y][x].y;
         //draw the square
-        ctx.drawImage(nextTetrominoColor,coorX,coorY)
+        ctx.drawImage(nextTetrominoColor, coorX, coorY)
         //ctx.fillStyle = nextTetrominoColor;
         //ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
     }
@@ -485,6 +494,7 @@ function DeleteTetromino() {
 }
 
 function CreateTetrominoFromNext() {
+    downPressAllowed = false; //kill downward momentum when new piece spawns
     startX = startXDefault;
     startY = startYDefault;
     rotation = 0;
@@ -556,7 +566,7 @@ function RedrawRows() {
         for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
             let coorY = coordinateArray[row][col].y;
-            if ( stoppedShapeArray[row][col] !== 0) {
+            if (stoppedShapeArray[row][col] !== 0) {
                 // ctx.fillStyle = stoppedShapeArray[row][col];
                 // ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
                 let tetColor = stoppedShapeArray[row][col];
@@ -568,5 +578,5 @@ function RedrawRows() {
 
 //TODO: make responsive
 //TODO: break down-button-hold when new tetromino appears?
-//TODO: delete interval on gameover
+//TODO: delete game loop interval on gameover
 //TODO: add high score database

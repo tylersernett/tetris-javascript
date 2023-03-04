@@ -51,9 +51,9 @@
                 <button class='rot-button' id="rot-cw" onclick="RotateTetromino(1)">⟳</button>
             </div>
             <div class="dir-controls">
-                <button class='dir-button' id="move-left" onpointerdown="hspeed=-1" onpointerup="hspeed=0">←</button>
-                <button class='dir-button' id="move-down" onpointerdown="vspeed=1" onpointerup="vspeed=0">↓</button>
-                <button class='dir-button' id="move-right" onpointerdown="hspeed=1" onpointerup="hspeed=0">→</button>
+                <button class='dir-button' id="move-left" onpointerdown="hspeed=-1" onpointerup="hspeed=0" onpointerleave="hspeed=0">←</button>
+                <button class='dir-button' id="move-down" onpointerdown="HandleDownPress()" onpointerup="HandleDownRelease()" onpointerleave="HandleDownRelease()">↓</button>
+                <button class='dir-button' id="move-right" onpointerdown="hspeed=1" onpointerup="hspeed=0" onpointerleave="hspeed=0">→</button>
             </div>
         </div>
         <div class="block-renders">
