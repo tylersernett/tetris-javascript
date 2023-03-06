@@ -36,10 +36,12 @@ body {
 
 h1 {
     margin: 0;
+    line-height: 1.05em;
 }
 
 h2 {
     margin: 0;
+    /* line-height: 1.1em; */
 }
 
 .game-over {
