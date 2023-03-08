@@ -6,7 +6,7 @@ let startYDefault = 0, startY = startYDefault;
 let blockDimension = 21, blockMargin = 1;
 let rotation = 0;
 let score = 0, level = 1, lines = 0;
-let winOrLose = "Playing";
+let gameOver = false;
 let gravity, frames = 60;
 let gameloop;
 let downPressAllowed;
@@ -80,7 +80,7 @@ function SetupCanvas() {
     tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
     score = 0, level = 1, lines = 0;
-    winOrLose = "Playing";
+    gameOver = false;
     UpdateScores();
     frames = 60;
     SetGravity();
@@ -109,6 +109,7 @@ function SetupCanvas() {
     LoadRandomTetrominoIntoNext();
     CreateTetrominoFromNext();
     downPressAllowed = true;
+    clearInterval(gameloop);
     gameloop = setInterval(UpdateGame, 1000 / frames);
 }
 
@@ -119,7 +120,7 @@ let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
 function UpdateGame() {
     console.count("loop");
-    if (winOrLose != "Game Over") {
+    if (!gameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, fieldWidth, fieldHeight)
@@ -189,7 +190,7 @@ function CreateTetrominos() {
 //  MOVEMENT    \\
 //---------------\\
 function HandleKeyPress(key) {
-    if (winOrLose != "Game Over") { //!!! this check is a bit redundant, can clean up later
+    if (!gameOver) { //!!! this check is a bit redundant, can clean up later
         if (key.keyCode === 37) { // left arrow
             hspeed = -1;
             // MoveTetrominoHoriztonal(-1);
@@ -238,7 +239,7 @@ function HandleDownRelease() {
 }
 
 function RotateTetromino(val) {
-    if (winOrLose != "Game Over") {
+    if (!gameOver) {
         if (!RotationCollision(val)) {
             DeleteTetromino();
             rotation += val;
@@ -250,7 +251,7 @@ function RotateTetromino(val) {
 }
 
 function MoveTetrominoDown() {
-    if (winOrLose != "Game Over") {
+    if (!gameOver) {
         if (!VerticalCollision(1)) {
             DeleteTetromino();
             startY++;
@@ -302,7 +303,7 @@ function SetGravity() {
         gravitySpeed = newFrames / 60 * 1000;
         clearInterval(gravity);
         gravity = setInterval(function () {
-            if (winOrLose != "Game Over") {
+            if (!gameOver ) {
                 MoveTetrominoDown();
             }
         }, gravitySpeed);
@@ -430,7 +431,7 @@ function HorizontalCollision(val) {
 //---------------\\
 
 function DrawCurTetrominoAndCheckGameOver() {
-    let gameOver = false;
+    let gameOverCheck = false;
     for (let i = 0; i < curTetromino[rotation].length; i++) {
         let x = curTetromino[rotation][i][0] + startX;
         let y = curTetromino[rotation][i][1] + startY;
@@ -445,13 +446,13 @@ function DrawCurTetrominoAndCheckGameOver() {
         ctx.drawImage(curTetrominoColor, coorX, coorY)
         //Check for Game Over -- when two pieces overlap eachother
         if (PieceCollision(x, y)) {
-            gameOver = true;
+            gameOverCheck = true;
             console.log('dead collision')
         }
     }
 
-    if (gameOver) {
-        winOrLose = "Game Over";
+    if (gameOverCheck) {
+        gameOver = true;
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
         clearInterval(gameloop);
