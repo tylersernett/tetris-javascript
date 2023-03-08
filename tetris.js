@@ -8,6 +8,7 @@ let rotation = 0;
 let score = 0, level = 1, lines = 0;
 let winOrLose = "Playing";
 let gravity, frames = 60;
+let gameloop;
 let downPressAllowed;
 
 let bgColor = '#f8f8f8';
@@ -108,6 +109,7 @@ function SetupCanvas() {
     LoadRandomTetrominoIntoNext();
     CreateTetrominoFromNext();
     downPressAllowed = true;
+    gameloop = setInterval(UpdateGame, 1000 / frames);
 }
 
 let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
@@ -116,6 +118,7 @@ let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
 function UpdateGame() {
+    console.count("loop");
     if (winOrLose != "Game Over") {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = bgColor;
@@ -156,8 +159,6 @@ function UpdateGame() {
         frameCount++;
     }
 }
-
-setInterval(UpdateGame, 1000 / frames);
 
 function CreateTetrominos() {
     /*  T block: [ [[0, 1], [1, 1], [2, 1], [1, 2]], [[rotation2]], [[rotation3]], [[rotation4]] ]
@@ -453,6 +454,7 @@ function DrawCurTetrominoAndCheckGameOver() {
         winOrLose = "Game Over";
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
+        clearInterval(gameloop);
     }
 }
 
@@ -576,7 +578,4 @@ function RedrawRows() {
     }
 }
 
-//TODO: make responsive
-//TODO: break down-button-hold when new tetromino appears?
-//TODO: delete game loop interval on gameover
 //TODO: add high score database
