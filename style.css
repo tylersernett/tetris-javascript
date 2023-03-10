@@ -88,7 +88,7 @@ h2 {
 
 button {
     touch-action: manipulation;
-
+    margin: 0px;
     outline: 0;
     /* grid-gap: 8px; */
     align-items: center;
