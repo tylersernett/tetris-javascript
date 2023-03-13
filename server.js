@@ -1,14 +1,12 @@
 require('dotenv').config();
 const app = require('express')();
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser')
 let PORT = process.env.PORT;
 let uri = process.env.MONGO_URI;
 
-//var MongoClient = require('mongodb').MongoClient;
-// app.listen(
-//     PORT,
-//     () => console.log(`server listening on port ${PORT}`)
-// );
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
 
 async function connect() {
     try {
@@ -48,8 +46,9 @@ app.get('/highscores', (req, res) => {
         })
 })
 
-app.get('/add-score', (req, res) => {
-    const scoreDoc = new Highscore({ name: "testris1", score: 5000, lines: 6, level: 1 });
+app.post('/add-score', (req, res) => {
+    console.log(req.body)
+    const scoreDoc = new Highscore({ name: req.body.name, score: req.body.score, lines: req.body.lines, level: req.body.level });
     scoreDoc.save()
         .then((result) => {
             res.send(result)

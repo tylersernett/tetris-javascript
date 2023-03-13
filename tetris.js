@@ -455,6 +455,9 @@ function DrawCurTetrominoAndCheckGameOver() {
         gameOver = true;
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
+        document.getElementById('level-submit').value = level;
+        document.getElementById('score-submit').value = score;
+        document.getElementById('lines-submit').value = lines;
         clearInterval(gameloop);
     }
 }
