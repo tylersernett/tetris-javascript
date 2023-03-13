@@ -27,3 +27,37 @@ solution: copy vertical/horizontal collision check idea
 
  issue: keys are rapid-firing
  solution: frameCount
+
+ ### Highscore Database
+ - install node, mongodb, mongoose, dotenv
+ - require the above at the top of server.js
+ - connect to DB
+ - create Mongoose Schema
+
+connect:
+```javascript
+ async function connect() {
+    try {
+        await mongoose.connect(uri);
+        console.log("Connected to MongoDB")
+        app.listen(
+            PORT,
+            () => console.log(`server listening on port ${PORT}`)
+        );
+    } catch (err) {
+        console.error(err)
+    }
+}
+```
+
+Schema:
+```javascript
+const Schema = mongoose.Schema;
+const scoreSchema = new Schema({
+    name: { type: String, required: true },
+    score: { type: Number, required: true },
+    lines: { type: Number, required: true },
+    level: { type: Number, required: true },
+}, { timestamps: true });
+const Highscore = mongoose.model('Highscore', scoreSchema);
+```
