@@ -187,9 +187,12 @@ function CreateTetrominos() {
 }
 
 async function GetHighscores() {
-    const response = await fetch("http://localhost:8080/highscores");
-    const scores = response.json();
-    console.log(scores);
+    const response = await fetch("http://localhost:8080/highscores") //GET request to server
+    const scores = await response.json();
+    document.getElementById('highscore-display').innerHTML = 
+        "<ol>" +
+        scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
+        + "</ol>"
 }
 
 //-------------\\
@@ -309,7 +312,7 @@ function SetGravity() {
         gravitySpeed = newFrames / 60 * 1000;
         clearInterval(gravity);
         gravity = setInterval(function () {
-            if (!gameOver ) {
+            if (!gameOver) {
                 MoveTetrominoDown();
             }
         }, gravitySpeed);
