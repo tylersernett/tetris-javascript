@@ -87,7 +87,8 @@ function SetupCanvas() {
     startX = startXDefault;
     startY = startYDefault;
     document.getElementById('game-over').style.visibility = "hidden";
-
+    document.getElementById('highscore-outer').style.visibility = "hidden";
+    document.getElementById('highscore-prompt').style.visibility = "hidden";
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     canvas = document.getElementById('my-canvas');
@@ -186,13 +187,19 @@ function CreateTetrominos() {
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
 }
 
-async function GetHighscores() {
-    const response = await fetch("http://localhost:8080/highscores") //GET request to server
-    const scores = await response.json();
-    document.getElementById('highscore-display').innerHTML = 
+async function DisplayHighscores() {
+    const scores = await GetHighscores();
+    document.getElementById('highscore-display').innerHTML =
         "<ol>" +
         scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
-        + "</ol>"
+        + "</ol>";
+    document.getElementById('highscore-outer').style.visibility = "visible";
+}
+
+async function GetHighscores() {
+    const response = await fetch("http://localhost:8080/highscores"); //GET request to server
+    const scores = await response.json();
+    return scores;
 }
 
 //-------------\\
@@ -464,6 +471,7 @@ function DrawCurTetrominoAndCheckGameOver() {
         gameOver = true;
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
+        DisplayHighscores();
         document.getElementById('highscore-prompt').style.visibility = "visible";
         document.getElementById('level-submit').value = level;
         document.getElementById('score-submit').value = score;
