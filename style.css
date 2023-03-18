@@ -2,6 +2,7 @@ html,
 body {
     margin: 0;
     height: 100%;
+    /* font-size: 12.5px; */
     /* overflow: hidden; */
     font-family: 'Silkscreen', monospace;
     /* font-size: 1.25rem; */
@@ -44,27 +45,71 @@ h2 {
     /* line-height: 1.1em; */
 }
 
+h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    /* line-height: 1.1em; */
+}
+
+.overlay {
+    position: absolute; /* Sit on top of the page content */
+    /* display: none;  */
+    width: 214px; /* Full width (cover the whole page) */
+    height: 462px; /* Full height (cover the whole page) */
+    top: 40px;
+    left: 0;
+    right: 283px;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    /* background-color: rgba(0,0,0,0.5); Black background with opacity */
+    /* z-index: 2; */
+    
+    /* align-items: center; */
+    /* display: flex; */
+}
+
 .game-over {
+    display: block;
+    text-align: center;
+    /* margin: auto; */
+    /* width: 50%; */
     font-size: 1.5rem;
-    position: absolute;
-    left: -205px;
+    /* position: absolute; */
+    /* left: -205px; */
     color: red;
     background: white; /* Fallback for older browsers without RGBA-support */
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid black;
+    margin-bottom: 10px;
+}
+
+.highscore-outer{
+    border: 1px solid black;
+    text-align: center;
+    color: red;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.highscore-display{
+    visibility: inherit;
+    text-align:left;
+    font-size: .9rem;
 }
 
 .highscore-prompt {
-    display:flex;
-    flex-direction: column;
+    /* display: block; */
+    text-align: center;
+    /* display:flex; */
+    /* flex-direction: column; */
     font-size: 1.5rem;
-    position: absolute;
-    left: -205px;
-    top:133px;
+    /* position: absolute; */
     color: red;
     background: white; /* Fallback for older browsers without RGBA-support */
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid black;
+    /* padding: 10px; */
 }
 
 .text-number {
@@ -99,9 +144,26 @@ h2 {
     user-select: none;
 }
 
+input {
+    font-family: 'Silkscreen', monospace;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+
+    width: -webkit-calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 button {
+    font-family: 'Silkscreen', monospace;
     touch-action: manipulation;
     margin: 0px;
+    margin-bottom: 10px;
     outline: 0;
     /* grid-gap: 8px; */
     align-items: center;
@@ -181,8 +243,7 @@ button:active {
 
 /* keep these off screen */
 .block-renders {
-    position: absolute;
-    top: -100%;
+    visibility: hidden;
 }
 
 /* BIG */
