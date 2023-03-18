@@ -2,11 +2,14 @@ require('dotenv').config();
 const app = require('express')();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
+const cors = require('cors')
 let PORT = process.env.PORT;
 let uri = process.env.MONGO_URI;
 
+//MIDDLEWARE
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors())
 
 async function connect() {
     try {
@@ -36,8 +39,13 @@ app.get('/', (req, res) => {
     //res.render('tetris');
 })
 
+//https://www.geeksforgeeks.org/get-and-post-method-using-fetch-api/
+//tetris.js fetch()
+//.then(response => response.json())
+//.then(json => {
 app.get('/highscores', (req, res) => {
-    Highscore.find()
+    console.log('getting...');
+    Highscore.find().sort({score: -1}).limit(5) //sort by score in descending order - return top 5
         .then((result) => {
             res.send(result)
         })
@@ -47,7 +55,7 @@ app.get('/highscores', (req, res) => {
 })
 
 app.post('/add-score', (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const scoreDoc = new Highscore({ name: req.body.name, score: req.body.score, lines: req.body.lines, level: req.body.level });
     scoreDoc.save()
         .then((result) => {
