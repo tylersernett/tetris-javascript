@@ -54,6 +54,19 @@ h2 {
     border: 1px solid black;
 }
 
+.highscore-prompt {
+    display:flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    position: absolute;
+    left: -205px;
+    top:133px;
+    color: red;
+    background: white; /* Fallback for older browsers without RGBA-support */
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid black;
+}
+
 .text-number {
     font-size: 1.5rem;
     margin-top: -5px;
@@ -158,7 +171,7 @@ button:active {
 } */
 
 .restart-button {
-    position: fixed;
+    /* position: fixed; */
     font-family: 'Silkscreen', monospace;
     font-size: 1rem;
     /* min-height: 60px; */

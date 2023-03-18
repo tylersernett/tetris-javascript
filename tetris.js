@@ -119,7 +119,7 @@ let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
 function UpdateGame() {
-    console.count("loop");
+    //console.count("loop");
     if (!gameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = bgColor;
@@ -184,6 +184,12 @@ function CreateTetrominos() {
     tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
     // Z
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
+}
+
+async function GetHighscores() {
+    const response = await fetch("http://localhost:8080/highscores");
+    const scores = response.json();
+    console.log(scores);
 }
 
 //-------------\\
@@ -455,6 +461,7 @@ function DrawCurTetrominoAndCheckGameOver() {
         gameOver = true;
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
+        document.getElementById('highscore-prompt').style.visibility = "visible";
         document.getElementById('level-submit').value = level;
         document.getElementById('score-submit').value = score;
         document.getElementById('lines-submit').value = lines;
