@@ -194,6 +194,12 @@ async function DisplayHighscores() {
         scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
         + "</ol>";
     document.getElementById('highscore-outer').style.visibility = "visible";
+    if (scores[4].score < score ) { //if highscore achieved...
+        document.getElementById('highscore-prompt').style.visibility = "visible";
+        document.getElementById('level-submit').value = level;
+        document.getElementById('score-submit').value = score;
+        document.getElementById('lines-submit').value = lines;
+    }
 }
 
 async function GetHighscores() {
@@ -223,10 +229,6 @@ function HandleKeyPress(key) {
             RotateTetromino(-1);
         } else if (key.keyCode === 38) { // up arrow
             DebugPosition();
-        }
-    } else {
-        if (key.keyCode === 82) { // r -- Restart
-            SetupCanvas();
         }
     }
 }
@@ -472,10 +474,6 @@ function DrawCurTetrominoAndCheckGameOver() {
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
         DisplayHighscores();
-        document.getElementById('highscore-prompt').style.visibility = "visible";
-        document.getElementById('level-submit').value = level;
-        document.getElementById('score-submit').value = score;
-        document.getElementById('lines-submit').value = lines;
         clearInterval(gameloop);
     }
 }
