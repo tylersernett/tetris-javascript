@@ -45,7 +45,7 @@
 
                 <div id="highscore-container">
                     <!-- <form action='http://localhost:8080/highscores' method="GET"> -->
-                    <button class='option-button' type='submit' onclick='DisplayHighscores()' class='option-button'>Highscores<div class="title-break"></button>
+                    <button class='option-button' type='submit' onclick='ToggleHighscores()' class='option-button'>Highscores<div class="title-break"></button>
                     <!-- </form> -->
                 </div>
 
@@ -68,12 +68,12 @@
         <div class="overlay" id="overlay">
             <div class='game-over shadowed' id="game-over" style="visibility: hidden">Game Over</div>
 
-            <div class='highscore-outer shadowed' id="highscore-outer" style="visibility: visible">
+            <div class='highscore-outer shadowed' id="highscore-outer" style="visibility: hidden">
                 <h3>High scores</h3>
                 <div class='highscore-display' id="highscore-display"></div>
             </div>
 
-            <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: visible">
+            <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: hidden">
                 <h3>New High Score</h3>
                 <form action='http://localhost:8080/add-score' method="POST">
                     <input type="text" name="name" placeholder="name">
