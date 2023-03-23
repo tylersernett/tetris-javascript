@@ -40,13 +40,13 @@
                     x: rotate CW
                 </div>
                 <div id="restart-container">
-                    <button onclick='SetupCanvas()' class='restart-button '>Restart</button>
+                    <button onclick='SetupCanvas()' class='option-button '>Restart</button>
                 </div>
 
                 <div id="highscore-container">
                     <!-- <form action='http://localhost:8080/highscores' method="GET"> -->
-                    <button type='submit' onclick='DisplayHighscores()' class='restart-button'>Highscores<div class="title-break"></button>
-                    </form>
+                    <button class='option-button' type='submit' onclick='DisplayHighscores()' class='option-button'>Highscores<div class="title-break"></button>
+                    <!-- </form> -->
                 </div>
 
             </div>
@@ -81,7 +81,7 @@
                     <input type="hidden" name="score" id='score-submit'>
                     <input type="hidden" name="lines" id='lines-submit'>
                     <br />
-                    <button type='submit' class="restart-button">Submit</button>
+                    <button type='submit' class="option-button">Submit</button>
                 </form>
             </div>
 
