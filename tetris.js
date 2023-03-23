@@ -7,6 +7,7 @@ let blockDimension = 21, blockMargin = 1;
 let rotation = 0;
 let score = 0, level = 1, lines = 0;
 let gameOver = false;
+let showHighscores = false;
 let gravity, frames = 60;
 let gameloop;
 let downPressAllowed;
@@ -187,18 +188,30 @@ function CreateTetrominos() {
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
 }
 
-async function DisplayHighscores() {
+function ToggleHighscores() {
+    showHighscores = !showHighscores
+    console.log(showHighscores)
+    if (showHighscores) {
+        DisplayHighscores(false);
+    } else {
+        document.getElementById('highscore-outer').style.visibility = "hidden";
+    }
+}
+
+async function DisplayHighscores(checkNewScore) {
     const scores = await GetHighscores();
     document.getElementById('highscore-display').innerHTML =
         "<ol>" +
         scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
         + "</ol>";
-    document.getElementById('highscore-outer').style.visibility = "visible";
-    if (scores[4].score < score ) { //if highscore achieved...
-        document.getElementById('highscore-prompt').style.visibility = "visible";
-        document.getElementById('level-submit').value = level;
-        document.getElementById('score-submit').value = score;
-        document.getElementById('lines-submit').value = lines;
+    document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
+    if (checkNewScore) {
+        if (scores[4].score < score) { //if highscore achieved...
+            document.getElementById('highscore-prompt').style.visibility = "visible";
+            document.getElementById('level-submit').value = level;
+            document.getElementById('score-submit').value = score;
+            document.getElementById('lines-submit').value = lines;
+        }
     }
 }
 
@@ -473,7 +486,7 @@ function DrawCurTetrominoAndCheckGameOver() {
         gameOver = true;
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
-        DisplayHighscores();
+        DisplayHighscores(true);
         clearInterval(gameloop);
     }
 }
