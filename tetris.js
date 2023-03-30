@@ -156,7 +156,6 @@ function UpdateGame() {
         // }
 
         DrawCurTetrominoAndCheckGameOver();
-        //DrawTetromino;
         RedrawRows();
         DrawNextTetromino();
         frameCount++;
@@ -199,19 +198,18 @@ function ToggleHighscores() {
 }
 
 async function DisplayHighscores(checkNewScore) {
+    showHighscores = true;
     const scores = await GetHighscores();
+    console.log(scores)
     document.getElementById('highscore-display').innerHTML =
         "<ol>" +
         scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
         + "</ol>";
     document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
     if (checkNewScore) {
-        if (score >= 0) { //testing
-            //if (score > scores[4].score ) { //if highscore achieved...
+        // if (score >= 0) { //testing
+        if (scores.length < 5 || score > scores[4].score ) { //if highscore achieved...
             document.getElementById('highscore-prompt').style.visibility = "visible";
-            document.getElementById('level-submit').value = level;
-            document.getElementById('score-submit').value = score;
-            document.getElementById('lines-submit').value = lines;
         }
     }
 }
@@ -636,4 +634,5 @@ function RedrawRows() {
     }
 }
 
-//TODO: add high score database
+//TODO: mobile score alignment
+//TODO: profanity filter?
