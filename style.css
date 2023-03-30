@@ -2,13 +2,10 @@ html,
 body {
     margin: 0;
     height: 100%;
-    /* overflow: hidden; */
     font-family: 'Silkscreen', monospace;
-    /* font-size: 1.25rem; */
 }
 
 body {
-    /* text-align: center; */
     background: #fff;
 }
 
@@ -21,17 +18,11 @@ body {
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
-    /* border: 1px red solid; */
 }
 
 .full-container {
     width: 530px;
     margin: auto;
-    /* border: 1px green solid; */
-}
-
-.container {
-    display: flex;
 }
 
 h1 {
@@ -41,16 +32,68 @@ h1 {
 
 h2 {
     margin: 0;
-    /* line-height: 1.1em; */
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.right-col {
+    position: absolute;
+    width: 145px;
+    height: 462px; /* Full height (cover the whole page) */
+    left: 110px;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.overlay {
+    position: absolute;/* Sit on top of the page content */
+    width: 214px;  /* Full width (cover the whole page) */
+    height: 462px; /* Full height (cover the whole page) */
+    top: 40px;
+    left: 0;
+    right: 283px;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .game-over {
+    display: block;
+    text-align: center;
     font-size: 1.5rem;
-    position: absolute;
-    left: -205px;
     color: red;
-    background: white; /* Fallback for older browsers without RGBA-support */
-    background: rgba(255, 255, 255, 0.8);
+    background: white;
+    /* Fallback for older browsers without RGBA-support */
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+
+.highscore-outer {
+    border: 1px solid black;
+    text-align: center;
+    color: red;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.highscore-display {
+    visibility: inherit;
+    text-align: left;
+    font-size: .9rem;
+}
+
+.highscore-prompt {
+    text-align: center;
+    font-size: 1.5rem;
+    color: red;
+    background: white;
+    /* Fallback for older browsers without RGBA-support */
+    background: rgba(255, 255, 255, 0.92);
     border: 1px solid black;
 }
 
@@ -64,9 +107,7 @@ h2 {
     margin-bottom: 5px;
 }
 
-.right-col {
-    transform: translateX(-112px);
-}
+
 
 #next-title {
     margin-bottom: 66px;
@@ -75,8 +116,6 @@ h2 {
 .mobile-controls {
     margin-left: 5px;
     margin-right: 5px;
-    /* text-align: center; */
-    /* margin: auto; */
     width: 349px;
     /* Safari */
     -webkit-user-select: none;
@@ -86,21 +125,34 @@ h2 {
     user-select: none;
 }
 
+input {
+    font-family: 'Silkscreen', monospace;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+
+    width: -webkit-calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 button {
+    font-family: 'Silkscreen', monospace;
     touch-action: manipulation;
     margin: 0px;
     outline: 0;
-    /* grid-gap: 8px; */
     align-items: center;
     background: 0 0;
     border: 1px solid #000;
-    /* border-radius: 4px; */
-    color:black;
+    color: black;
     cursor: pointer;
     display: inline-flex;
     flex-shrink: 0;
     font-size: 16px;
-    /* gap: 8px; */
     justify-content: center;
     line-height: 1.5;
     overflow: hidden;
@@ -126,14 +178,17 @@ button:active {
     transform: translate(-2px, -2px);
 }
 
-/* button:focus-visible {
-    outline-offset: 1px;
-} */
+.option-button {
+    font-family: 'Silkscreen', monospace;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    width: 146px;
+}
 
 .rot-controls {
     display: flex;
-    gap: 5px;
-    margin-bottom: 5px;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 .rot-button {
@@ -144,7 +199,7 @@ button:active {
 
 .dir-controls {
     display: flex;
-    gap: 5px;
+    gap: 6px;
 }
 
 .dir-button {
@@ -153,23 +208,9 @@ button:active {
     min-height: 60px;
 }
 
-/* #restart-container{
-    display: flex;
-} */
-
-.restart-button {
-    position: fixed;
-    font-family: 'Silkscreen', monospace;
-    font-size: 1rem;
-    /* min-height: 60px; */
-    /* width: calc(100% - 5px); */
-    /* flex: 1 1 0; */
-}
-
 /* keep these off screen */
 .block-renders {
-    position: absolute;
-    top: -100%;
+    visibility: hidden;
 }
 
 /* BIG */
@@ -200,5 +241,24 @@ button:active {
     .full-container {
         width: 360px;
         margin: auto;
+    }
+
+    .right-col {
+        width: 115px;
+        left: 248px;
+    }
+
+    .overlay {
+        left: 0;
+        right: 115px;
+        bottom: 0;
+    }
+
+    .title-hide {
+        display: none;
+    }
+
+    .option-button{
+        width: 108px;
     }
 }

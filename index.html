@@ -14,36 +14,46 @@
 
 <body>
     <div class="full-container">
+
+
+        <div class="right-col">
+            <h1>
+                <!-- use non-breaking hyphen below -->
+                JS&#8209;<div class="title-break"></div>etris
+            </h1>
+
+            <h2 id="score-title">Score</h2>
+            <div class='text-number' id="score">0</div>
+
+            <h2 id="next-title">Next</h2>
+
+            <h2>Level</h2>
+            <div class='text-number' id="level">1</div>
+            <h2>Lines</h2>
+            <div class='text-number' id="lines">0</div>
+
+            <h2 id="controls">Controls</h2>
+            <div class="text-controls">
+                ←: move left<br />
+                →: move right<br />
+                ↓: move down<br />
+                z: rotate CCW<br />
+                x: rotate CW
+            </div>
+            <div id="restart-container">
+                <button onclick='SetupCanvas()' class='option-button '>Restart</button>
+            </div>
+
+            <div id="highscore-container">
+                <!-- <form action='http://localhost:8080/highscores' method="GET"> -->
+                <button class='option-button' type='submit' onclick='ToggleHighscores()' class='option-button'><div class="title-hide">High</div>scores</button>
+                <!-- </form> -->
+            </div>
+
+        </div>
         <div class="container">
             <canvas id='my-canvas'></canvas>
-            <div class="right-col">
-                <h1>
-                    JS&#8209;<div class="title-break"></div>etris
-                </h1>
-
-                <h2 id="score-title">Score</h2>
-                <div class='text-number' id="score">0</div>
-                <div class='game-over shadowed' id="game-over" style="visibility: hidden">Game Over</div>
-                <h2 id="next-title">Next</h2>
-
-                <h2>Level</h2>
-                <div class='text-number' id="level">1</div>
-                <h2>Lines</h2>
-                <div class='text-number' id="lines">0</div>
-
-                <h2 id="controls">Controls</h2>
-                <div class="text-controls">
-                    ←: move left<br />
-                    →: move right<br />
-                    ↓: move down<br />
-                    z: rotate CCW<br />
-                    x: rotate CW
-                </div>
-                <div id="restart-container">
-                    <button onclick='SetupCanvas()' class='restart-button '>Restart</button>
-                </div>
-
-            </div>
+            
         </div>
         <div class="mobile-controls">
             <div class="rot-controls">
@@ -51,11 +61,33 @@
                 <button class='rot-button' id="rot-cw" onclick="RotateTetromino(1)">⟳</button>
             </div>
             <div class="dir-controls">
-                <button class='dir-button' id="move-left" onpointerdown="hspeed=-1" onpointerup="hspeed=0" onpointerleave="hspeed=0">←</button>
-                <button class='dir-button' id="move-down" onpointerdown="HandleDownPress()" onpointerup="HandleDownRelease()" onpointerleave="HandleDownRelease()">↓</button>
-                <button class='dir-button' id="move-right" onpointerdown="hspeed=1" onpointerup="hspeed=0" onpointerleave="hspeed=0">→</button>
+                <button class='dir-button' id="move-left" onpointerdown="hspeed=-1" onpointerup="hspeed=0"
+                    onpointerleave="hspeed=0">←</button>
+                <button class='dir-button' id="move-down" onpointerdown="HandleDownPress()"
+                    onpointerup="HandleDownRelease()" onpointerleave="HandleDownRelease()">↓</button>
+                <button class='dir-button' id="move-right" onpointerdown="hspeed=1" onpointerup="hspeed=0"
+                    onpointerleave="hspeed=0">→</button>
             </div>
         </div>
+
+        <div class="overlay" id="overlay">
+            <div class='game-over shadowed' id="game-over" style="visibility: hidden">Game Over</div>
+
+            <div class='highscore-outer shadowed' id="highscore-outer" style="visibility: hidden">
+                <h3>High scores</h3>
+                <div class='highscore-display' id="highscore-display"></div>
+            </div>
+
+            <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: hidden">
+                <h3>New High Score</h3>
+                <form id = 'score-form' onsubmit='SubmitScore(event)'>
+                    <input type="text" name="name" id='name-submit' placeholder="name">
+                    <br />
+                    <button id='score-form-submit' type='submit' class="option-button">Submit</button>
+                </form>
+            </div>
+        </div>
+
         <div class="block-renders">
             <img id='block-t' src="block-t.png">
             <img id='block-i' src="block-i.png">
@@ -65,6 +97,7 @@
             <img id='block-s' src="block-s.png">
             <img id='block-z' src="block-z.png">
         </div>
+
     </div>
 </body>
 

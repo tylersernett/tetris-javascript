@@ -7,6 +7,7 @@ let blockDimension = 21, blockMargin = 1;
 let rotation = 0;
 let score = 0, level = 1, lines = 0;
 let gameOver = false;
+let showHighscores = false;
 let gravity, frames = 60;
 let gameloop;
 let downPressAllowed;
@@ -87,7 +88,8 @@ function SetupCanvas() {
     startX = startXDefault;
     startY = startYDefault;
     document.getElementById('game-over').style.visibility = "hidden";
-
+    document.getElementById('highscore-outer').style.visibility = "hidden";
+    document.getElementById('highscore-prompt').style.visibility = "hidden";
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     canvas = document.getElementById('my-canvas');
@@ -119,7 +121,7 @@ let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
 function UpdateGame() {
-    console.count("loop");
+    //console.count("loop");
     if (!gameOver) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = bgColor;
@@ -154,7 +156,6 @@ function UpdateGame() {
         // }
 
         DrawCurTetrominoAndCheckGameOver();
-        //DrawTetromino;
         RedrawRows();
         DrawNextTetromino();
         frameCount++;
@@ -186,6 +187,63 @@ function CreateTetrominos() {
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
 }
 
+function ToggleHighscores() {
+    showHighscores = !showHighscores
+    console.log(showHighscores)
+    if (showHighscores) {
+        DisplayHighscores(false);
+    } else {
+        document.getElementById('highscore-outer').style.visibility = "hidden";
+    }
+}
+
+async function DisplayHighscores(checkNewScore) {
+    showHighscores = true;
+    const scores = await GetHighscores();
+    console.log(scores)
+    document.getElementById('highscore-display').innerHTML =
+        "<ol>" +
+        scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
+        + "</ol>";
+    document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
+    if (checkNewScore) {
+        // if (score >= 0) { //testing
+        if (scores.length < 5 || score > scores[4].score ) { //if highscore achieved...
+            document.getElementById('highscore-prompt').style.visibility = "visible";
+        }
+    }
+}
+
+async function GetHighscores() {
+    console.log('get sent')
+    const response = await fetch("/highscores"); //GET request to server
+    const scores = await response.json();
+    return scores;
+}
+
+async function SubmitScore(event) {
+    event.preventDefault(); //prevent page refresh
+    console.log('send sent')
+    fetch("/add-score", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            name: document.getElementById("name-submit").value,
+            score: score,
+            lines: lines,
+            level: level,
+        }),
+    }).then((response) => response.json())
+        .then((result) => {
+            console.log("Successful Submission:", result);
+            document.getElementById('highscore-prompt').style.visibility = "hidden";
+            DisplayHighscores(false); //refresh highscores
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+}
+
 //-------------\\
 //  MOVEMENT    \\
 //---------------\\
@@ -207,10 +265,6 @@ function HandleKeyPress(key) {
             RotateTetromino(-1);
         } else if (key.keyCode === 38) { // up arrow
             DebugPosition();
-        }
-    } else {
-        if (key.keyCode === 82) { // r -- Restart
-            SetupCanvas();
         }
     }
 }
@@ -303,7 +357,7 @@ function SetGravity() {
         gravitySpeed = newFrames / 60 * 1000;
         clearInterval(gravity);
         gravity = setInterval(function () {
-            if (!gameOver ) {
+            if (!gameOver) {
                 MoveTetrominoDown();
             }
         }, gravitySpeed);
@@ -455,6 +509,7 @@ function DrawCurTetrominoAndCheckGameOver() {
         gameOver = true;
         //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
+        DisplayHighscores(true);
         clearInterval(gameloop);
     }
 }
@@ -579,4 +634,5 @@ function RedrawRows() {
     }
 }
 
-//TODO: add high score database
+//TODO: profanity filter?
+//TODO: right align highscores
