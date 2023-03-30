@@ -2,14 +2,10 @@ html,
 body {
     margin: 0;
     height: 100%;
-    /* font-size: 12.5px; */
-    /* overflow: hidden; */
     font-family: 'Silkscreen', monospace;
-    /* font-size: 1.25rem; */
 }
 
 body {
-    /* text-align: center; */
     background: #fff;
 }
 
@@ -22,17 +18,11 @@ body {
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
-    /* border: 1px red solid; */
 }
 
 .full-container {
     width: 530px;
     margin: auto;
-    /* border: 1px green solid; */
-}
-
-.container {
-    /* display: flex; */
 }
 
 h1 {
@@ -42,61 +32,43 @@ h1 {
 
 h2 {
     margin: 0;
-    /* line-height: 1.1em; */
 }
 
 h3 {
     margin: 0;
     font-size: 1.2rem;
-    /* line-height: 1.1em; */
 }
 
 .right-col {
     position: absolute;
     width: 145px;
-    height: 462px;
-    /* Full height (cover the whole page) */
+    height: 462px; /* Full height (cover the whole page) */
     left: 110px;
     right: 0;
     margin-left: auto;
     margin-right: auto;
-    /* margin:auto; */
-    /* transform: translateX(-112px); */
 }
 
 .overlay {
-    position: absolute;
-    /* Sit on top of the page content */
-    /* display: none;  */
-    width: 214px;
-    /* Full width (cover the whole page) */
-    height: 462px;
-    /* Full height (cover the whole page) */
+    position: absolute;/* Sit on top of the page content */
+    width: 214px;  /* Full width (cover the whole page) */
+    height: 462px; /* Full height (cover the whole page) */
     top: 40px;
     left: 0;
     right: 283px;
     bottom: 0;
     margin-left: auto;
     margin-right: auto;
-    /* background-color: rgba(0,0,0,0.5); Black background with opacity */
-    /* z-index: 2; */
-
-    /* align-items: center; */
-    /* display: flex; */
 }
 
 .game-over {
     display: block;
     text-align: center;
-    /* margin: auto; */
-    /* width: 50%; */
     font-size: 1.5rem;
-    /* position: absolute; */
-    /* left: -205px; */
     color: red;
     background: white;
     /* Fallback for older browsers without RGBA-support */
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     border: 1px solid black;
     margin-bottom: 10px;
 }
@@ -116,18 +88,13 @@ h3 {
 }
 
 .highscore-prompt {
-    /* display: block; */
     text-align: center;
-    /* display:flex; */
-    /* flex-direction: column; */
     font-size: 1.5rem;
-    /* position: absolute; */
     color: red;
     background: white;
     /* Fallback for older browsers without RGBA-support */
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     border: 1px solid black;
-    /* padding: 10px; */
 }
 
 .text-number {
@@ -149,8 +116,6 @@ h3 {
 .mobile-controls {
     margin-left: 5px;
     margin-right: 5px;
-    /* text-align: center; */
-    /* margin: auto; */
     width: 349px;
     /* Safari */
     -webkit-user-select: none;
@@ -180,17 +145,14 @@ button {
     touch-action: manipulation;
     margin: 0px;
     outline: 0;
-    /* grid-gap: 8px; */
     align-items: center;
     background: 0 0;
     border: 1px solid #000;
-    /* border-radius: 4px; */
     color: black;
     cursor: pointer;
     display: inline-flex;
     flex-shrink: 0;
     font-size: 16px;
-    /* gap: 8px; */
     justify-content: center;
     line-height: 1.5;
     overflow: hidden;
@@ -222,10 +184,6 @@ button:active {
     margin-bottom: 10px;
     width: 146px;
 }
-
-/* button:focus-visible {
-    outline-offset: 1px;
-} */
 
 .rot-controls {
     display: flex;
