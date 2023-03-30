@@ -32,7 +32,7 @@ body {
 }
 
 .container {
-    display: flex;
+    /* display: flex; */
 }
 
 h1 {
@@ -51,11 +51,27 @@ h3 {
     /* line-height: 1.1em; */
 }
 
+.right-col {
+    position: absolute;
+    width: 145px;
+    height: 462px;
+    /* Full height (cover the whole page) */
+    left: 110px;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    /* margin:auto; */
+    /* transform: translateX(-112px); */
+}
+
 .overlay {
-    position: absolute; /* Sit on top of the page content */
+    position: absolute;
+    /* Sit on top of the page content */
     /* display: none;  */
-    width: 214px; /* Full width (cover the whole page) */
-    height: 462px; /* Full height (cover the whole page) */
+    width: 214px;
+    /* Full width (cover the whole page) */
+    height: 462px;
+    /* Full height (cover the whole page) */
     top: 40px;
     left: 0;
     right: 283px;
@@ -64,7 +80,7 @@ h3 {
     margin-right: auto;
     /* background-color: rgba(0,0,0,0.5); Black background with opacity */
     /* z-index: 2; */
-    
+
     /* align-items: center; */
     /* display: flex; */
 }
@@ -78,13 +94,14 @@ h3 {
     /* position: absolute; */
     /* left: -205px; */
     color: red;
-    background: white; /* Fallback for older browsers without RGBA-support */
+    background: white;
+    /* Fallback for older browsers without RGBA-support */
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid black;
     margin-bottom: 10px;
 }
 
-.highscore-outer{
+.highscore-outer {
     border: 1px solid black;
     text-align: center;
     color: red;
@@ -92,9 +109,9 @@ h3 {
     background: rgba(255, 255, 255, 0.92);
 }
 
-.highscore-display{
+.highscore-display {
     visibility: inherit;
-    text-align:left;
+    text-align: left;
     font-size: .9rem;
 }
 
@@ -106,7 +123,8 @@ h3 {
     font-size: 1.5rem;
     /* position: absolute; */
     color: red;
-    background: white; /* Fallback for older browsers without RGBA-support */
+    background: white;
+    /* Fallback for older browsers without RGBA-support */
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid black;
     /* padding: 10px; */
@@ -122,9 +140,7 @@ h3 {
     margin-bottom: 5px;
 }
 
-.right-col {
-    transform: translateX(-112px);
-}
+
 
 #next-title {
     margin-bottom: 66px;
@@ -169,7 +185,7 @@ button {
     background: 0 0;
     border: 1px solid #000;
     /* border-radius: 4px; */
-    color:black;
+    color: black;
     cursor: pointer;
     display: inline-flex;
     flex-shrink: 0;
@@ -204,6 +220,7 @@ button:active {
     font-family: 'Silkscreen', monospace;
     font-size: 1rem;
     margin-bottom: 10px;
+    width: 146px;
 }
 
 /* button:focus-visible {
@@ -212,8 +229,8 @@ button:active {
 
 .rot-controls {
     display: flex;
-    gap: 5px;
-    margin-bottom: 5px;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 .rot-button {
@@ -224,7 +241,7 @@ button:active {
 
 .dir-controls {
     display: flex;
-    gap: 5px;
+    gap: 6px;
 }
 
 .dir-button {
@@ -268,9 +285,22 @@ button:active {
         margin: auto;
     }
 
+    .right-col {
+        width: 115px;
+        left: 248px;
+    }
+
     .overlay {
         left: 0;
         right: 115px;
         bottom: 0;
+    }
+
+    .title-hide {
+        display: none;
+    }
+
+    .option-button{
+        width: 108px;
     }
 }
