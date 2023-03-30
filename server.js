@@ -66,5 +66,3 @@ app.post('/add-score', (req, res) => {
             console.error(err)
         })
 })
-
-//TODO: refresh scores after POST

@@ -216,7 +216,7 @@ async function DisplayHighscores(checkNewScore) {
 
 async function GetHighscores() {
     console.log('get sent')
-    const response = await fetch("http://localhost:8080/highscores"); //GET request to server
+    const response = await fetch("/highscores"); //GET request to server
     const scores = await response.json();
     return scores;
 }
@@ -224,7 +224,7 @@ async function GetHighscores() {
 async function SubmitScore(event) {
     event.preventDefault(); //prevent page refresh
     console.log('send sent')
-    fetch("http://localhost:8080/add-score", {
+    fetch("/add-score", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -634,5 +634,5 @@ function RedrawRows() {
     }
 }
 
-//TODO: mobile score alignment
 //TODO: profanity filter?
+//TODO: right align highscores
