@@ -68,3 +68,13 @@ app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 ```
+
+POST:
+```javascript
+fetch("http://localhost:8080/add-score", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({msg: "help"}),
+})
+```
+Make sure to include headers and use stringify!
