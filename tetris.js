@@ -237,7 +237,9 @@ async function SubmitScore(event) {
         }),
     }).then((response) => response.json())
         .then((result) => {
-            console.log("Success:", result);
+            console.log("Successful Submission:", result);
+            document.getElementById('highscore-prompt').style.visibility = "hidden";
+            DisplayHighscores(false); //refresh highscores
         })
         .catch((error) => {
             console.error("Error:", error);
