@@ -267,4 +267,10 @@ button:active {
         width: 360px;
         margin: auto;
     }
+
+    .overlay {
+        left: 0;
+        right: 115px;
+        bottom: 0;
+    }
 }
