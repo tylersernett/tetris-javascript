@@ -61,3 +61,10 @@ const scoreSchema = new Schema({
 }, { timestamps: true });
 const Highscore = mongoose.model('Highscore', scoreSchema);
 ```
+
+Middleware:
+```javascript
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+```
