@@ -206,7 +206,8 @@ async function DisplayHighscores(checkNewScore) {
         + "</ol>";
     document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
     if (checkNewScore) {
-        if (scores[4].score < score) { //if highscore achieved...
+        if (score >= 0) { //testing
+            //if (score > scores[4].score ) { //if highscore achieved...
             document.getElementById('highscore-prompt').style.visibility = "visible";
             document.getElementById('level-submit').value = level;
             document.getElementById('score-submit').value = score;
@@ -216,9 +217,31 @@ async function DisplayHighscores(checkNewScore) {
 }
 
 async function GetHighscores() {
+    console.log('get sent')
     const response = await fetch("http://localhost:8080/highscores"); //GET request to server
     const scores = await response.json();
     return scores;
+}
+
+async function SubmitScore(event) {
+    event.preventDefault(); //prevent page refresh
+    console.log('send sent')
+    fetch("http://localhost:8080/add-score", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            name: document.getElementById("name-submit").value,
+            score: score,
+            lines: lines,
+            level: level,
+        }),
+    }).then((response) => response.json())
+        .then((result) => {
+            console.log("Success:", result);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 }
 
 //-------------\\

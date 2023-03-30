@@ -75,13 +75,13 @@
 
             <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: hidden">
                 <h3>New High Score</h3>
-                <form action='http://localhost:8080/add-score' method="POST">
-                    <input type="text" name="name" placeholder="name">
+                <form id = 'score-form' onsubmit='SubmitScore(event)'>
+                    <input type="text" name="name" id='name-submit' placeholder="name">
                     <input type="hidden" name="level" id='level-submit'>
                     <input type="hidden" name="score" id='score-submit'>
                     <input type="hidden" name="lines" id='lines-submit'>
                     <br />
-                    <button type='submit' class="option-button">Submit</button>
+                    <button id='score-form-submit' type='submit' class="option-button">Submit</button>
                 </form>
             </div>
 
