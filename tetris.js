@@ -216,7 +216,7 @@ async function DisplayHighscores(checkNewScore) {
 
 async function GetHighscores() {
     console.log('get sent')
-    const response = await fetch("/highscores"); //GET request to server
+    const response = await fetch("https://tetris-javascript.onrender.com/highscores"); //GET request to server
     const scores = await response.json();
     return scores;
 }
@@ -224,7 +224,7 @@ async function GetHighscores() {
 async function SubmitScore(event) {
     event.preventDefault(); //prevent page refresh
     console.log('send sent')
-    fetch("/add-score", {
+    fetch("https://tetris-javascript.onrender.com/add-score", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
