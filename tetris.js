@@ -187,63 +187,6 @@ function CreateTetrominos() {
     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
 }
 
-function ToggleHighscores() {
-    showHighscores = !showHighscores
-    console.log(showHighscores)
-    if (showHighscores) {
-        DisplayHighscores(false);
-    } else {
-        document.getElementById('highscore-outer').style.visibility = "hidden";
-    }
-}
-
-async function DisplayHighscores(checkNewScore) {
-    showHighscores = true;
-    const scores = await GetHighscores();
-    console.log(scores)
-    document.getElementById('highscore-display').innerHTML =
-        "<ol>" +
-        scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
-        + "</ol>";
-    document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
-    if (checkNewScore) {
-        // if (score >= 0) { //testing
-        if (scores.length < 5 || score > scores[4].score ) { //if highscore achieved...
-            document.getElementById('highscore-prompt').style.visibility = "visible";
-        }
-    }
-}
-
-async function GetHighscores() {
-    console.log('get sent')
-    const response = await fetch("https://tetris-javascript.onrender.com/highscores"); //GET request to server
-    const scores = await response.json();
-    return scores;
-}
-
-async function SubmitScore(event) {
-    event.preventDefault(); //prevent page refresh
-    console.log('send sent')
-    fetch("https://tetris-javascript.onrender.com/add-score", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            name: document.getElementById("name-submit").value,
-            score: score,
-            lines: lines,
-            level: level,
-        }),
-    }).then((response) => response.json())
-        .then((result) => {
-            console.log("Successful Submission:", result);
-            document.getElementById('highscore-prompt').style.visibility = "hidden";
-            DisplayHighscores(false); //refresh highscores
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
-}
-
 //-------------\\
 //  MOVEMENT    \\
 //---------------\\
@@ -634,5 +577,67 @@ function RedrawRows() {
     }
 }
 
+//-------------\\
+//  HIGHSCORES  \\
+//---------------\\
+
+function ToggleHighscores() {
+    showHighscores = !showHighscores
+    console.log(showHighscores)
+    if (showHighscores) {
+        DisplayHighscores(false);
+    } else {
+        document.getElementById('highscore-outer').style.visibility = "hidden";
+    }
+}
+
+async function DisplayHighscores(checkNewScore) {
+    showHighscores = true;
+    const scores = await GetHighscores();
+    console.log(scores)
+    document.getElementById('highscore-display').innerHTML =
+        "<ol>" +
+        scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
+        + "</ol>";
+    document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
+    if (checkNewScore) {
+        // if (score >= 0) { //testing
+        if (scores.length < 5 || score > scores[4].score ) { //if highscore achieved...
+            document.getElementById('highscore-prompt').style.visibility = "visible";
+        }
+    }
+}
+
+async function GetHighscores() {
+    console.log('get sent')
+    const response = await fetch("https://tetris-javascript.onrender.com/highscores"); //GET request to server
+    const scores = await response.json();
+    return scores;
+}
+
+async function SubmitScore(event) {
+    event.preventDefault(); //prevent page refresh
+    console.log('send sent')
+    fetch("https://tetris-javascript.onrender.com/add-score", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            name: document.getElementById("name-submit").value,
+            score: score,
+            lines: lines,
+            level: level,
+        }),
+    }).then((response) => response.json())
+        .then((result) => {
+            console.log("Successful Submission:", result);
+            document.getElementById('highscore-prompt').style.visibility = "hidden";
+            DisplayHighscores(false); //refresh highscores
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+}
+
 //TODO: profanity filter?
 //TODO: right align highscores
+//TODO: rate limit? https://github.com/tonikv/snake-highscore/blob/master/index.js
