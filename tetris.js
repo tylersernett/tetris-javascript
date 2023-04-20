@@ -80,6 +80,7 @@ function SetupCanvas() {
     blockZ = document.getElementById('block-z');
     tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
+    showHighscores = false;
     score = 0, level = 1, lines = 0;
     gameOver = false;
     UpdateScores();
