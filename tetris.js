@@ -44,8 +44,8 @@ class Coordinates {
 //  INITIALIZATION    \\
 //---------------------\\
 
-//wait for page to load, then run SetupCanvas
-document.addEventListener('DOMContentLoaded', () => { CreateTetrominos(); SetupCanvas() });
+//wait for page to load, then run SetupCanvas ... also send a Get to fire up the server
+document.addEventListener('DOMContentLoaded', () => { GetHighscores(); CreateTetrominos(); SetupCanvas() });
 // window.onload = window.onresize = function() {
 //     let canvas = document.getElementById('my-canvas');
 //     canvas.width = window.innerWidth * 0.8;
