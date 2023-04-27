@@ -81,6 +81,7 @@ function SetupCanvas() {
     tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
     showHighscores = false;
+    document.getElementById('score-form-submit').disabled= false;
     score = 0, level = 1, lines = 0;
     gameOver = false;
     UpdateScores();
@@ -618,6 +619,7 @@ async function GetHighscores() {
 
 async function SubmitScore(event) {
     event.preventDefault(); //prevent page refresh
+    document.getElementById('score-form-submit').disabled= true;
     console.log('send sent')
     fetch("https://tetris-javascript.onrender.com/add-score", {
         method: "POST",
