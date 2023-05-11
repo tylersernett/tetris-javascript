@@ -127,28 +127,7 @@ function UpdateGame() {
         ctx.strokeStyle = textColor;
         ctx.strokeRect(0 + 0.5, 0 + 0.5, fieldWidth - 1, fieldHeight - 1); //offset by half pixel to prevent transparency issue
 
-        //control how fast button "holds" are registered
-        if (hspeed != 0) {
-            if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
-                MoveTetrominoHoriztonal(hspeed);
-                lastFrameWithHorizontalMovement = frameCount;
-            }
-        }
-        if (vspeed != 0) {
-            if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
-                if (downPressAllowed) { //assist behavior where down is accidentally not released (if you press, then slide without releasing over it)
-                    MoveTetrominoDown();
-                    lastFrameWithVerticalMovement = frameCount;
-                }
-            }
-        }
-        //the following allows one to 'hold' rotations. disabled because it feels too 'helicoptery'
-        // if (rspeed != 0) {
-        //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
-        //     RotateTetromino(rspeed);
-        //     lastFrameWithRotationMovement = frameCount;
-        //     }
-        // }
+        updateMovement();
         DrawCurTetrominoAndCheckGameOver();
         RedrawRows();
         DrawNextTetromino();
@@ -185,7 +164,28 @@ function CreateTetrominos() {
 //  MOVEMENT    \\
 //---------------\\
 function updateMovement() {
-
+    //control how fast button "holds" are registered
+    if (hspeed != 0) {
+        if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
+            MoveTetrominoHoriztonal(hspeed);
+            lastFrameWithHorizontalMovement = frameCount;
+        }
+    }
+    if (vspeed != 0) {
+        if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
+            if (downPressAllowed) { //assist behavior where down is accidentally not released (if you press, then slide without releasing over it)
+                MoveTetrominoDown();
+                lastFrameWithVerticalMovement = frameCount;
+            }
+        }
+    }
+    //the following allows one to 'hold' rotations. disabled because it feels too 'helicoptery'
+    // if (rspeed != 0) {
+    //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
+    //     RotateTetromino(rspeed);
+    //     lastFrameWithRotationMovement = frameCount;
+    //     }
+    // }
 }
 
 function HandleKeyPress(key) {
