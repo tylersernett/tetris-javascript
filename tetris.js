@@ -46,11 +46,6 @@ class Coordinates {
 
 //wait for page to load, then run SetupCanvas ... also send a Get to fire up the server
 document.addEventListener('DOMContentLoaded', () => { GetHighscores(); CreateTetrominos(); SetupCanvas() });
-// window.onload = window.onresize = function() {
-//     let canvas = document.getElementById('my-canvas');
-//     canvas.width = window.innerWidth * 0.8;
-//     canvas.height = window.innerHeight * 0.8;
-// }
 
 //populate coordArrays
 function CreateCoordArrays() {
@@ -81,7 +76,7 @@ function SetupCanvas() {
     tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
     showHighscores = false;
-    document.getElementById('score-form-submit').disabled= false;
+    document.getElementById('score-form-submit').disabled = false;
     score = 0, level = 1, lines = 0;
     gameOver = false;
     UpdateScores();
@@ -123,17 +118,14 @@ let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 let lastFrameWithRotationMovement = -rotationMovementLimit
 function UpdateGame() {
-    //console.count("loop");
     if (!gameOver) {
+        //clear old canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, fieldWidth, fieldHeight)
         //draw field border
         ctx.strokeStyle = textColor;
-
         ctx.strokeRect(0 + 0.5, 0 + 0.5, fieldWidth - 1, fieldHeight - 1); //offset by half pixel to prevent transparency issue
-        //ctx.lineWidth = 2;
-        //ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
 
         //control how fast button "holds" are registered
         if (hspeed != 0) {
@@ -150,13 +142,13 @@ function UpdateGame() {
                 }
             }
         }
+        //the following allows one to 'hold' rotations. disabled because it feels too 'helicoptery'
         // if (rspeed != 0) {
         //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
         //     RotateTetromino(rspeed);
         //     lastFrameWithRotationMovement = frameCount;
         //     }
         // }
-
         DrawCurTetrominoAndCheckGameOver();
         RedrawRows();
         DrawNextTetromino();
@@ -192,6 +184,10 @@ function CreateTetrominos() {
 //-------------\\
 //  MOVEMENT    \\
 //---------------\\
+function updateMovement() {
+
+}
+
 function HandleKeyPress(key) {
     if (!gameOver) { //!!! this check is a bit redundant, can clean up later
         if (key.keyCode === 37) { // left arrow
@@ -215,17 +211,13 @@ function HandleKeyPress(key) {
 }
 
 function keyUpHandler(key) {
-    if (key.keyCode === 37 || key.keyCode === 39) {
+    if (key.keyCode === 37 || key.keyCode === 39) { //left or right arrow
         hspeed = 0;
-    } else if (key.keyCode === 40) {
+    } else if (key.keyCode === 40) { //down arrow
         HandleDownRelease();
-    } else if ((key.keyCode === 88) || key.keyCode === 90) {
+    } else if ((key.keyCode === 88) || key.keyCode === 90) { //x or z
         rspeed = 0;
     }
-}
-
-function mod(n, m) {
-    return ((n % m) + m) % m;
 }
 
 function HandleDownPress() {
@@ -235,6 +227,10 @@ function HandleDownPress() {
 function HandleDownRelease() {
     vspeed = 0;
     downPressAllowed = true;
+}
+
+function mod(n, m) {
+    return ((n % m) + m) % m;
 }
 
 function RotateTetromino(val) {
@@ -254,7 +250,6 @@ function MoveTetrominoDown() {
         if (!VerticalCollision(1)) {
             DeleteTetromino();
             startY++;
-            //DrawTetromino();
             DrawCurTetrominoAndCheckGameOver();
         }
     }
@@ -264,7 +259,6 @@ function MoveTetrominoHoriztonal(val) {
     if (!HorizontalCollision(val)) {
         DeleteTetromino();
         startX += val;
-        //DrawTetromino();
         DrawCurTetrominoAndCheckGameOver();
     }
 }
@@ -395,7 +389,6 @@ function VerticalCollision(val) {
         }
         CheckForCompletedRows();
         CreateTetrominoFromNext();
-        //DrawTetromino();
         DrawCurTetrominoAndCheckGameOver();
         return true;
     }
@@ -440,8 +433,6 @@ function DrawCurTetrominoAndCheckGameOver() {
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
         //draw the square
-        //ctx.fillStyle = curTetrominoColor;
-        //ctx.fillRect(coorX, coorY, blockDimension, blockDimension);   
         ctx.drawImage(curTetrominoColor, coorX, coorY)
         //Check for Game Over -- when two pieces overlap eachother
         if (PieceCollision(x, y)) {
@@ -452,7 +443,6 @@ function DrawCurTetrominoAndCheckGameOver() {
 
     if (gameOverCheck) {
         gameOver = true;
-        //document.getElementById('restart-container').innerHTML = "<button onclick='SetupCanvas()' class='restart-button'>Restart</button>";
         document.getElementById('game-over').style.visibility = "visible";
         DisplayHighscores(true);
         clearInterval(gameloop);
@@ -475,8 +465,6 @@ function DrawNextTetromino() {
         let coorY = nextTetrominoCoordinateArray[y][x].y;
         //draw the square
         ctx.drawImage(nextTetrominoColor, coorX, coorY)
-        //ctx.fillStyle = nextTetrominoColor;
-        //ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
     }
 }
 
@@ -564,14 +552,12 @@ function RowClearBonus(rows) {
 }
 
 function RedrawRows() {
-    // go through all cells in GBArray. Fill in occupied ones w/ color
+    // go through all cells in GBArray. Fill in occupied ones w/ image
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
             let coorY = coordinateArray[row][col].y;
             if (stoppedShapeArray[row][col] !== 0) {
-                // ctx.fillStyle = stoppedShapeArray[row][col];
-                // ctx.fillRect(coorX, coorY, blockDimension, blockDimension);
                 let tetColor = stoppedShapeArray[row][col];
                 ctx.drawImage(tetColor, coorX, coorY);
             }
@@ -603,8 +589,8 @@ async function DisplayHighscores(checkNewScore) {
         + "</ol>";
     document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
     if (checkNewScore) {
-        // if (score >= 0) { //testing
-        if (scores.length < 5 || score > scores[4].score ) { //if highscore achieved...
+        // if (score >= 0) { //for testing
+        if (scores.length < 5 || score > scores[4].score) { //if highscore achieved...
             document.getElementById('highscore-prompt').style.visibility = "visible";
         }
     }
@@ -619,11 +605,11 @@ async function GetHighscores() {
 
 async function SubmitScore(event) {
     event.preventDefault(); //prevent page refresh
-    document.getElementById('score-form-submit').disabled= true;
+    document.getElementById('score-form-submit').disabled = true;
     console.log('send sent')
     fetch("https://tetris-javascript.onrender.com/add-score", {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             name: document.getElementById("name-submit").value,
             score: score,
