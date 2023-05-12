@@ -9,7 +9,7 @@ let uri = process.env.MONGO_URI;
 //MIDDLEWARE
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors()) //add url here later???
+app.use(cors({origin: "https://tylersernett.github.io/"})) //add url here later???
 
 async function connect() {
     try {
