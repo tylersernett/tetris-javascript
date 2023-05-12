@@ -41,24 +41,26 @@
                 x: rotate CW
             </div>
             <div id="restart-container">
-                <button onclick='SetupCanvas()' class='option-button '>Restart</button>
+                <button onclick='setupCanvas()' class='option-button '>Restart</button>
             </div>
 
             <div id="highscore-container">
                 <!-- <form action='http://localhost:8080/highscores' method="GET"> -->
-                <button class='option-button' type='submit' onclick='ToggleHighscores()' class='option-button'><div class="title-hide">High</div>scores</button>
+                <button class='option-button' type='submit' onclick='toggleHighscores()' class='option-button'>
+                    <div class="title-hide">High</div>scores
+                </button>
                 <!-- </form> -->
             </div>
 
         </div>
         <div class="container">
             <canvas id='my-canvas'></canvas>
-            
+
         </div>
         <div class="mobile-controls">
             <div class="rot-controls">
-                <button class='rot-button' id="rot-ccw" onclick="RotateTetromino(-1)">⟲</button>
-                <button class='rot-button' id="rot-cw" onclick="RotateTetromino(1)">⟳</button>
+                <button class='rot-button' id="rot-ccw" onclick="rotateTetromino(-1)">⟲</button>
+                <button class='rot-button' id="rot-cw" onclick="rotateTetromino(1)">⟳</button>
             </div>
             <div class="dir-controls">
                 <button class='dir-button' id="move-left" onpointerdown="hspeed=-1" onpointerup="hspeed=0"
@@ -80,7 +82,7 @@
 
             <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: hidden">
                 <h3>New High Score</h3>
-                <form id = 'score-form' onsubmit='SubmitScore(event)'>
+                <form id='score-form' onsubmit='submitScore(event)'>
                     <input type="text" name="name" id='name-submit' placeholder="name">
                     <br />
                     <button id='score-form-submit' type='submit' class="option-button">Submit</button>
@@ -88,6 +90,7 @@
             </div>
         </div>
 
+        <!-- These render off screen -->
         <div class="block-renders">
             <img id='block-t' src="block-t.png">
             <img id='block-i' src="block-i.png">
