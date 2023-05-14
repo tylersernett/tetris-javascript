@@ -173,7 +173,7 @@ function updateMovement() {
     }
     if (vspeed != 0) {
         if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
-            if (downPressAllowed) { //assist behavior where down is accidentally not released (if you press, then slide without releasing over it)
+            if (downPressAllowed) { //disable downpress from carrying over when last piece is placed and new piece spawns
                 moveTetrominoDown();
                 lastFrameWithVerticalMovement = frameCount;
             }
@@ -192,10 +192,8 @@ function handleKeyPress(key) {
     if (!gameOver) { //!!! this check is a bit redundant, can clean up later
         if (key.keyCode === 37) { // left arrow
             hspeed = -1;
-            // MoveTetrominoHoriztonal(-1);
         } else if (key.keyCode === 39) { // right arrow
             hspeed = 1;
-            // MoveTetrominoHoriztonal(1);
         } else if (key.keyCode === 40) { // down arrow
             HandleDownPress();
         } else if (key.keyCode === 88) { //x
@@ -239,7 +237,6 @@ function rotateTetromino(val) {
             deleteTetromino();
             rotation += val;
             rotation = mod(rotation, curTetromino.length); //keep inside Array bounds
-            //DrawTetromino();
             drawCurTetrominoAndCheckGameOver();
         }
     }
@@ -313,7 +310,7 @@ function wallCollision(x) {
     return (x > gBArrayWidth - 1 || x < 0);
 }
 function pieceCollision(x, y) {
-    //stoppedShapeArray will hold color string if occupied
+    //stoppedShapeArray will hold 0 if unoccupied
     return (stoppedShapeArray[y][x] !== 0)
 }
 
@@ -331,17 +328,14 @@ function rotationCollision(val) {
         let y = square[1] + startY;
         if (wallCollision(x)) {
             collision = true;
-            console.log('rot col wall')
             break;
         }
         if (floorCollision(y)) {
             collision = true;
-            console.log('rot col floor')
             break;
         }
         if (pieceCollision(x, y)) {
             collision = true;
-            console.log('rot col piece')
             break;
         }
     }
@@ -374,7 +368,6 @@ function verticalCollision(val) {
         //FloorCollision(x, y+1) for immediate stop...leave off +1 for some "sliding"
         if (floorCollision(y) || pieceCollision(x, y)) { //always check FloorCollision first, or you may hit array bounds error
             collision = true;
-            console.log('collision locked')
             break;
         }
     }
@@ -437,7 +430,6 @@ function drawCurTetrominoAndCheckGameOver() {
         //Check for Game Over -- when two pieces overlap eachother
         if (pieceCollision(x, y)) {
             gameOverCheck = true;
-            console.log('dead collision')
         }
     }
 
@@ -532,7 +524,6 @@ function checkForCompletedRows() {
         updateScores();
         redrawRows();
     }
-    console.log('check completion', stoppedShapeArray)
 }
 
 function updateScores() {
@@ -571,7 +562,6 @@ function redrawRows() {
 
 function toggleHighscores() {
     showHighscores = !showHighscores
-    console.log(showHighscores)
     if (showHighscores) {
         displayHighscores(false);
     } else {
@@ -582,7 +572,6 @@ function toggleHighscores() {
 async function displayHighscores(checkNewScore) {
     showHighscores = true;
     const scores = await getHighscores();
-    console.log(scores)
     document.getElementById('highscore-display').innerHTML =
         "<ol>" +
         scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
@@ -597,7 +586,6 @@ async function displayHighscores(checkNewScore) {
 }
 
 async function getHighscores() {
-    console.log('get sent')
     const response = await fetch("https://tetris-javascript.onrender.com/highscores"); //GET request to server
     const scores = await response.json();
     return scores;
@@ -606,7 +594,6 @@ async function getHighscores() {
 async function submitScore(event) {
     event.preventDefault(); //prevent page refresh
     document.getElementById('score-form-submit').disabled = true;
-    console.log('send sent')
     fetch("https://tetris-javascript.onrender.com/add-score", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -618,7 +605,6 @@ async function submitScore(event) {
         }),
     }).then((response) => response.json())
         .then((result) => {
-            console.log("Successful Submission:", result);
             document.getElementById('highscore-prompt').style.visibility = "hidden";
             displayHighscores(false); //refresh highscores
         })
