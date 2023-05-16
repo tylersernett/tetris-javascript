@@ -1,4 +1,3 @@
-let canvasEl;
 let ctx;
 let gBArrayHeight = 20, gBArrayWidth = 10;
 let startXDefault = 4, startX = startXDefault;
@@ -44,8 +43,8 @@ class Coordinates {
 //  INITIALIZATION    \\
 //---------------------\\
 
-//wait for page to load, then run SetupCanvas ... also send a Get to fire up the server
-document.addEventListener('DOMContentLoaded', () => { createTetrominos(); setupCanvas(); getHighscores(); });
+//wait for page to load, then run SetupCanvas ... also send getHighscores to fire up the server (cheap host takes some seconds to spin up)
+document.addEventListener('DOMContentLoaded', () => { assignElements(); createTetrominos(); setupCanvas(); getHighscores(); });
 
 //populate coordArrays
 function createCoordArrays() {
@@ -64,14 +63,8 @@ function createCoordArrays() {
 }
 
 let blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ;
-let highscoreOuterEl, highscoreDisplayEl, highscorePromptEl, scoreFormSubmitEl, gameOverEl, scoreEl, linesEl, levelEl, nameSubmitEl
-
-// function assignElements() {
-
-// }
-
-let fieldWidth, fieldHeight;
-function setupCanvas() {
+let canvasEl, highscoreOuterEl, highscoreDisplayEl, highscorePromptEl, scoreFormSubmitEl, gameOverEl, scoreEl, linesEl, levelEl, nameSubmitEl;
+function assignElements() {
     canvasEl = document.getElementById('my-canvas');
     gameOverEl = document.getElementById('game-over');
     highscoreOuterEl = document.getElementById('highscore-outer');
@@ -89,6 +82,10 @@ function setupCanvas() {
     blockL = document.getElementById('block-l');
     blockS = document.getElementById('block-s');
     blockZ = document.getElementById('block-z');
+}
+
+let fieldWidth, fieldHeight;
+function setupCanvas() {
     tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
     showHighscores = false;
