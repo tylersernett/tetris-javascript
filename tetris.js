@@ -1,42 +1,8 @@
-let gBArrayHeight = 20, gBArrayWidth = 10;
-//stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
-let coordinateArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-//stores currently controlled block & static blocks as filled (1) or empty (0)
-let gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-//stores 'placed' block colors as strings
-let stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-
-let nextTetrominoCoordinateArray = new Array(3).fill(0).map(() => new Array(4).fill(0));
-class Coordinates {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
 //-------------------\\
 //  INITIALIZATION    \\
 //---------------------\\
-
-//wait for page to load, then run SetupCanvas ... also send getHighscores to fire up the server (cheap host takes some seconds to spin up)
-document.addEventListener('DOMContentLoaded', () => { assignElements(); initializeCanvas(); createTetrominos(); setupCanvas(); getHighscores(); });
-
-//populate coordArrays
-let blockDimension = 21, blockMargin = 1;
-function createCoordArrays() {
-    let yTop = 1, xLeft = 3, blockSpacing = (1 + blockDimension + 1);
-    for (let row = 0; row < gBArrayHeight; row++) {
-        for (let col = 0; col < gBArrayWidth; col++) {
-            coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
-        }
-    }
-    let nextLeft = xLeft + 247 - 6, nextTop = yTop + 104;
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 4; col++) {
-            nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
-        }
-    }
-}
+//wait for page to load, then run initializers ... also send getHighscores to fire up the server (cheap host takes some seconds to spin up)
+document.addEventListener('DOMContentLoaded', () => { initializeCanvas(); initializeGame(); getHighscores(); });
 
 let canvasEl, highscoreOuterEl, highscoreDisplayEl, highscorePromptEl, scoreFormSubmitEl, gameOverEl, scoreEl, linesEl, levelEl, nameSubmitEl;
 let blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ;
@@ -63,8 +29,21 @@ function assignElements() {
     tetrominoImages = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 }
 
+///////ARRAYS\\\\\\\\
+let gBArrayHeight = 20, gBArrayWidth = 10;
+let coordinateArray; //stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
+let gameBoardArray; //stores currently controlled block & static blocks as filled (1) or empty (0)
+let stoppedShapeArray; //stores 'placed' blocks as strings
+function zeroOutArray(arr) {
+    return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
+}
+let nextTetrominoCoordinateArray = new Array(3).fill(0).map(() => new Array(4).fill(0));
+///////////\\\\\\\\\\\
+
 let ctx, fieldWidth, fieldHeight;
 function initializeCanvas() {
+    assignElements(); 
+
     ctx = canvasEl.getContext('2d');
     fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
     fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
@@ -72,9 +51,62 @@ function initializeCanvas() {
     canvasEl.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
     canvasEl.height = (5 + fieldHeight) * scale;
     ctx.scale(scale, scale); //zoom in
-        
+
+    createCoordArrays();
+    createTetrominos();
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
+}
+
+let blockDimension = 21, blockMargin = 1;
+function createCoordArrays() {
+    class Coordinates {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    coordinateArray = zeroOutArray(coordinateArray);
+
+    let yTop = 1, xLeft = 3, blockSpacing = (1 + blockDimension + 1);
+    for (let row = 0; row < gBArrayHeight; row++) {
+        for (let col = 0; col < gBArrayWidth; col++) {
+            coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
+        }
+    }
+    let nextLeft = xLeft + 247 - 6, nextTop = yTop + 104;
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 4; col++) {
+            nextTetrominoCoordinateArray[row][col] = new Coordinates(nextLeft + blockSpacing * col, nextTop + blockSpacing * row);
+        }
+    }
+}
+
+let tetrominos = [];
+function createTetrominos() {
+    /*  T block: [ [[0, 1], [1, 1], [2, 1], [1, 2]], [[rotation2]], [[rotation3]], [[rotation4]] ]
+
+                    0   1   2   3
+                0 |   |   |   |   |
+                1 |xxx|xxx|xxx|   |
+                2 |   |xxx|   |   |
+                3 |   |   |   |   |
+    */
+    // T 
+    tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
+    // I
+    tetrominos.push([[[0, 2], [1, 2], [2, 2], [3, 2]], [[2, 0], [2, 1], [2, 2], [2, 3]]]);
+    // J
+    tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [0, 2], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [0, 0]], [[1, 0], [2, 0], [1, 1], [1, 2]]]);
+    // Square
+    tetrominos.push([[[1, 1], [2, 1], [1, 2], [2, 2]]]);
+    // L
+    tetrominos.push([[[0, 1], [1, 1], [2, 1], [0, 2]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
+    // S
+    tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
+    // Z
+    tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
 }
 
 let startXDefault = 4, startX = startXDefault;
@@ -84,7 +116,7 @@ let gameOver = false, showHighscores = false;
 let gameloop, gravity, frames = 60;
 let bgColor = '#f8f8f8', textColor = 'black';
 let downPressAllowed, rotationIndex = 0;
-function setupCanvas() {
+function initializeGame() {
     showHighscores = false;
     scoreFormSubmitEl.disabled = false;
     score = 0, level = 1, lines = 0;
@@ -97,13 +129,11 @@ function setupCanvas() {
     gameOverEl.style.visibility = "hidden";
     highscoreOuterEl.style.visibility = "hidden";
     highscorePromptEl.style.visibility = "hidden";
-    gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-    stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
+    gameBoardArray = zeroOutArray(gameBoardArray);
+    stoppedShapeArray = zeroOutArray(stoppedShapeArray);
 
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
-    createCoordArrays();
     loadRandomTetrominoIntoNext();
     createTetrominoFromNext();
     downPressAllowed = true;
@@ -132,32 +162,6 @@ function updateGame() {
         drawNextTetromino();
         frameCount++;
     }
-}
-
-let tetrominos = [];
-function createTetrominos() {
-    /*  T block: [ [[0, 1], [1, 1], [2, 1], [1, 2]], [[rotation2]], [[rotation3]], [[rotation4]] ]
-
-                    0   1   2   3
-                0 |   |   |   |   |
-                1 |xxx|xxx|xxx|   |
-                2 |   |xxx|   |   |
-                3 |   |   |   |   |
-    */
-    // T 
-    tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
-    // I
-    tetrominos.push([[[0, 2], [1, 2], [2, 2], [3, 2]], [[2, 0], [2, 1], [2, 2], [2, 3]]]);
-    // J
-    tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [0, 2], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [0, 0]], [[1, 0], [2, 0], [1, 1], [1, 2]]]);
-    // Square
-    tetrominos.push([[[1, 1], [2, 1], [1, 2], [2, 2]]]);
-    // L
-    tetrominos.push([[[0, 1], [1, 1], [2, 1], [0, 2]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
-    // S
-    tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
-    // Z
-    tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
 }
 
 //-------------\\
