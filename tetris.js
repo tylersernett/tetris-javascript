@@ -560,57 +560,65 @@ function redrawRows() {
 //  HIGHSCORES  \\
 //---------------\\
 
+const highscoreOuter = document.getElementById('highscore-outer');
+const highscoreDisplay = document.getElementById('highscore-display');
+const highscorePrompt = document.getElementById('highscore-prompt');
+const scoreFormSubmit = document.getElementById('score-form-submit');
+
 function toggleHighscores() {
-    showHighscores = !showHighscores
+    showHighscores = !showHighscores;
     if (showHighscores) {
         displayHighscores(false);
     } else {
-        document.getElementById('highscore-outer').style.visibility = "hidden";
+        highscoreOuter.style.visibility = 'hidden';
     }
 }
 
 async function displayHighscores(checkNewScore) {
     showHighscores = true;
     const scores = await getHighscores();
-    document.getElementById('highscore-display').innerHTML =
-        "<ol>" +
-        scores.map(score => "<li>" + score.name + ": " + score.score + "</li>").join(' ') //use join-- otherwise you get unwanted commas after array is stringified
-        + "</ol>";
-    document.getElementById('highscore-outer').style.visibility = "visible"; //await here? to avoid springing...
-    if (checkNewScore) {
-        // if (score >= 0) { //for testing
-        if (scores.length < 5 || score > scores[4].score) { //if highscore achieved...
-            document.getElementById('highscore-prompt').style.visibility = "visible";
-        }
+    const scoreListItems = scores
+        .map((score) => `<li>${score.name}: ${score.score}</li>`)
+        .join('');
+    highscoreDisplay.innerHTML = `<ol>${scoreListItems}</ol>`;
+    highscoreOuter.style.visibility = 'visible';
+    if (checkNewScore && (scores.length < 5 || score > scores[4]?.score)) {
+        highscorePrompt.style.visibility = 'visible';
     }
 }
 
 async function getHighscores() {
-    const response = await fetch("https://tetris-javascript.onrender.com/highscores"); //GET request to server
-    const scores = await response.json();
-    return scores;
+    try {
+        const response = await fetch(
+            'https://tetris-javascript.onrender.com/highscores'
+        );
+        const scores = await response.json();
+        return scores;
+    } catch (error) {
+        console.error('Error getting scores:', error);
+        return [];
+    }
 }
 
 async function submitScore(event) {
-    event.preventDefault(); //prevent page refresh
-    document.getElementById('score-form-submit').disabled = true;
-    fetch("https://tetris-javascript.onrender.com/add-score", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            name: document.getElementById("name-submit").value,
-            score: score,
-            lines: lines,
-            level: level,
-        }),
-    }).then((response) => response.json())
-        .then((result) => {
-            document.getElementById('highscore-prompt').style.visibility = "hidden";
-            displayHighscores(false); //refresh highscores
-        })
-        .catch((error) => {
-            console.error("Error:", error);
+    event.preventDefault();
+    scoreFormSubmit.disabled = true;
+    try {
+        await fetch('https://tetris-javascript.onrender.com/add-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: document.getElementById('name-submit').value,
+                score,
+                lines,
+                level,
+            }),
         });
+        highscorePrompt.style.visibility = 'hidden';
+        displayHighscores(false);
+    } catch (error) {
+        console.error('Error submitting score:', error);
+    }
 }
 
 //TODO: profanity filter?
