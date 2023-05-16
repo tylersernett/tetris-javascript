@@ -1,4 +1,4 @@
-let canvas;
+let canvasEl;
 let ctx;
 let gBArrayHeight = 20, gBArrayWidth = 10;
 let startXDefault = 4, startX = startXDefault;
@@ -45,7 +45,7 @@ class Coordinates {
 //---------------------\\
 
 //wait for page to load, then run SetupCanvas ... also send a Get to fire up the server
-document.addEventListener('DOMContentLoaded', () => { getHighscores(); createTetrominos(); setupCanvas() });
+document.addEventListener('DOMContentLoaded', () => { createTetrominos(); setupCanvas(); getHighscores(); });
 
 //populate coordArrays
 function createCoordArrays() {
@@ -63,9 +63,25 @@ function createCoordArrays() {
     }
 }
 
-let fieldWidth, fieldHeight;
 let blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ;
+let highscoreOuterEl, highscoreDisplayEl, highscorePromptEl, scoreFormSubmitEl, gameOverEl, scoreEl, linesEl, levelEl, nameSubmitEl
+
+// function assignElements() {
+
+// }
+
+let fieldWidth, fieldHeight;
 function setupCanvas() {
+    canvasEl = document.getElementById('my-canvas');
+    gameOverEl = document.getElementById('game-over');
+    highscoreOuterEl = document.getElementById('highscore-outer');
+    highscoreDisplayEl = document.getElementById('highscore-display');
+    highscorePromptEl = document.getElementById('highscore-prompt');
+    scoreFormSubmitEl = document.getElementById('score-form-submit');
+    nameSubmitEl = document.getElementById('name-submit')
+    scoreEl = document.getElementById('score');
+    linesEl = document.getElementById('lines');
+    levelEl = document.getElementById('level');
     blockT = document.getElementById('block-t');
     blockI = document.getElementById('block-i');
     blockJ = document.getElementById('block-j');
@@ -76,7 +92,7 @@ function setupCanvas() {
     tetrominoColors = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 
     showHighscores = false;
-    document.getElementById('score-form-submit').disabled = false;
+    scoreFormSubmitEl.disabled = false;
     score = 0, level = 1, lines = 0;
     gameOver = false;
     updateScores();
@@ -84,23 +100,22 @@ function setupCanvas() {
     setGravity();
     startX = startXDefault;
     startY = startYDefault;
-    document.getElementById('game-over').style.visibility = "hidden";
-    document.getElementById('highscore-outer').style.visibility = "hidden";
-    document.getElementById('highscore-prompt').style.visibility = "hidden";
+    gameOverEl.style.visibility = "hidden";
+    highscoreOuterEl.style.visibility = "hidden";
+    highscorePromptEl.style.visibility = "hidden";
     gameBoardArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
     stoppedShapeArray = new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-    canvas = document.getElementById('my-canvas');
-    ctx = canvas.getContext('2d');
+    ctx = canvasEl.getContext('2d');
     fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2))
     fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2))
     let scale = 1;
-    canvas.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
-    canvas.height = (5 + fieldHeight) * scale;
+    canvasEl.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
+    canvasEl.height = (5 + fieldHeight) * scale;
 
     ctx.scale(scale, scale); //zoom in
 
     ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
 
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
@@ -120,7 +135,7 @@ let lastFrameWithRotationMovement = -rotationMovementLimit
 function updateGame() {
     if (!gameOver) {
         //clear old canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, fieldWidth, fieldHeight)
         //draw field border
@@ -435,7 +450,7 @@ function drawCurTetrominoAndCheckGameOver() {
 
     if (gameOverCheck) {
         gameOver = true;
-        document.getElementById('game-over').style.visibility = "visible";
+        gameOverEl.style.visibility = "visible";
         displayHighscores(true);
         clearInterval(gameloop);
     }
@@ -527,9 +542,9 @@ function checkForCompletedRows() {
 }
 
 function updateScores() {
-    document.getElementById('score').innerHTML = score;
-    document.getElementById('lines').innerHTML = lines;
-    document.getElementById('level').innerHTML = level;
+    scoreEl.innerHTML = score;
+    linesEl = lines;
+    levelEl = level;
 }
 
 function rowClearBonus(rows) {
@@ -560,17 +575,12 @@ function redrawRows() {
 //  HIGHSCORES  \\
 //---------------\\
 
-const highscoreOuter = document.getElementById('highscore-outer');
-const highscoreDisplay = document.getElementById('highscore-display');
-const highscorePrompt = document.getElementById('highscore-prompt');
-const scoreFormSubmit = document.getElementById('score-form-submit');
-
 function toggleHighscores() {
     showHighscores = !showHighscores;
     if (showHighscores) {
         displayHighscores(false);
     } else {
-        highscoreOuter.style.visibility = 'hidden';
+        highscoreOuterEl.style.visibility = 'hidden';
     }
 }
 
@@ -580,10 +590,10 @@ async function displayHighscores(checkNewScore) {
     const scoreListItems = scores
         .map((score) => `<li>${score.name}: ${score.score}</li>`)
         .join('');
-    highscoreDisplay.innerHTML = `<ol>${scoreListItems}</ol>`;
-    highscoreOuter.style.visibility = 'visible';
+    highscoreDisplayEl.innerHTML = `<ol>${scoreListItems}</ol>`;
+    highscoreOuterEl.style.visibility = 'visible';
     if (checkNewScore && (scores.length < 5 || score > scores[4]?.score)) {
-        highscorePrompt.style.visibility = 'visible';
+        highscorePromptEl.style.visibility = 'visible';
     }
 }
 
@@ -602,19 +612,19 @@ async function getHighscores() {
 
 async function submitScore(event) {
     event.preventDefault();
-    scoreFormSubmit.disabled = true;
+    scoreFormSubmitEl.disabled = true;
     try {
         await fetch('https://tetris-javascript.onrender.com/add-score', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                name: document.getElementById('name-submit').value,
+                name: nameSubmitEl.value,
                 score,
                 lines,
                 level,
             }),
         });
-        highscorePrompt.style.visibility = 'hidden';
+        highscorePromptEl.style.visibility = 'hidden';
         displayHighscores(false);
     } catch (error) {
         console.error('Error submitting score:', error);
