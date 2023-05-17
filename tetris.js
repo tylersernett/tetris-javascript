@@ -141,7 +141,7 @@ function initializeGame() {
     gameloop = setInterval(updateGame, 1000 / frames);
 }
 
-let hspeed = 0, vspeed = 0, rspeed = 0; frameCount = 0;
+let hspeed = 0, vspeed = 0, rspeed = 0, frameCount = 0;
 let horizontalMovementLimit = 6, verticalMovementLimit = 2, rotationMovementLimit = 6;
 let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
@@ -199,7 +199,7 @@ function handleKeyPress(key) {
         } else if (key.keyCode === 39) { // right arrow
             hspeed = 1;
         } else if (key.keyCode === 40) { // down arrow
-            HandleDownPress();
+            handleDownPress();
         } else if (key.keyCode === 88) { //x
             rspeed = 1;
             rotateTetromino(1);
@@ -216,17 +216,17 @@ function keyUpHandler(key) {
     if (key.keyCode === 37 || key.keyCode === 39) { //left or right arrow
         hspeed = 0;
     } else if (key.keyCode === 40) { //down arrow
-        HandleDownRelease();
+        handleDownRelease();
     } else if ((key.keyCode === 88) || key.keyCode === 90) { //x or z
         rspeed = 0;
     }
 }
 
-function HandleDownPress() {
+function handleDownPress() {
     vspeed = 1;
 }
 
-function HandleDownRelease() {
+function handleDownRelease() {
     vspeed = 0;
     downPressAllowed = true;
 }
