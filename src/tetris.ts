@@ -18,14 +18,14 @@ let canvasEl: HTMLCanvasElement,
     linesEl: HTMLElement,
     levelEl: HTMLElement,
     nameSubmitEl: HTMLInputElement;
-let blockT: HTMLElement,
-    blockI: HTMLElement,
-    blockJ: HTMLElement,
-    blockSQ: HTMLElement,
-    blockL: HTMLElement,
-    blockS: HTMLElement,
-    blockZ: HTMLElement;
-let tetrominoImages: HTMLElement[];
+let blockT: HTMLImageElement,
+    blockI: HTMLImageElement,
+    blockJ: HTMLImageElement,
+    blockSQ: HTMLImageElement,
+    blockL: HTMLImageElement,
+    blockS: HTMLImageElement,
+    blockZ: HTMLImageElement;
+let tetrominoImages: HTMLImageElement[];
 
 function assignElements() {
     canvasEl = document.querySelector<HTMLCanvasElement>('#my-canvas');
@@ -39,34 +39,26 @@ function assignElements() {
     linesEl = document.getElementById('lines')!;
     levelEl = document.getElementById('level')!;
 
-    blockT = document.getElementById('block-t')!;
-    blockI = document.getElementById('block-i')!;
-    blockJ = document.getElementById('block-j')!;
-    blockSQ = document.getElementById('block-sq')!;
-    blockL = document.getElementById('block-l')!;
-    blockS = document.getElementById('block-s')!;
-    blockZ = document.getElementById('block-z')!;
+    blockT = document.querySelector<HTMLImageElement>('#block-t')!;
+    blockI = document.querySelector<HTMLImageElement>('#block-i')!;
+    blockJ = document.querySelector<HTMLImageElement>('#block-j')!;
+    blockSQ = document.querySelector<HTMLImageElement>('#block-sq')!;
+    blockL = document.querySelector<HTMLImageElement>('#block-l')!;
+    blockS = document.querySelector<HTMLImageElement>('#block-s')!;
+    blockZ = document.querySelector<HTMLImageElement>('#block-z')!;
     tetrominoImages = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 }
 
 
 ///////ARRAYS\\\\\\\\
-// let gBArrayHeight = 20, gBArrayWidth = 10;
-// let coordinateArray; //stores pixel coords w/ format [[{x:111, y:222}], [{x:, y:}], [{x:, y:}]...]...
-// let gameBoardArray; //stores currently controlled block & static blocks as filled (1) or empty (0)
-// let stoppedShapeArray; //stores 'placed' blocks as strings
-// function zeroOutArray(arr) {
-//     return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-// }
-// let nextTetrominoCoordinateArray = new Array(3).fill(0).map(() => new Array(4).fill(0));
 class Coordinates {
     constructor(public x: number, public y: number) { }
 }
 let gBArrayHeight = 20;
 let gBArrayWidth = 10;
-let coordinateArray: (Coordinates)[][];//{ x: number; y: number }[][];
-let gameBoardArray: number[][];
-let stoppedShapeArray: ( number | CanvasImageSource)[][];//any;//string[];
+let coordinateArray: (Coordinates)[][];//stores pixel coords 
+let gameBoardArray: number[][]; //stores currently controlled block & static blocks as filled (1) or empty (0)
+let stoppedShapeArray: ( number | CanvasImageSource)[][];//stores 'placed' blocks
 
 function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][] {
     return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -75,11 +67,6 @@ function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][
 const nextTetrominoCoordinateArray: Coordinates[][] = Array.from({ length: 3 }, () =>
   Array.from({ length: 4 }, () => new Coordinates(0, 0))
 );
-
-// let nextTetrominoCoordinateArray: any;
-// number[][] = new Array(3)
-//   .fill(0)
-//   .map(() => new Array(4).fill(0));
 ///////////\\\\\\\\\\\
 
 let ctx: CanvasRenderingContext2D;
@@ -142,6 +129,14 @@ class Tetromino {
 let tetrominos: Tetromino[] = [];
 
 function createTetrominos(): void {
+    /*  T block: [ [[0, 1], [1, 1], [2, 1], [1, 2]], [[rotation2]], [[rotation3]], [[rotation4]] ]
+
+                    0   1   2   3
+                0 |   |   |   |   |
+                1 |xxx|xxx|xxx|   |
+                2 |   |xxx|   |   |
+                3 |   |   |   |   |
+    */
     // T block
     tetrominos.push(
         new Tetromino([
@@ -203,31 +198,6 @@ function createTetrominos(): void {
         ])
     );
 }
-// let tetrominos = [];
-// function createTetrominos() {
-//     /*  T block: [ [[0, 1], [1, 1], [2, 1], [1, 2]], [[rotation2]], [[rotation3]], [[rotation4]] ]
-
-//                     0   1   2   3
-//                 0 |   |   |   |   |
-//                 1 |xxx|xxx|xxx|   |
-//                 2 |   |xxx|   |   |
-//                 3 |   |   |   |   |
-//     */
-//     // T 
-//     tetrominos.push([[[0, 1], [1, 1], [2, 1], [1, 2]], [[1, 0], [0, 1], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [1, 0]], [[1, 0], [2, 1], [1, 1], [1, 2]]]);
-//     // I
-//     tetrominos.push([[[0, 2], [1, 2], [2, 2], [3, 2]], [[2, 0], [2, 1], [2, 2], [2, 3]]]);
-//     // J
-//     tetrominos.push([[[0, 1], [1, 1], [2, 1], [2, 2]], [[1, 0], [0, 2], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [0, 0]], [[1, 0], [2, 0], [1, 1], [1, 2]]]);
-//     // Square
-//     tetrominos.push([[[1, 1], [2, 1], [1, 2], [2, 2]]]);
-//     // L
-//     tetrominos.push([[[0, 1], [1, 1], [2, 1], [0, 2]], [[1, 0], [0, 0], [1, 1], [1, 2]], [[0, 1], [1, 1], [2, 1], [2, 0]], [[1, 0], [2, 2], [1, 1], [1, 2]]]);
-//     // S
-//     tetrominos.push([[[1, 1], [2, 1], [0, 2], [1, 2]], [[1, 1], [2, 1], [1, 0], [2, 2]]]);
-//     // Z
-//     tetrominos.push([[[0, 1], [1, 1], [1, 2], [2, 2]], [[2, 0], [1, 1], [1, 2], [2, 1]]]);
-// }
 
 let startXDefault = 4, startX = startXDefault;
 let startYDefault = 0, startY = startYDefault;
@@ -306,13 +276,6 @@ function updateMovement(): void {
             }
         }
     }
-    //the following allows one to 'hold' rotations. disabled because it feels too 'helicoptery'
-    // if (rspeed != 0) {
-    //     if (frameCount - lastFrameWithRotationMovement >= rotationMovementLimit) {
-    //     RotateTetromino(rspeed);
-    //     lastFrameWithRotationMovement = frameCount;
-    //     }
-    // }
 }
 
 function handleKeyPress(key: KeyboardEvent): void {
@@ -529,7 +492,6 @@ function verticalCollision(val: number): boolean {
     return false;
 }
 
-
 //create a tetromino copy and see if it fits horizontally
 function horizontalCollision(val: number): boolean {
     if (val === 0) { return false; }
@@ -621,7 +583,7 @@ function deleteTetromino(): void {
 }
 
 let curTetromino: Tetromino;//number[][][] = [];
-let curTetrominoImage: any;
+let curTetrominoImage: CanvasImageSource;
 
 function createTetrominoFromNext(): void {
     downPressAllowed = false; //kill downward momentum when new piece spawns
@@ -635,7 +597,7 @@ function createTetrominoFromNext(): void {
 }
 
 let nextTetromino: Tetromino;
-let nextTetrominoImage: any = undefined;
+let nextTetrominoImage: CanvasImageSource;
 function loadRandomTetrominoIntoNext(): void {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length);
     nextTetromino = tetrominos[randomTetromino];
@@ -703,18 +665,6 @@ function redrawRows(): void {
         for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
             let coorY = coordinateArray[row][col].y;
-            // if (stoppedShapeArray[row][col] !== 0) {
-            //     let tetColor = stoppedShapeArray[row][col];
-            //     ctx.drawImage(tetColor, coorX, coorY);
-            // }
-            // if (typeof stoppedShapeArray[row][col] !==  'number') {
-            //     let tetColor = stoppedShapeArray[row][col];
-            //     ctx.drawImage(tetColor, coorX, coorY);
-            // }
-            // let tetColor: CanvasImageSource | undefined = stoppedShapeArray[row][col] !== 0 ? stoppedShapeArray[row][col] : undefined;
-            // if (tetColor) {
-            //     ctx.drawImage(tetColor, coorX, coorY);
-            // }
             let tetColor = stoppedShapeArray[row][col] !== 0 ? stoppedShapeArray[row][col] as CanvasImageSource : undefined;
             if (tetColor) {
                 ctx.drawImage(tetColor, coorX, coorY);
@@ -722,7 +672,6 @@ function redrawRows(): void {
         }
     }
 }
-
 
 //-------------\\
 //  HIGHSCORES  \\
@@ -782,7 +731,6 @@ async function submitScore(event: Event) {
         console.error('Error submitting score:', error);
     }
 }
-
 
 //TODO: profanity filter?
 //TODO: right align highscores
