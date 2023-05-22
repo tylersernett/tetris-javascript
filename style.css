@@ -5,6 +5,10 @@ body {
     font-family: 'Silkscreen', monospace;
 }
 
+:root {
+    --fullWidth: 412px;
+}
+
 body {
     background: #fff;
 }
@@ -21,7 +25,7 @@ body {
 }
 
 .full-container {
-    width: 530px;
+    width: var(--fullWidth);
     margin: auto;
 }
 
@@ -43,8 +47,10 @@ h3 {
     position: absolute;
     width: 145px;
     height: 462px; /* Full height (cover the whole page) */
-    left: 110px;
-    right: 0;
+    /* left: calc(var(--gamewidth) - 188px); */
+    /* left: calc((var(--boardwidth) + 245px)); */
+    left: 0;
+    right: calc(var(--fullWidth) - 642px);
     margin-left: auto;
     margin-right: auto;
 }
@@ -55,7 +61,8 @@ h3 {
     height: 462px; /* Full height (cover the whole page) */
     top: 40px;
     left: 0;
-    right: 283px;
+    right: calc(var(--fullWidth) - 246px);
+    /* right: 283px; */
     bottom: 0;
     margin-left: auto;
     margin-right: auto;
@@ -245,11 +252,10 @@ button:active {
 
     .right-col {
         width: 115px;
-        left: 248px;
+        right: -250px;
     }
 
     .overlay {
-        left: 0;
         right: 115px;
         bottom: 0;
     }
