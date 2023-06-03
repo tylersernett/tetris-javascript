@@ -122,7 +122,7 @@ class Tetromino {
     }
 
     getSecondArrayLength(): number {
-        return this.rotations.length > 0 ? this.rotations[0].length : 0;
+        return this.rotations[0]?.length || 0;
     }
 }
 
@@ -292,9 +292,10 @@ function handleKeyPress(key: KeyboardEvent): void {
         } else if (key.keyCode === 90) { //z
             rspeed = -1;
             rotateTetromino(-1);
-        } else if (key.keyCode === 38) { // up arrow
-            debugPosition();
-        }
+        } 
+        // else if (key.keyCode === 38) { // up arrow
+        //     debugPosition();
+        // }
     }
 }
 
@@ -349,6 +350,15 @@ function moveTetrominoHorizontal(val: number): void {
         drawCurTetrominoAndCheckGameOver();
     }
 }
+
+// function debugPosition() {
+//     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
+//         let square = curTetromino.rotations[rotationIndex][i];
+//         let x = square[0] + startX;
+//         let y = square[1] + startY;
+//         console.log('x: ', x, 'y:', y);
+//     }
+// }
 
 function setGravity(): void {
     let newFrames: number;
@@ -441,16 +451,6 @@ function rotationCollision(val: number): boolean {
         }
     }
     return collision;
-}
-
-
-function debugPosition() {
-    for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-        let square = curTetromino.rotations[rotationIndex][i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        console.log('x: ', x, 'y:', y);
-    }
 }
 
 // create a tetromino copy and see if it fits vertically
