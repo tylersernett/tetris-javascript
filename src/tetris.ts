@@ -1,3 +1,9 @@
+import {
+    pieceCollision,
+    rotationCollision,
+    verticalCollision,
+    horizontalCollision
+} from './collisions';
 //-------------------\\
 //  INITIALIZATION    \\
 //---------------------\\
@@ -54,11 +60,11 @@ function assignElements() {
 class Coordinates {
     constructor(public x: number, public y: number) { }
 }
-let gBArrayHeight = 20;
-let gBArrayWidth = 10;
+export let gBArrayHeight = 20;
+export let gBArrayWidth = 10;
 let coordinateArray: (Coordinates)[][];//stores pixel coords 
 let gameBoardArray: number[][]; //stores currently controlled block & static blocks as filled (1) or empty (0)
-let stoppedShapeArray: ( number | CanvasImageSource)[][];//stores 'placed' blocks
+export let stoppedShapeArray: ( number | CanvasImageSource)[][];//stores 'placed' blocks
 
 function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][] {
     return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
@@ -199,13 +205,14 @@ function createTetrominos(): void {
     );
 }
 
-let startXDefault = 4, startX = startXDefault;
-let startYDefault = 0, startY = startYDefault;
+export let startXDefault = 4, startX = startXDefault;
+export let startYDefault = 0, startY = startYDefault;
 let score = 0, level = 1, lines = 0;
 let gameOver = false, showHighscores = false;
 let gameloop: NodeJS.Timeout, gravity: ReturnType<typeof setInterval> | undefined, framerate: number;
 let bgColor = '#f8f8f8', textColor = 'black';
-let downPressAllowed: boolean, rotationIndex = 0;
+let downPressAllowed: boolean;
+export let rotationIndex = 0;
 
 function initializeGame() {
     showHighscores = false;
@@ -279,7 +286,7 @@ function updateMovement(): void {
 }
 
 function handleKeyPress(key: KeyboardEvent): void {
-    if (!gameOver) { //!!! this check is a bit redundant, can clean up later
+    if (!gameOver) { // this check is a bit redundant, can clean up later
         if (key.keyCode === 37) { // left arrow
             hspeed = -1;
         } else if (key.keyCode === 39) { // right arrow
@@ -318,7 +325,7 @@ function handleDownRelease(): void {
     downPressAllowed = true;
 }
 
-function mod(n: number, m: number): number {
+export function mod(n: number, m: number): number {
     return ((n % m) + m) % m;
 }
 
@@ -396,7 +403,7 @@ function setGravity(): void {
     }
 
     //only update the interval when there's a new speed
-    if (framerate !== newFrames) { //!!!Refactor: "frames"
+    if (framerate !== newFrames) { //Refactor: "frames"
         framerate = newFrames;
         let gravitySpeed = (newFrames / 60) * 1000;
         clearInterval(gravity);
@@ -409,119 +416,12 @@ function setGravity(): void {
 }
 
 
-//-------------\\
-//  COLLISIONS  \\
-//---------------\\
-function floorCollision(y: number): boolean {
-    return y >= gBArrayHeight;
-}
 
-function wallCollision(x: number): boolean {
-    return x > gBArrayWidth - 1 || x < 0;
-}
-
-function pieceCollision(x: number, y: number): boolean {
-    // stoppedShapeArray will hold 0 if unoccupied
-    return stoppedShapeArray[y][x] !== 0;
-}
-
-// creates a rotated copy and checks if it fits
-function rotationCollision(val: number): boolean {
-    // mod function: keep index within bounds of array
-    let newRotation = rotationIndex + val;
-    let tetrominoCopy = curTetromino.rotations[mod(newRotation, curTetromino.length)];
-    let collision = false;
-
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        if (wallCollision(x)) {
-            collision = true;
-            break;
-        }
-        if (floorCollision(y)) {
-            collision = true;
-            break;
-        }
-        if (pieceCollision(x, y)) {
-            collision = true;
-            break;
-        }
-    }
-    return collision;
-}
-
-// create a tetromino copy and see if it fits vertically
-function verticalCollision(val: number): boolean {
-    let tetrominoCopy = curTetromino.rotations[rotationIndex];
-    let collision = false;
-
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-
-        // moving down: increment y to check for a collison
-        y += val;
-
-        // FloorCollision(x, y+1) for immediate stop...leave off +1 for some "sliding"
-        if (floorCollision(y) || pieceCollision(x, y)) {
-            // always check FloorCollision first, or you may hit array bounds error
-            collision = true;
-            break;
-        }
-    }
-
-    if (collision) {
-        // move this loop up?
-        for (let i = 0; i < tetrominoCopy.length; i++) {
-            let square = tetrominoCopy[i];
-            let x = square[0] + startX;
-            let y = square[1] + startY;
-            stoppedShapeArray[y][x] = curTetrominoImage;
-        }
-        checkForCompletedRows();
-        createTetrominoFromNext();
-        drawCurTetrominoAndCheckGameOver();
-        return true;
-    }
-
-    return false;
-}
-
-//create a tetromino copy and see if it fits horizontally
-function horizontalCollision(val: number): boolean {
-    if (val === 0) { return false; }
-    let tetrominoCopy = curTetromino.rotations[rotationIndex];
-    let collision = false;
-
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        x += val;
-
-        if (wallCollision(x)) {
-            collision = true;
-            break;
-        }
-        if (pieceCollision(x, y)) {
-            collision = true;
-            break;
-        }
-    }
-
-    return collision;
-}
 
 //-------------\\
 //  GAME LOGIC  \\
 //---------------\\
-function drawCurTetrominoAndCheckGameOver(): void {
+export function drawCurTetrominoAndCheckGameOver(): void {
     let gameOverCheck = false;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
         let x = curTetromino.rotations[rotationIndex][i][0] + startX;
@@ -582,10 +482,10 @@ function deleteTetromino(): void {
     }
 }
 
-let curTetromino: Tetromino;//number[][][] = [];
-let curTetrominoImage: CanvasImageSource;
+export let curTetromino: Tetromino;//number[][][] = [];
+export let curTetrominoImage: CanvasImageSource;
 
-function createTetrominoFromNext(): void {
+export function createTetrominoFromNext(): void {
     downPressAllowed = false; //kill downward momentum when new piece spawns
     startX = startXDefault;
     startY = startYDefault;
@@ -605,7 +505,7 @@ function loadRandomTetrominoIntoNext(): void {
     nextTetrominoImage = tetrominoImages[randomTetromino];
 }
 
-function checkForCompletedRows(): void {
+export function checkForCompletedRows(): void {
     let rowsToDelete = 0;
     for (let y = 0; y < gBArrayHeight; y++) {
         let completed = false;
