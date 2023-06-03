@@ -1,3 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.checkForCompletedRows = exports.createTetrominoFromNext = exports.curTetrominoImage = exports.curTetromino = exports.drawCurTetrominoAndCheckGameOver = exports.mod = exports.rotationIndex = exports.startY = exports.startYDefault = exports.startX = exports.startXDefault = exports.stoppedShapeArray = exports.gBArrayWidth = exports.gBArrayHeight = void 0;
+const collisions_1 = require("./collisions");
 //-------------------\\
 //  INITIALIZATION    \\
 //---------------------\\
@@ -37,13 +41,12 @@ class Coordinates {
         this.y = y;
     }
 }
-let gBArrayHeight = 20;
-let gBArrayWidth = 10;
+exports.gBArrayHeight = 20;
+exports.gBArrayWidth = 10;
 let coordinateArray; //stores pixel coords 
 let gameBoardArray; //stores currently controlled block & static blocks as filled (1) or empty (0)
-let stoppedShapeArray; //stores 'placed' blocks
 function zeroOutArray(arr) {
-    return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
+    return new Array(exports.gBArrayHeight).fill(0).map(() => new Array(exports.gBArrayWidth).fill(0));
 }
 const nextTetrominoCoordinateArray = Array.from({ length: 3 }, () => Array.from({ length: 4 }, () => new Coordinates(0, 0)));
 ///////////\\\\\\\\\\\
@@ -53,8 +56,8 @@ let fieldHeight;
 function initializeCanvas() {
     assignElements();
     ctx = canvasEl.getContext('2d');
-    fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2));
-    fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2));
+    fieldWidth = blockMargin * 4 + (exports.gBArrayWidth * (blockDimension + blockMargin * 2));
+    fieldHeight = blockMargin * 2 + (exports.gBArrayHeight * (blockDimension + blockMargin * 2));
     let scale = 1;
     canvasEl.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
     canvasEl.height = (5 + fieldHeight) * scale;
@@ -67,10 +70,10 @@ function initializeCanvas() {
 let blockDimension = 21, blockMargin = 1;
 function createCoordArrays() {
     //coordinateArray = zeroOutArray(coordinateArray);
-    coordinateArray = Array.from({ length: gBArrayHeight }, () => Array.from({ length: gBArrayWidth }, () => new Coordinates(0, 0)));
+    coordinateArray = Array.from({ length: exports.gBArrayHeight }, () => Array.from({ length: exports.gBArrayWidth }, () => new Coordinates(0, 0)));
     let yTop = 1, xLeft = 3, blockSpacing = 1 + blockDimension + 1;
-    for (let row = 0; row < gBArrayHeight; row++) {
-        for (let col = 0; col < gBArrayWidth; col++) {
+    for (let row = 0; row < exports.gBArrayHeight; row++) {
+        for (let col = 0; col < exports.gBArrayWidth; col++) {
             coordinateArray[row][col] = new Coordinates(xLeft + blockSpacing * col, yTop + blockSpacing * row);
         }
     }
@@ -89,7 +92,7 @@ class Tetromino {
         return this.rotations?.length || 0;
     }
     getSecondArrayLength() {
-        return this.rotations.length > 0 ? this.rotations[0].length : 0;
+        return this.rotations[0]?.length || 0;
     }
 }
 let tetrominos = [];
@@ -143,13 +146,14 @@ function createTetrominos() {
         [[2, 0], [1, 1], [1, 2], [2, 1]],
     ]));
 }
-let startXDefault = 4, startX = startXDefault;
-let startYDefault = 0, startY = startYDefault;
+exports.startXDefault = 4, exports.startX = exports.startXDefault;
+exports.startYDefault = 0, exports.startY = exports.startYDefault;
 let score = 0, level = 1, lines = 0;
 let gameOver = false, showHighscores = false;
 let gameloop, gravity, framerate;
 let bgColor = '#f8f8f8', textColor = 'black';
-let downPressAllowed, rotationIndex = 0;
+let downPressAllowed;
+exports.rotationIndex = 0;
 function initializeGame() {
     showHighscores = false;
     scoreFormSubmitEl.disabled = false;
@@ -160,13 +164,13 @@ function initializeGame() {
     updateScores();
     framerate = 60;
     setGravity();
-    startX = startXDefault;
-    startY = startYDefault;
+    exports.startX = exports.startXDefault;
+    exports.startY = exports.startYDefault;
     gameOverEl.style.visibility = "hidden";
     highscoreOuterEl.style.visibility = "hidden";
     highscorePromptEl.style.visibility = "hidden";
     gameBoardArray = zeroOutArray(gameBoardArray);
-    stoppedShapeArray = zeroOutArray(stoppedShapeArray);
+    exports.stoppedShapeArray = zeroOutArray(exports.stoppedShapeArray);
     ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
     loadRandomTetrominoIntoNext();
     createTetrominoFromNext();
@@ -216,7 +220,7 @@ function updateMovement() {
     }
 }
 function handleKeyPress(key) {
-    if (!gameOver) { //!!! this check is a bit redundant, can clean up later
+    if (!gameOver) { // this check is a bit redundant, can clean up later
         if (key.keyCode === 37) { // left arrow
             hspeed = -1;
         }
@@ -234,9 +238,9 @@ function handleKeyPress(key) {
             rspeed = -1;
             rotateTetromino(-1);
         }
-        else if (key.keyCode === 38) { // up arrow
-            debugPosition();
-        }
+        // else if (key.keyCode === 38) { // up arrow
+        //     debugPosition();
+        // }
     }
 }
 function keyUpHandler(key) {
@@ -260,32 +264,41 @@ function handleDownRelease() {
 function mod(n, m) {
     return ((n % m) + m) % m;
 }
+exports.mod = mod;
 function rotateTetromino(val) {
     if (!gameOver) {
-        if (!rotationCollision(val)) {
+        if (!(0, collisions_1.rotationCollision)(val)) {
             deleteTetromino();
-            rotationIndex += val;
-            rotationIndex = mod(rotationIndex, curTetromino.length); //keep inside Array bounds
+            exports.rotationIndex += val;
+            exports.rotationIndex = mod(exports.rotationIndex, exports.curTetromino.length); //keep inside Array bounds
             drawCurTetrominoAndCheckGameOver();
         }
     }
 }
 function moveTetrominoDown() {
     if (!gameOver) {
-        if (!verticalCollision(1)) {
+        if (!(0, collisions_1.verticalCollision)(1)) {
             deleteTetromino();
-            startY++;
+            exports.startY++;
             drawCurTetrominoAndCheckGameOver();
         }
     }
 }
 function moveTetrominoHorizontal(val) {
-    if (!horizontalCollision(val)) {
+    if (!(0, collisions_1.horizontalCollision)(val)) {
         deleteTetromino();
-        startX += val;
+        exports.startX += val;
         drawCurTetrominoAndCheckGameOver();
     }
 }
+// function debugPosition() {
+//     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
+//         let square = curTetromino.rotations[rotationIndex][i];
+//         let x = square[0] + startX;
+//         let y = square[1] + startY;
+//         console.log('x: ', x, 'y:', y);
+//     }
+// }
 function setGravity() {
     let newFrames;
     switch (level) {
@@ -351,7 +364,7 @@ function setGravity() {
             break;
     }
     //only update the interval when there's a new speed
-    if (framerate !== newFrames) { //!!!Refactor: "frames"
+    if (framerate !== newFrames) { //Refactor: "frames"
         framerate = newFrames;
         let gravitySpeed = (newFrames / 60) * 1000;
         clearInterval(gravity);
@@ -363,125 +376,21 @@ function setGravity() {
     }
 }
 //-------------\\
-//  COLLISIONS  \\
-//---------------\\
-function floorCollision(y) {
-    return y >= gBArrayHeight;
-}
-function wallCollision(x) {
-    return x > gBArrayWidth - 1 || x < 0;
-}
-function pieceCollision(x, y) {
-    // stoppedShapeArray will hold 0 if unoccupied
-    return stoppedShapeArray[y][x] !== 0;
-}
-// creates a rotated copy and checks if it fits
-function rotationCollision(val) {
-    // mod function: keep index within bounds of array
-    let newRotation = rotationIndex + val;
-    let tetrominoCopy = curTetromino.rotations[mod(newRotation, curTetromino.length)];
-    let collision = false;
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        if (wallCollision(x)) {
-            collision = true;
-            break;
-        }
-        if (floorCollision(y)) {
-            collision = true;
-            break;
-        }
-        if (pieceCollision(x, y)) {
-            collision = true;
-            break;
-        }
-    }
-    return collision;
-}
-function debugPosition() {
-    for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-        let square = curTetromino.rotations[rotationIndex][i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        console.log('x: ', x, 'y:', y);
-    }
-}
-// create a tetromino copy and see if it fits vertically
-function verticalCollision(val) {
-    let tetrominoCopy = curTetromino.rotations[rotationIndex];
-    let collision = false;
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        // moving down: increment y to check for a collison
-        y += val;
-        // FloorCollision(x, y+1) for immediate stop...leave off +1 for some "sliding"
-        if (floorCollision(y) || pieceCollision(x, y)) {
-            // always check FloorCollision first, or you may hit array bounds error
-            collision = true;
-            break;
-        }
-    }
-    if (collision) {
-        // move this loop up?
-        for (let i = 0; i < tetrominoCopy.length; i++) {
-            let square = tetrominoCopy[i];
-            let x = square[0] + startX;
-            let y = square[1] + startY;
-            stoppedShapeArray[y][x] = curTetrominoImage;
-        }
-        checkForCompletedRows();
-        createTetrominoFromNext();
-        drawCurTetrominoAndCheckGameOver();
-        return true;
-    }
-    return false;
-}
-//create a tetromino copy and see if it fits horizontally
-function horizontalCollision(val) {
-    if (val === 0) {
-        return false;
-    }
-    let tetrominoCopy = curTetromino.rotations[rotationIndex];
-    let collision = false;
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
-        x += val;
-        if (wallCollision(x)) {
-            collision = true;
-            break;
-        }
-        if (pieceCollision(x, y)) {
-            collision = true;
-            break;
-        }
-    }
-    return collision;
-}
-//-------------\\
 //  GAME LOGIC  \\
 //---------------\\
 function drawCurTetrominoAndCheckGameOver() {
     let gameOverCheck = false;
-    for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-        let x = curTetromino.rotations[rotationIndex][i][0] + startX;
-        let y = curTetromino.rotations[rotationIndex][i][1] + startY;
+    for (let i = 0; i < exports.curTetromino.rotations[exports.rotationIndex].length; i++) {
+        let x = exports.curTetromino.rotations[exports.rotationIndex][i][0] + exports.startX;
+        let y = exports.curTetromino.rotations[exports.rotationIndex][i][1] + exports.startY;
         gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
         //transcribe xy info to coordinateArray pixels
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
         //draw the square
-        ctx.drawImage(curTetrominoImage, coorX, coorY);
+        ctx.drawImage(exports.curTetrominoImage, coorX, coorY);
         //Check for Game Over -- when two pieces overlap eachother
-        if (pieceCollision(x, y)) {
+        if ((0, collisions_1.pieceCollision)(x, y)) {
             gameOverCheck = true;
         }
     }
@@ -492,6 +401,7 @@ function drawCurTetrominoAndCheckGameOver() {
         clearInterval(gameloop);
     }
 }
+exports.drawCurTetrominoAndCheckGameOver = drawCurTetrominoAndCheckGameOver;
 function drawNextTetromino() {
     //draw white rectangle over old piece
     let bgX = nextTetrominoCoordinateArray[0][0].x;
@@ -511,10 +421,10 @@ function drawNextTetromino() {
 function deleteTetromino() {
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
     let marg = 0.5;
-    for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
+    for (let i = 0; i < exports.curTetromino.rotations[exports.rotationIndex].length; i++) {
         //clear gameBoardArray:
-        let x = curTetromino.rotations[rotationIndex][i][0] + startX;
-        let y = curTetromino.rotations[rotationIndex][i][1] + startY;
+        let x = exports.curTetromino.rotations[exports.rotationIndex][i][0] + exports.startX;
+        let y = exports.curTetromino.rotations[exports.rotationIndex][i][1] + exports.startY;
         gameBoardArray[y][x] = 0;
         //undraw:
         let coorX = coordinateArray[y][x].x;
@@ -523,18 +433,17 @@ function deleteTetromino() {
         ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
     }
 }
-let curTetromino; //number[][][] = [];
-let curTetrominoImage;
 function createTetrominoFromNext() {
     downPressAllowed = false; //kill downward momentum when new piece spawns
-    startX = startXDefault;
-    startY = startYDefault;
-    rotationIndex = 0;
-    curTetromino = nextTetromino;
-    curTetrominoImage = nextTetrominoImage;
+    exports.startX = exports.startXDefault;
+    exports.startY = exports.startYDefault;
+    exports.rotationIndex = 0;
+    exports.curTetromino = nextTetromino;
+    exports.curTetrominoImage = nextTetrominoImage;
     loadRandomTetrominoIntoNext();
     drawNextTetromino();
 }
+exports.createTetrominoFromNext = createTetrominoFromNext;
 let nextTetromino;
 let nextTetrominoImage;
 function loadRandomTetrominoIntoNext() {
@@ -545,22 +454,22 @@ function loadRandomTetrominoIntoNext() {
 }
 function checkForCompletedRows() {
     let rowsToDelete = 0;
-    for (let y = 0; y < gBArrayHeight; y++) {
+    for (let y = 0; y < exports.gBArrayHeight; y++) {
         let completed = false;
-        if (stoppedShapeArray[y].every((index) => index !== 0)) {
+        if (exports.stoppedShapeArray[y].every((index) => index !== 0)) {
             completed = true;
         }
         if (completed) {
             rowsToDelete++;
             //could add a check here for the greatest y value, then only redraw above that
-            for (let i = 0; i < gBArrayWidth; i++) {
+            for (let i = 0; i < exports.gBArrayWidth; i++) {
                 // Update the arrays by zeroing out previously filled squares
-                stoppedShapeArray[y][i] = 0;
+                exports.stoppedShapeArray[y][i] = 0;
                 gameBoardArray[y][i] = 0;
             }
             //grab the row, clear it out, and add it to the TOP of the array
-            let removedRowColors = stoppedShapeArray.splice(y, 1);
-            stoppedShapeArray.unshift(...removedRowColors);
+            let removedRowColors = exports.stoppedShapeArray.splice(y, 1);
+            exports.stoppedShapeArray.unshift(...removedRowColors);
             let removedRowGBA = gameBoardArray.splice(y, 1);
             gameBoardArray.unshift(...removedRowGBA);
         }
@@ -574,6 +483,7 @@ function checkForCompletedRows() {
         redrawRows();
     }
 }
+exports.checkForCompletedRows = checkForCompletedRows;
 function updateScores() {
     scoreEl.innerHTML = score.toString();
     linesEl.innerHTML = lines.toString();
@@ -595,11 +505,11 @@ function rowClearBonus(rows) {
 }
 function redrawRows() {
     // go through all cells in GBArray. Fill in occupied ones w/ image
-    for (let row = 0; row < gBArrayHeight; row++) {
-        for (let col = 0; col < gBArrayWidth; col++) {
+    for (let row = 0; row < exports.gBArrayHeight; row++) {
+        for (let col = 0; col < exports.gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
             let coorY = coordinateArray[row][col].y;
-            let tetColor = stoppedShapeArray[row][col] !== 0 ? stoppedShapeArray[row][col] : undefined;
+            let tetColor = exports.stoppedShapeArray[row][col] !== 0 ? exports.stoppedShapeArray[row][col] : undefined;
             if (tetColor) {
                 ctx.drawImage(tetColor, coorX, coorY);
             }
