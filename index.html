@@ -42,7 +42,7 @@
                 z: rotate CCW<br />
                 x: rotate CW
             </div>
-            
+
             <div id="restart-container">
                 <button id="restart-button" class='option-button '>Restart</button>
             </div>
@@ -83,8 +83,8 @@
 
             <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: hidden">
                 <h3>New High Score</h3>
-                <form id='score-form' onsubmit='submitScore(event)'>
-                    <input type="text" name="name" id='name-submit' placeholder="name">
+                <form id='score-form'>
+                    <input type="text" name="name" id='name-submit' placeholder="name" maxlength="10"/>
                     <br />
                     <button id='score-form-submit' type='submit' class="option-button">Submit</button>
                 </form>

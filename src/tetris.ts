@@ -8,9 +8,8 @@ export function mod(n: number, m: number): number {
 //-------------------\\
 //  INITIALIZATION    \\
 //---------------------\\
-//wait for page to load, then run initializers ... also send getHighscores to fire up the server (cheap host takes some seconds to spin up)
+//wait for page to load, then run initializers ... also getHighscores to fire up the server (cheap host takes some seconds to spin up)
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("init3")
     initializeCanvas();
     initializeGame();
     getHighscores();
@@ -20,8 +19,9 @@ let canvasEl: HTMLCanvasElement,
     highscoreOuterEl: HTMLElement,
     highscoreDisplayEl: HTMLElement,
     highscorePromptEl: HTMLElement,
-    highscoreButton: HTMLButtonElement,
-    restartButton: HTMLButtonElement,
+    highscoreButtonEl: HTMLButtonElement,
+    restartButtonEl: HTMLButtonElement,
+    scoreFormEl: HTMLFormElement,
     scoreFormSubmitEl: HTMLButtonElement,
     gameOverEl: HTMLElement,
     scoreEl: HTMLElement,
@@ -38,18 +38,16 @@ let blockT: HTMLImageElement,
 let tetrominoImages: HTMLImageElement[];
 
 function assignElements() {
-    canvasEl = document.querySelector<HTMLCanvasElement>('#my-canvas');
+    canvasEl = document.querySelector<HTMLCanvasElement>('#my-canvas')!;
     gameOverEl = document.getElementById('game-over')!;
     highscoreOuterEl = document.getElementById('highscore-outer')!;
     highscoreDisplayEl = document.getElementById('highscore-display')!;
     highscorePromptEl = document.getElementById('highscore-prompt')!;
-    highscoreButton = document.querySelector<HTMLButtonElement>('#highscore-button');
-    restartButton = document.querySelector<HTMLButtonElement>('#restart-button');
-    console.log("rb", restartButton);
-    // restartButton = document.getElementById('restart-button')!;
-    // restartButton.style.background='black';
-    scoreFormSubmitEl = document.querySelector<HTMLButtonElement>('#score-form-submit');
-    nameSubmitEl = document.querySelector<HTMLInputElement>('#name-submit');
+    highscoreButtonEl = document.querySelector<HTMLButtonElement>('#highscore-button')!;
+    restartButtonEl = document.querySelector<HTMLButtonElement>('#restart-button')!;
+    scoreFormEl = document.querySelector<HTMLFormElement>('#score-form')!;
+    scoreFormSubmitEl = document.querySelector<HTMLButtonElement>('#score-form-submit')!;
+    nameSubmitEl = document.querySelector<HTMLInputElement>('#name-submit')!;
     scoreEl = document.getElementById('score')!;
     linesEl = document.getElementById('lines')!;
     levelEl = document.getElementById('level')!;
@@ -65,7 +63,7 @@ function assignElements() {
 }
 
 
-///////ARRAYS\\\\\\\\
+///////  ARRAYS  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 class Coordinates {
     constructor(public x: number, public y: number) { }
 }
@@ -82,7 +80,7 @@ function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][
 const nextTetrominoCoordinateArray: Coordinates[][] = Array.from({ length: 3 }, () =>
     Array.from({ length: 4 }, () => new Coordinates(0, 0))
 );
-///////////\\\\\\\\\\\
+////////  |||||||  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 let ctx: CanvasRenderingContext2D;
 let fieldWidth: number;
@@ -103,8 +101,12 @@ function initializeCanvas(): void {
     createTetrominos();
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
-    highscoreButton.onclick = toggleHighscores;
-    restartButton.onclick = initializeGame; 
+    scoreFormEl.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+        submitScore(event);
+    });
+    highscoreButtonEl.onclick = toggleHighscores;
+    restartButtonEl.onclick = initializeGame;
 }
 
 let blockDimension = 21, blockMargin = 1;
@@ -320,9 +322,6 @@ function setGravity(): void {
         }, gravitySpeed);
     }
 }
-
-
-
 
 //-------------\\
 //  GAME LOGIC  \\
