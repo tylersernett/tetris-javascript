@@ -1,9 +1,9 @@
-import {frameCount, downPressAllowed, gameOver, drawCurTetrominoAndCheckGameOver, deleteTetromino, changeStartX, incrementStartY, changeRotationIndex, setDownPressAllowed} from './tetris'
+import { frameCount, downPressAllowed, gameOver, drawCurTetrominoAndCheckGameOver, deleteTetromino, changeStartX, incrementStartY, changeRotationIndex, setDownPressAllowed } from './tetris'
 import { rotationCollision, horizontalCollision, verticalCollision } from './collisions';
 //-------------\\
 //  MOVEMENT    \\
 //---------------\\
-export let tetSpeeds = {hspeed: 0, vspeed: 0, rspeed: 0}
+export let tetSpeeds = { hspeed: 0, vspeed: 0, rspeed: 0 }
 let horizontalMovementLimit = 6, verticalMovementLimit = 2, rotationMovementLimit = 6;
 let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
@@ -26,33 +26,33 @@ export function updateMovement(): void {
     }
 }
 
-export function handleKeyPress(key: KeyboardEvent): void {
+export function handleKeyPress(keyEvent: KeyboardEvent): void {
     if (!gameOver) { // this check is a bit redundant, can clean up later
-        if (key.keyCode === 37) { // left arrow
+        if (keyEvent.key === 'ArrowLeft') {
             tetSpeeds.hspeed = -1;
-        } else if (key.keyCode === 39) { // right arrow
+        } else if (keyEvent.key === 'ArrowRight') {
             tetSpeeds.hspeed = 1;
-        } else if (key.keyCode === 40) { // down arrow
+        } else if (keyEvent.key === 'ArrowDown') {
             handleDownPress();
-        } else if (key.keyCode === 88) { //x
+        } else if (keyEvent.key === 'x') {
             tetSpeeds.rspeed = 1;
             rotateTetromino(1);
-        } else if (key.keyCode === 90) { //z
+        } else if (keyEvent.key === 'z') {
             tetSpeeds.rspeed = -1;
             rotateTetromino(-1);
         }
-        // else if (key.keyCode === 38) { // up arrow
+        // else if (keyEvent.key === 'ArrowUp') {
         //     debugPosition();
         // }
     }
 }
 
-export function keyUpHandler(key: KeyboardEvent): void {
-    if (key.keyCode === 37 || key.keyCode === 39) { //left or right arrow
+export function keyUpHandler(keyEvent: KeyboardEvent): void {
+    if (keyEvent.key === 'ArrowLeft' || keyEvent.key === 'ArrowRight') {
         tetSpeeds.hspeed = 0;
-    } else if (key.keyCode === 40) { //down arrow
+    } else if (keyEvent.key === 'ArrowDown') {
         handleDownRelease();
-    } else if (key.keyCode === 88 || key.keyCode === 90) { //x or z
+    } else if (keyEvent.key === 'x' || keyEvent.key === 'z') {
         tetSpeeds.rspeed = 0;
     }
 }
