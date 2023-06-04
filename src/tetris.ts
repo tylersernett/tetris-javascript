@@ -133,10 +133,14 @@ function createCoordArrays(): void {
     }
 }
 
+//TODO: refactor tetromino class...
+//tetromino.rotation[rotationIndex][block#][0:x, 1:y]
+//name "i, j, l, etc"
+//img
 class Tetromino {
     constructor(public rotations: number[][][]) { }
 
-    get length(): number {
+    get rotLength(): number {
         return this.rotations?.length || 0;
     }
 
@@ -327,6 +331,7 @@ function setGravity(): void {
 //  GAME LOGIC  \\
 //---------------\\
 //maybe cleaner if these were properties of an object instead of standalone vars mod'd by a function
+//TODO: move draw functions to own file? need access to ctx, gameover, gameboardarray
 export function changeStartX(val: number): void {
     startX += val;
 }
@@ -337,7 +342,7 @@ export function incrementStartY(): void {
 
 export function changeRotationIndex(val: number): void {
     rotationIndex += val;
-    rotationIndex = mod(rotationIndex, curTetromino.length); //keep inside Array bounds
+    rotationIndex = mod(rotationIndex, curTetromino.rotLength); //keep inside Array bounds
 }
 
 export function setDownPressAllowed(bool: boolean): void {
@@ -407,7 +412,7 @@ export function deleteTetromino(): void {
 
 export let curTetromino: Tetromino;//number[][][] = [];
 export let curTetrominoImage: CanvasImageSource;
-
+//TODO:curTetrominoProps {startX: , startY: , rotationIndex: , image: ,}
 export function createTetrominoFromNext(): void {
     downPressAllowed = false; //kill downward momentum when new piece spawns
     startX = startXDefault;
@@ -488,9 +493,9 @@ function redrawRows(): void {
         for (let col = 0; col < gBArrayWidth; col++) {
             let coorX = coordinateArray[row][col].x;
             let coorY = coordinateArray[row][col].y;
-            let tetColor = stoppedShapeArray[row][col] !== 0 ? stoppedShapeArray[row][col] as CanvasImageSource : undefined;
-            if (tetColor) {
-                ctx.drawImage(tetColor, coorX, coorY);
+            let tetImgSource = stoppedShapeArray[row][col] !== 0 ? stoppedShapeArray[row][col] as CanvasImageSource : undefined;
+            if (tetImgSource) {
+                ctx.drawImage(tetImgSource, coorX, coorY);
             }
         }
     }

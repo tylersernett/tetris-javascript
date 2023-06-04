@@ -24,7 +24,7 @@ export function pieceCollision(x: number, y: number): boolean {
 export function rotationCollision(val: number): boolean {
     // mod: keep index within bounds of array
     let newRotation = rotationIndex + val;
-    let tetrominoCopy = curTetromino.rotations[mod(newRotation, curTetromino.length)];
+    let tetrominoCopy = curTetromino.rotations[mod(newRotation, curTetromino.rotLength)];
     let collision = false;
 
     // Cycle through all Tetromino square blocks
