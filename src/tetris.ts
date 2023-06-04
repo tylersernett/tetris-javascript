@@ -27,8 +27,8 @@ let canvasEl: HTMLCanvasElement,
     scoreEl: HTMLElement,
     linesEl: HTMLElement,
     levelEl: HTMLElement,
-    nameSubmitEl: HTMLInputElement,
-    mobileButtonRotCCWEl: HTMLButtonElement,
+    nameSubmitEl: HTMLInputElement;
+let mobileButtonRotCCWEl: HTMLButtonElement,
     mobileButtonRotCWEl: HTMLButtonElement,
     mobileButtonLeft: HTMLButtonElement,
     mobileButtonDown: HTMLButtonElement,
@@ -76,7 +76,7 @@ function defineButtons() {
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
     scoreFormEl.addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the form from submitting normally
+        event.preventDefault(); // Prevent page refresh
         submitScore(event);
     });
     highscoreButtonEl.onclick = toggleHighscores;
@@ -252,7 +252,8 @@ export let startYDefault = 0, startY = startYDefault;
 let score = 0, level = 1, lines = 0;
 export let gameOver = false
 let showHighscores = false;
-let gameloop: NodeJS.Timeout, gravity: ReturnType<typeof setInterval> | undefined, framerate: number;
+let gameloop: NodeJS.Timeout, gravity: ReturnType<typeof setInterval> | undefined, gravityFrames: number;
+let frameRate = 60;
 let bgColor = '#f8f8f8', textColor = 'black';
 export let downPressAllowed: boolean;
 export let rotationIndex = 0;
@@ -265,7 +266,7 @@ function initializeGame() {
     lines = 0;
     gameOver = false;
     updateScores();
-    framerate = 60;
+    gravityFrames = 60;
     setGravity();
     startX = startXDefault;
     startY = startYDefault;
@@ -281,7 +282,7 @@ function initializeGame() {
     createTetrominoFromNext();
     downPressAllowed = true;
     clearInterval(gameloop);
-    gameloop = setInterval(updateGame, 1000 / framerate);
+    gameloop = setInterval(updateGame, 1000 / frameRate);
 }
 
 export let frameCount = 0;
@@ -305,27 +306,27 @@ function updateGame() {
 }
 
 function setGravity(): void {
-    let newFrames: number;
+    let newGravityFrames: number;
     switch (level) {
-        case 1: newFrames = 48; break;
-        case 2: newFrames = 43; break;
-        case 3: newFrames = 38; break;
-        case 4: newFrames = 33; break;
-        case 5: newFrames = 28; break;
-        case 6: newFrames = 23; break;
-        case 7: newFrames = 18; break;
-        case 8: newFrames = 13; break;
-        case 9: newFrames = 8; break;
-        case 10: newFrames = 6; break;
+        case 1: newGravityFrames = 48; break;
+        case 2: newGravityFrames = 43; break;
+        case 3: newGravityFrames = 38; break;
+        case 4: newGravityFrames = 33; break;
+        case 5: newGravityFrames = 28; break;
+        case 6: newGravityFrames = 23; break;
+        case 7: newGravityFrames = 18; break;
+        case 8: newGravityFrames = 13; break;
+        case 9: newGravityFrames = 8; break;
+        case 10: newGravityFrames = 6; break;
         case 11:
         case 12:
-        case 13: newFrames = 5; break;
+        case 13: newGravityFrames = 5; break;
         case 14:
         case 15:
-        case 16: newFrames = 4; break;
+        case 16: newGravityFrames = 4; break;
         case 17:
         case 18:
-        case 19: newFrames = 3; break;
+        case 19: newGravityFrames = 3; break;
         case 20:
         case 21:
         case 22:
@@ -335,14 +336,14 @@ function setGravity(): void {
         case 26:
         case 27:
         case 28:
-        case 29: newFrames = 2; break;
-        default: newFrames = 1; break;
+        case 29: newGravityFrames = 2; break;
+        default: newGravityFrames = 2; break;
     }
 
     //only update the interval when there's a new speed
-    if (framerate !== newFrames) { //Refactor: "frames"
-        framerate = newFrames;
-        let gravitySpeed = (newFrames / 60) * 1000;
+    if (gravityFrames !== newGravityFrames) { 
+        gravityFrames = newGravityFrames;
+        let gravitySpeed = (newGravityFrames / frameRate) * 1000;
         clearInterval(gravity);
         gravity = setInterval(() => {
             if (!gameOver) {
