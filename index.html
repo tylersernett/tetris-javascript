@@ -17,9 +17,8 @@
 
 <body>
     <div class="full-container">
-
-
         <div class="right-col">
+
             <h1>
                 <!-- use non-breaking hyphen below -->
                 TS&#8209;<div class="title-break"></div>etris
@@ -43,23 +42,22 @@
                 z: rotate CCW<br />
                 x: rotate CW
             </div>
+            
             <div id="restart-container">
-                <button onclick='initializeGame()' class='option-button '>Restart</button>
+                <button id="restart-button" class='option-button '>Restart</button>
             </div>
-
             <div id="highscore-container">
-                <!-- <form action='http://localhost:8080/highscores' method="GET"> -->
-                <button class='option-button' type='submit' onclick='toggleHighscores()' class='option-button'>
-                    <div class="title-hide">High</div>scores
+                <button id='highscore-button' class='option-button' type='submit'>
+                    <div class="title-hide">High</div>scores<!-- don't show 'high' on small screens -->
                 </button>
-                <!-- </form> -->
             </div>
 
         </div>
+
         <div class="container">
             <canvas id='my-canvas'></canvas>
-
         </div>
+
         <div class="mobile-controls">
             <div class="rot-controls">
                 <button class='rot-button' id="rot-ccw" onclick="rotateTetromino(-1)">⟲</button>
