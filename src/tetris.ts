@@ -1,14 +1,16 @@
-import {
-    pieceCollision,
-    rotationCollision,
-    verticalCollision,
-    horizontalCollision
-} from './collisions';
+import { pieceCollision, } from './collisions';
+
+import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown } from './movement'
+
+export function mod(n: number, m: number): number {
+    return ((n % m) + m) % m;
+}
 //-------------------\\
 //  INITIALIZATION    \\
 //---------------------\\
 //wait for page to load, then run initializers ... also send getHighscores to fire up the server (cheap host takes some seconds to spin up)
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("init3")
     initializeCanvas();
     initializeGame();
     getHighscores();
@@ -18,6 +20,8 @@ let canvasEl: HTMLCanvasElement,
     highscoreOuterEl: HTMLElement,
     highscoreDisplayEl: HTMLElement,
     highscorePromptEl: HTMLElement,
+    highscoreButton: HTMLButtonElement,
+    restartButton: HTMLButtonElement,
     scoreFormSubmitEl: HTMLButtonElement,
     gameOverEl: HTMLElement,
     scoreEl: HTMLElement,
@@ -39,6 +43,11 @@ function assignElements() {
     highscoreOuterEl = document.getElementById('highscore-outer')!;
     highscoreDisplayEl = document.getElementById('highscore-display')!;
     highscorePromptEl = document.getElementById('highscore-prompt')!;
+    highscoreButton = document.querySelector<HTMLButtonElement>('#highscore-button');
+    restartButton = document.querySelector<HTMLButtonElement>('#restart-button');
+    console.log("rb", restartButton);
+    // restartButton = document.getElementById('restart-button')!;
+    // restartButton.style.background='black';
     scoreFormSubmitEl = document.querySelector<HTMLButtonElement>('#score-form-submit');
     nameSubmitEl = document.querySelector<HTMLInputElement>('#name-submit');
     scoreEl = document.getElementById('score')!;
@@ -64,14 +73,14 @@ export let gBArrayHeight = 20;
 export let gBArrayWidth = 10;
 let coordinateArray: (Coordinates)[][];//stores pixel coords 
 let gameBoardArray: number[][]; //stores currently controlled block & static blocks as filled (1) or empty (0)
-export let stoppedShapeArray: ( number | CanvasImageSource)[][];//stores 'placed' blocks
+export let stoppedShapeArray: (number | CanvasImageSource)[][];//stores 'placed' blocks
 
 function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][] {
     return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
 }
 
 const nextTetrominoCoordinateArray: Coordinates[][] = Array.from({ length: 3 }, () =>
-  Array.from({ length: 4 }, () => new Coordinates(0, 0))
+    Array.from({ length: 4 }, () => new Coordinates(0, 0))
 );
 ///////////\\\\\\\\\\\
 
@@ -94,6 +103,8 @@ function initializeCanvas(): void {
     createTetrominos();
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
+    highscoreButton.onclick = toggleHighscores;
+    restartButton.onclick = initializeGame; 
 }
 
 let blockDimension = 21, blockMargin = 1;
@@ -101,8 +112,8 @@ let blockDimension = 21, blockMargin = 1;
 function createCoordArrays(): void {
     //coordinateArray = zeroOutArray(coordinateArray);
     coordinateArray = Array.from({ length: gBArrayHeight }, () =>
-    Array.from({ length: gBArrayWidth }, () => new Coordinates(0, 0))
-);
+        Array.from({ length: gBArrayWidth }, () => new Coordinates(0, 0))
+    );
     let yTop = 1,
         xLeft = 3,
         blockSpacing = 1 + blockDimension + 1;
@@ -122,7 +133,7 @@ function createCoordArrays(): void {
 
 class Tetromino {
     constructor(public rotations: number[][][]) { }
-    
+
     get length(): number {
         return this.rotations?.length || 0;
     }
@@ -208,10 +219,11 @@ function createTetrominos(): void {
 export let startXDefault = 4, startX = startXDefault;
 export let startYDefault = 0, startY = startYDefault;
 let score = 0, level = 1, lines = 0;
-let gameOver = false, showHighscores = false;
+export let gameOver = false
+let showHighscores = false;
 let gameloop: NodeJS.Timeout, gravity: ReturnType<typeof setInterval> | undefined, framerate: number;
 let bgColor = '#f8f8f8', textColor = 'black';
-let downPressAllowed: boolean;
+export let downPressAllowed: boolean;
 export let rotationIndex = 0;
 
 function initializeGame() {
@@ -241,11 +253,8 @@ function initializeGame() {
     gameloop = setInterval(updateGame, 1000 / framerate);
 }
 
-let hspeed = 0, vspeed = 0, rspeed = 0, frameCount = 0;
-let horizontalMovementLimit = 6, verticalMovementLimit = 2, rotationMovementLimit = 6;
-let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
-let lastFrameWithVerticalMovement = -verticalMovementLimit;
-let lastFrameWithRotationMovement = -rotationMovementLimit;
+export let frameCount = 0;
+
 function updateGame() {
     if (!gameOver) {
         //clear old canvas
@@ -263,109 +272,6 @@ function updateGame() {
         frameCount++;
     }
 }
-
-//-------------\\
-//  MOVEMENT    \\
-//---------------\\
-function updateMovement(): void {
-    //control how fast button "holds" are registered
-    if (hspeed !== 0) {
-        if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
-            moveTetrominoHorizontal(hspeed);
-            lastFrameWithHorizontalMovement = frameCount;
-        }
-    }
-    if (vspeed !== 0) {
-        if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
-            if (downPressAllowed) { //disable downpress from carrying over when last piece is placed and new piece spawns
-                moveTetrominoDown();
-                lastFrameWithVerticalMovement = frameCount;
-            }
-        }
-    }
-}
-
-function handleKeyPress(key: KeyboardEvent): void {
-    if (!gameOver) { // this check is a bit redundant, can clean up later
-        if (key.keyCode === 37) { // left arrow
-            hspeed = -1;
-        } else if (key.keyCode === 39) { // right arrow
-            hspeed = 1;
-        } else if (key.keyCode === 40) { // down arrow
-            handleDownPress();
-        } else if (key.keyCode === 88) { //x
-            rspeed = 1;
-            rotateTetromino(1);
-        } else if (key.keyCode === 90) { //z
-            rspeed = -1;
-            rotateTetromino(-1);
-        } 
-        // else if (key.keyCode === 38) { // up arrow
-        //     debugPosition();
-        // }
-    }
-}
-
-function keyUpHandler(key: KeyboardEvent): void {
-    if (key.keyCode === 37 || key.keyCode === 39) { //left or right arrow
-        hspeed = 0;
-    } else if (key.keyCode === 40) { //down arrow
-        handleDownRelease();
-    } else if (key.keyCode === 88 || key.keyCode === 90) { //x or z
-        rspeed = 0;
-    }
-}
-
-function handleDownPress(): void {
-    vspeed = 1;
-}
-
-function handleDownRelease(): void {
-    vspeed = 0;
-    downPressAllowed = true;
-}
-
-export function mod(n: number, m: number): number {
-    return ((n % m) + m) % m;
-}
-
-function rotateTetromino(val: number): void {
-    if (!gameOver) {
-        if (!rotationCollision(val)) {
-            deleteTetromino();
-            rotationIndex += val;
-            rotationIndex = mod(rotationIndex, curTetromino.length); //keep inside Array bounds
-            drawCurTetrominoAndCheckGameOver();
-        }
-    }
-}
-
-function moveTetrominoDown(): void {
-    if (!gameOver) {
-        if (!verticalCollision(1)) {
-            deleteTetromino();
-            startY++;
-            drawCurTetrominoAndCheckGameOver();
-        }
-    }
-}
-
-function moveTetrominoHorizontal(val: number): void {
-    if (!horizontalCollision(val)) {
-        deleteTetromino();
-        startX += val;
-        drawCurTetrominoAndCheckGameOver();
-    }
-}
-
-// function debugPosition() {
-//     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-//         let square = curTetromino.rotations[rotationIndex][i];
-//         let x = square[0] + startX;
-//         let y = square[1] + startY;
-//         console.log('x: ', x, 'y:', y);
-//     }
-// }
 
 function setGravity(): void {
     let newFrames: number;
@@ -421,6 +327,24 @@ function setGravity(): void {
 //-------------\\
 //  GAME LOGIC  \\
 //---------------\\
+//maybe cleaner if these were properties of an object instead of standalone vars mod'd by a function
+export function changeStartX(val: number): void {
+    startX += val;
+}
+
+export function incrementStartY(): void {
+    startY++;
+}
+
+export function changeRotationIndex(val: number): void {
+    rotationIndex += val;
+    rotationIndex = mod(rotationIndex, curTetromino.length); //keep inside Array bounds
+}
+
+export function setDownPressAllowed(bool: boolean): void {
+    downPressAllowed = bool;
+}
+
 export function drawCurTetrominoAndCheckGameOver(): void {
     let gameOverCheck = false;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
@@ -465,7 +389,7 @@ function drawNextTetromino(): void {
     }
 }
 
-function deleteTetromino(): void {
+export function deleteTetromino(): void {
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
     let marg = 0.5;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
@@ -501,7 +425,7 @@ let nextTetrominoImage: CanvasImageSource;
 function loadRandomTetrominoIntoNext(): void {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length);
     nextTetromino = tetrominos[randomTetromino];
-    console.log(nextTetromino)
+    console.log("next", nextTetromino)
     nextTetrominoImage = tetrominoImages[randomTetromino];
 }
 
