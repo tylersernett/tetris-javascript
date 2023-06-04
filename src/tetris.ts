@@ -1,6 +1,6 @@
 import { pieceCollision, } from './collisions';
 
-import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown } from './movement'
+import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown, rotateTetromino, handleDownPress, handleDownRelease, tetSpeeds } from './movement'
 
 export function mod(n: number, m: number): number {
     return ((n % m) + m) % m;
@@ -27,7 +27,12 @@ let canvasEl: HTMLCanvasElement,
     scoreEl: HTMLElement,
     linesEl: HTMLElement,
     levelEl: HTMLElement,
-    nameSubmitEl: HTMLInputElement;
+    nameSubmitEl: HTMLInputElement,
+    mobileButtonRotCCWEl: HTMLButtonElement,
+    mobileButtonRotCWEl: HTMLButtonElement,
+    mobileButtonLeft: HTMLButtonElement,
+    mobileButtonDown: HTMLButtonElement,
+    mobileButtonRight: HTMLButtonElement;
 let blockT: HTMLImageElement,
     blockI: HTMLImageElement,
     blockJ: HTMLImageElement,
@@ -51,6 +56,11 @@ function assignElements() {
     scoreEl = document.getElementById('score')!;
     linesEl = document.getElementById('lines')!;
     levelEl = document.getElementById('level')!;
+    mobileButtonRotCCWEl = document.querySelector<HTMLButtonElement>('#rot-ccw')!;
+    mobileButtonRotCWEl = document.querySelector<HTMLButtonElement>('#rot-cw')!;
+    mobileButtonLeft = document.querySelector<HTMLButtonElement>('#move-left')!;
+    mobileButtonDown = document.querySelector<HTMLButtonElement>('#move-down')!;
+    mobileButtonRight = document.querySelector<HTMLButtonElement>('#move-right')!;
 
     blockT = document.querySelector<HTMLImageElement>('#block-t')!;
     blockI = document.querySelector<HTMLImageElement>('#block-i')!;
@@ -107,6 +117,17 @@ function initializeCanvas(): void {
     });
     highscoreButtonEl.onclick = toggleHighscores;
     restartButtonEl.onclick = initializeGame;
+    mobileButtonRotCCWEl.onclick = () => rotateTetromino(-1);
+    mobileButtonRotCWEl.onclick = () => rotateTetromino(1);
+    mobileButtonLeft.onpointerdown = () => tetSpeeds.hspeed = -1;
+    mobileButtonLeft.onpointerup = () => tetSpeeds.hspeed = 0;
+    mobileButtonLeft.onpointerleave = () => tetSpeeds.hspeed = 0;
+    mobileButtonDown.onpointerdown = handleDownPress;
+    mobileButtonDown.onpointerup = handleDownRelease;
+    mobileButtonDown.onpointerleave = handleDownRelease;
+    mobileButtonRight.onpointerdown = () => tetSpeeds.hspeed = 1;
+    mobileButtonRight.onpointerup = () => tetSpeeds.hspeed = 0;
+    mobileButtonRight.onpointerleave = () => tetSpeeds.hspeed = 0;
 }
 
 let blockDimension = 21, blockMargin = 1;
