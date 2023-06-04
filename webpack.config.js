@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: './src/tetris.ts',
+  watch: true,
   module: {
     rules: [
       {
