@@ -72,43 +72,7 @@ function assignElements() {
     tetrominoImages = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 }
 
-
-///////  ARRAYS  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-class Coordinates {
-    constructor(public x: number, public y: number) { }
-}
-export let gBArrayHeight = 20;
-export let gBArrayWidth = 10;
-let coordinateArray: (Coordinates)[][];//stores pixel coords 
-let gameBoardArray: number[][]; //stores currently controlled block & static blocks as filled (1) or empty (0)
-export let stoppedShapeArray: (number | CanvasImageSource)[][];//stores 'placed' blocks
-
-function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][] {
-    return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
-}
-
-const nextTetrominoCoordinateArray: Coordinates[][] = Array.from({ length: 3 }, () =>
-    Array.from({ length: 4 }, () => new Coordinates(0, 0))
-);
-////////  |||||||  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-let ctx: CanvasRenderingContext2D;
-let fieldWidth: number;
-let fieldHeight: number;
-
-function initializeCanvas(): void {
-    assignElements();
-
-    ctx = canvasEl.getContext('2d')!;
-    fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2));
-    fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2));
-    let scale = 1;
-    canvasEl.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
-    canvasEl.height = (5 + fieldHeight) * scale;
-    ctx.scale(scale, scale);
-
-    createCoordArrays();
-    createTetrominos();
+function defineButtons() {
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', keyUpHandler, false);
     scoreFormEl.addEventListener('submit', function (event) {
@@ -130,7 +94,47 @@ function initializeCanvas(): void {
     mobileButtonRight.onpointerleave = () => tetSpeeds.hspeed = 0;
 }
 
+let ctx: CanvasRenderingContext2D;
+let fieldWidth: number;
+let fieldHeight: number;
 let blockDimension = 21, blockMargin = 1;
+function defineCanvas() {
+    ctx = canvasEl.getContext('2d')!;
+    fieldWidth = blockMargin * 4 + (gBArrayWidth * (blockDimension + blockMargin * 2));
+    fieldHeight = blockMargin * 2 + (gBArrayHeight * (blockDimension + blockMargin * 2));
+    let scale = 1;
+    canvasEl.width = (fieldWidth + (blockDimension + blockMargin * 2) * 5) * scale;
+    canvasEl.height = (5 + fieldHeight) * scale;
+    ctx.scale(scale, scale);
+}
+
+
+///////  ARRAYS  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+class Coordinates {
+    constructor(public x: number, public y: number) { }
+}
+export let gBArrayHeight = 20;
+export let gBArrayWidth = 10;
+let coordinateArray: (Coordinates)[][];//stores pixel coords 
+let gameBoardArray: number[][]; //stores currently controlled block & static blocks as filled (1) or empty (0)
+export let stoppedShapeArray: (number | CanvasImageSource)[][];//stores 'placed' blocks
+
+function zeroOutArray(arr: (CanvasImageSource | number | string)[][]): number[][] {
+    return new Array(gBArrayHeight).fill(0).map(() => new Array(gBArrayWidth).fill(0));
+}
+
+const nextTetrominoCoordinateArray: Coordinates[][] = Array.from({ length: 3 }, () =>
+    Array.from({ length: 4 }, () => new Coordinates(0, 0))
+);
+////////  |||||||  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+function initializeCanvas(): void {
+    assignElements();
+    defineButtons();
+    defineCanvas();
+    createCoordArrays();
+    createTetrominos();
+}
 
 function createCoordArrays(): void {
     //coordinateArray = zeroOutArray(coordinateArray);
