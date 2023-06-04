@@ -30,8 +30,8 @@ export function rotationCollision(val: number): boolean {
     // Cycle through all Tetromino square blocks
     for (let i = 0; i < tetrominoCopy.length; i++) {
         let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
+        let x = square.x + startX;
+        let y = square.y + startY;
         if (wallCollision(x)) {
             collision = true;
             break;
@@ -56,8 +56,8 @@ export function verticalCollision(val: number): boolean {
     // Cycle through all Tetromino square blocks
     for (let i = 0; i < tetrominoCopy.length; i++) {
         let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
+        let x = square.x + startX;
+        let y = square.y + startY;
 
         // moving down: increment y to check for a collison
         y += val;
@@ -74,8 +74,8 @@ export function verticalCollision(val: number): boolean {
         // place tetromino
         for (let i = 0; i < tetrominoCopy.length; i++) {
             let square = tetrominoCopy[i];
-            let x = square[0] + startX;
-            let y = square[1] + startY;
+            let x = square.x + startX;
+            let y = square.y + startY;
             stoppedShapeArray[y][x] = curTetrominoImage;
         }
         checkForCompletedRows();
@@ -96,8 +96,8 @@ export function horizontalCollision(val: number): boolean {
     // Cycle through all Tetromino square blocks
     for (let i = 0; i < tetrominoCopy.length; i++) {
         let square = tetrominoCopy[i];
-        let x = square[0] + startX;
-        let y = square[1] + startY;
+        let x = square.x + startX;
+        let y = square.y + startY;
         x += val;
 
         if (wallCollision(x)) {

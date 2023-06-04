@@ -108,7 +108,6 @@ function defineCanvas() {
     ctx.scale(scale, scale);
 }
 
-
 ///////  ARRAYS  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 class Coordinates {
     constructor(public x: number, public y: number) { }
@@ -163,7 +162,7 @@ function createCoordArrays(): void {
 //name "i, j, l, etc"
 //img
 class Tetromino {
-    constructor(public rotations: number[][][]) { }
+    constructor(public rotations: Coordinates[][]) { }
 
     get rotLength(): number {
         return this.rotations?.length || 0;
@@ -178,7 +177,7 @@ let tetrominos: Tetromino[] = [];
 
 function createTetrominos(): void {
     /*  T block: [ [[0, 1], [1, 1], [2, 1], [1, 2]], [[rotation2]], [[rotation3]], [[rotation4]] ]
-
+  
                     0   1   2   3
                 0 |   |   |   |   |
                 1 |xxx|xxx|xxx|   |
@@ -186,66 +185,52 @@ function createTetrominos(): void {
                 3 |   |   |   |   |
     */
     // T block
-    tetrominos.push(
-        new Tetromino([
-            [[0, 1], [1, 1], [2, 1], [1, 2]],
-            [[1, 0], [0, 1], [1, 1], [1, 2]],
-            [[0, 1], [1, 1], [2, 1], [1, 0]],
-            [[1, 0], [2, 1], [1, 1], [1, 2]],
-        ])
-    );
-
-    // I block
-    tetrominos.push(
-        new Tetromino([
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            [[2, 0], [2, 1], [2, 2], [2, 3]],
-        ])
-    );
-
-    // J block
-    tetrominos.push(
-        new Tetromino([
-            [[0, 1], [1, 1], [2, 1], [2, 2]],
-            [[1, 0], [0, 2], [1, 1], [1, 2]],
-            [[0, 1], [1, 1], [2, 1], [0, 0]],
-            [[1, 0], [2, 0], [1, 1], [1, 2]],
-        ])
-    );
-
-    // Square block
-    tetrominos.push(
-        new Tetromino([
-            [[1, 1], [2, 1], [1, 2], [2, 2]],
-        ])
-    );
-
-    // L block
-    tetrominos.push(
-        new Tetromino([
-            [[0, 1], [1, 1], [2, 1], [0, 2]],
-            [[1, 0], [0, 0], [1, 1], [1, 2]],
-            [[0, 1], [1, 1], [2, 1], [2, 0]],
-            [[1, 0], [2, 2], [1, 1], [1, 2]],
-        ])
-    );
-
-    // S block
-    tetrominos.push(
-        new Tetromino([
-            [[1, 1], [2, 1], [0, 2], [1, 2]],
-            [[1, 1], [2, 1], [1, 0], [2, 2]],
-        ])
-    );
-
-    // Z block
-    tetrominos.push(
-        new Tetromino([
-            [[0, 1], [1, 1], [1, 2], [2, 2]],
-            [[2, 0], [1, 1], [1, 2], [2, 1]],
-        ])
-    );
-}
+    tetrominos.push(new Tetromino([
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 2)],
+        [new Coordinates(1, 0), new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(1, 2)],
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 0)],
+        [new Coordinates(1, 0), new Coordinates(2, 1), new Coordinates(1, 1), new Coordinates(1, 2)]
+      ]));
+      
+      // I block
+      tetrominos.push(new Tetromino([
+        [new Coordinates(0, 2), new Coordinates(1, 2), new Coordinates(2, 2), new Coordinates(3, 2)],
+        [new Coordinates(2, 0), new Coordinates(2, 1), new Coordinates(2, 2), new Coordinates(2, 3)]
+      ]));
+      
+      // J block
+      tetrominos.push(new Tetromino([
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(2, 2)],
+        [new Coordinates(1, 0), new Coordinates(0, 2), new Coordinates(1, 1), new Coordinates(1, 2)],
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(0, 0)],
+        [new Coordinates(1, 0), new Coordinates(2, 0), new Coordinates(1, 1), new Coordinates(1, 2)]
+      ]));
+      
+      // Square block
+      tetrominos.push(new Tetromino([
+        [new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 2), new Coordinates(2, 2)]
+      ]));
+      
+      // L block
+      tetrominos.push(new Tetromino([
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(0, 2)],
+        [new Coordinates(1, 0), new Coordinates(0, 0), new Coordinates(1, 1), new Coordinates(1, 2)],
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(2, 0)],
+        [new Coordinates(1, 0), new Coordinates(2, 2), new Coordinates(1, 1), new Coordinates(1, 2)]
+      ]));
+      
+      // S block
+      tetrominos.push(new Tetromino([
+        [new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(0, 2), new Coordinates(1, 2)],
+        [new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 0), new Coordinates(2, 2)]
+      ]));
+      
+      // Z block
+      tetrominos.push(new Tetromino([
+        [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(1, 2), new Coordinates(2, 2)],
+        [new Coordinates(2, 0), new Coordinates(1, 1), new Coordinates(1, 2), new Coordinates(2, 1)]
+      ]));
+  }
 
 export let startXDefault = 4, startX = startXDefault;
 export let startYDefault = 0, startY = startYDefault;
@@ -378,8 +363,8 @@ export function setDownPressAllowed(bool: boolean): void {
 export function drawCurTetrominoAndCheckGameOver(): void {
     let gameOverCheck = false;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-        let x = curTetromino.rotations[rotationIndex][i][0] + startX;
-        let y = curTetromino.rotations[rotationIndex][i][1] + startY;
+        let x = curTetromino.rotations[rotationIndex][i].x + startX;
+        let y = curTetromino.rotations[rotationIndex][i].y + startY;
         gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
 
         //transcribe xy info to coordinateArray pixels
@@ -410,8 +395,8 @@ function drawNextTetromino(): void {
 
     for (let i = 0; i < nextTetromino.rotations[0].length; i++) {
         //use [0][ ][ ] for defaultRotation - no need to draw any other kind of rotation for the Next-block view.
-        let x = nextTetromino.rotations[0][i][0];
-        let y = nextTetromino.rotations[0][i][1];
+        let x = nextTetromino.rotations[0][i].x;
+        let y = nextTetromino.rotations[0][i].y;
         let coorX = nextTetrominoCoordinateArray[y][x].x;
         let coorY = nextTetrominoCoordinateArray[y][x].y;
         //draw the square
@@ -424,8 +409,8 @@ export function deleteTetromino(): void {
     let marg = 0.5;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
         //clear gameBoardArray:
-        let x = curTetromino.rotations[rotationIndex][i][0] + startX;
-        let y = curTetromino.rotations[rotationIndex][i][1] + startY;
+        let x = curTetromino.rotations[rotationIndex][i].x + startX;
+        let y = curTetromino.rotations[rotationIndex][i].y + startY;
         gameBoardArray[y][x] = 0;
         //undraw:
         let coorX = coordinateArray[y][x].x;
