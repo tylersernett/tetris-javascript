@@ -1,4 +1,4 @@
-import { frameCount, downPressAllowed, gameOver, drawCurTetrominoAndCheckGameOver, deleteTetromino, changeStartX, incrementStartY, changeRotationIndex, setDownPressAllowed } from './tetris'
+import { frameCount, downPressAllowed, gameOver, drawCurTetrominoAndCheckGameOver, deleteTetromino, changeRotationIndex, setDownPressAllowed, curTetromino } from './tetris'
 import { rotationCollision, horizontalCollision, verticalCollision } from './collisions';
 //-------------\\
 //  MOVEMENT    \\
@@ -82,8 +82,7 @@ export function moveTetrominoDown(): void {
     if (!gameOver) {
         if (!verticalCollision(1)) {
             deleteTetromino();
-            // startY++;
-            incrementStartY();
+            curTetromino.gridY++
             drawCurTetrominoAndCheckGameOver();
         }
     }
@@ -92,8 +91,7 @@ export function moveTetrominoDown(): void {
 function moveTetrominoHorizontal(val: number): void {
     if (!horizontalCollision(val)) {
         deleteTetromino();
-        changeStartX(val);
-        // startX += val;
+        curTetromino.gridX += val;
         drawCurTetrominoAndCheckGameOver();
     }
 }

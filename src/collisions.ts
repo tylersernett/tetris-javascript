@@ -1,4 +1,4 @@
-import { gBArrayHeight, gBArrayWidth, stoppedShapeArray, startX, startY, curTetromino, rotationIndex, 
+import { gBArrayHeight, gBArrayWidth, stoppedShapeArray, curTetromino, rotationIndex, 
     mod,
     checkForCompletedRows,
     createTetrominoFromNext,
@@ -30,8 +30,8 @@ export function rotationCollision(val: number): boolean {
     // Cycle through all Tetromino square blocks
     for (let i = 0; i < tetrominoCopy.length; i++) {
         let square = tetrominoCopy[i];
-        let x = square.x + startX;
-        let y = square.y + startY;
+        let x = square.x + curTetromino.gridX;
+        let y = square.y + curTetromino.gridY;
         if (wallCollision(x)) {
             collision = true;
             break;
@@ -56,8 +56,8 @@ export function verticalCollision(val: number): boolean {
     // Cycle through all Tetromino square blocks
     for (let i = 0; i < tetrominoCopy.length; i++) {
         let square = tetrominoCopy[i];
-        let x = square.x + startX;
-        let y = square.y + startY;
+        let x = square.x + curTetromino.gridX;
+        let y = square.y + curTetromino.gridY;
 
         // moving down: increment y to check for a collison
         y += val;
@@ -74,8 +74,8 @@ export function verticalCollision(val: number): boolean {
         // place tetromino
         for (let i = 0; i < tetrominoCopy.length; i++) {
             let square = tetrominoCopy[i];
-            let x = square.x + startX;
-            let y = square.y + startY;
+            let x = square.x + curTetromino.gridX;
+            let y = square.y + curTetromino.gridY;
             stoppedShapeArray[y][x] = curTetromino.image;
         }
         checkForCompletedRows();
@@ -96,8 +96,8 @@ export function horizontalCollision(val: number): boolean {
     // Cycle through all Tetromino square blocks
     for (let i = 0; i < tetrominoCopy.length; i++) {
         let square = tetrominoCopy[i];
-        let x = square.x + startX;
-        let y = square.y + startY;
+        let x = square.x + curTetromino.gridX;
+        let y = square.y + curTetromino.gridY;
         x += val;
 
         if (wallCollision(x)) {

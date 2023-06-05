@@ -157,10 +157,16 @@ function createCoordArrays(): void {
 
 //TODO: refactor tetromino class...
 //tetromino.rotation[rotationIndex][block#][0:x, 1:y]
-//name "i, j, l, etc"
-//img
+//TODO:curTetrominoProps {gridX: , gridY: , rotationIndex: , image: ,}
+export let gridXDefault = 4; 
+export let gridYDefault = 0;
 class Tetromino {
-    constructor(public rotations: Coordinates[][], public image: CanvasImageSource, public name: String) { }
+    constructor(public rotations: Coordinates[][], 
+        public image: CanvasImageSource, 
+        public name: String, 
+        public rotationIndex: number = 0, 
+        public gridX: number = gridXDefault, 
+        public gridY: number = gridYDefault) { }
 
     get rotLength(): number {
         return this.rotations?.length || 0;
@@ -230,8 +236,6 @@ function createTetrominos(): void {
       ], blockZ, "Z"));
   }
 
-export let startXDefault = 4, startX = startXDefault;
-export let startYDefault = 0, startY = startYDefault;
 let score = 0, level = 1, lines = 0;
 export let gameOver = false
 let showHighscores = false;
@@ -251,8 +255,6 @@ function initializeGame() {
     updateScores();
     gravityFrames = 60;
     setGravity();
-    startX = startXDefault;
-    startY = startYDefault;
     gameOverEl.style.visibility = "hidden";
     highscoreOuterEl.style.visibility = "hidden";
     highscorePromptEl.style.visibility = "hidden";
@@ -341,13 +343,13 @@ function setGravity(): void {
 //---------------\\
 //maybe cleaner if these were properties of an object instead of standalone vars mod'd by a function
 //TODO: move draw functions to own file? need access to ctx, gameover, gameboardarray
-export function changeStartX(val: number): void {
-    startX += val;
-}
+// export function changeStartX(val: number): void {
+//     startX += val;
+// }
 
-export function incrementStartY(): void {
-    startY++;
-}
+// export function incrementStartY(): void {
+//     startY++;
+// }
 
 export function changeRotationIndex(val: number): void {
     rotationIndex += val;
@@ -361,8 +363,8 @@ export function setDownPressAllowed(bool: boolean): void {
 export function drawCurTetrominoAndCheckGameOver(): void {
     let gameOverCheck = false;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-        let x = curTetromino.rotations[rotationIndex][i].x + startX;
-        let y = curTetromino.rotations[rotationIndex][i].y + startY;
+        let x = curTetromino.rotations[rotationIndex][i].x + curTetromino.gridX;
+        let y = curTetromino.rotations[rotationIndex][i].y + curTetromino.gridY;
         gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
 
         //transcribe xy info to coordinateArray pixels
@@ -407,8 +409,8 @@ export function deleteTetromino(): void {
     let marg = 0.5;
     for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
         //clear gameBoardArray:
-        let x = curTetromino.rotations[rotationIndex][i].x + startX;
-        let y = curTetromino.rotations[rotationIndex][i].y + startY;
+        let x = curTetromino.rotations[rotationIndex][i].x + curTetromino.gridX;
+        let y = curTetromino.rotations[rotationIndex][i].y + curTetromino.gridY;
         gameBoardArray[y][x] = 0;
         //undraw:
         let coorX = coordinateArray[y][x].x;
@@ -420,13 +422,12 @@ export function deleteTetromino(): void {
 }
 
 export let curTetromino: Tetromino;//number[][][] = [];
-//TODO:curTetrominoProps {startX: , startY: , rotationIndex: , image: ,}
 export function createTetrominoFromNext(): void {
     downPressAllowed = false; //kill downward momentum when new piece spawns
-    startX = startXDefault;
-    startY = startYDefault;
-    rotationIndex = 0;
     curTetromino = nextTetromino;
+    curTetromino.gridX = gridXDefault;
+    curTetromino.gridY = gridYDefault;
+    rotationIndex = 0;
     loadRandomTetrominoIntoNext();
     drawNextTetromino();
 }
