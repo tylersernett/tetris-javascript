@@ -40,7 +40,6 @@ let blockT: HTMLImageElement,
     blockL: HTMLImageElement,
     blockS: HTMLImageElement,
     blockZ: HTMLImageElement;
-let tetrominoImages: HTMLImageElement[];
 
 function assignElements() {
     canvasEl = document.querySelector<HTMLCanvasElement>('#my-canvas')!;
@@ -69,7 +68,6 @@ function assignElements() {
     blockL = document.querySelector<HTMLImageElement>('#block-l')!;
     blockS = document.querySelector<HTMLImageElement>('#block-s')!;
     blockZ = document.querySelector<HTMLImageElement>('#block-z')!;
-    tetrominoImages = [blockT, blockI, blockJ, blockSQ, blockL, blockS, blockZ];
 }
 
 function defineButtons() {
@@ -162,7 +160,7 @@ function createCoordArrays(): void {
 //name "i, j, l, etc"
 //img
 class Tetromino {
-    constructor(public rotations: Coordinates[][]) { }
+    constructor(public rotations: Coordinates[][], public image: CanvasImageSource, public name: String) { }
 
     get rotLength(): number {
         return this.rotations?.length || 0;
@@ -190,13 +188,13 @@ function createTetrominos(): void {
         [new Coordinates(1, 0), new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(1, 2)],
         [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 0)],
         [new Coordinates(1, 0), new Coordinates(2, 1), new Coordinates(1, 1), new Coordinates(1, 2)]
-      ]));
+      ], blockT, "T"));
       
       // I block
       tetrominos.push(new Tetromino([
         [new Coordinates(0, 2), new Coordinates(1, 2), new Coordinates(2, 2), new Coordinates(3, 2)],
         [new Coordinates(2, 0), new Coordinates(2, 1), new Coordinates(2, 2), new Coordinates(2, 3)]
-      ]));
+      ], blockI, "I"));
       
       // J block
       tetrominos.push(new Tetromino([
@@ -204,12 +202,12 @@ function createTetrominos(): void {
         [new Coordinates(1, 0), new Coordinates(0, 2), new Coordinates(1, 1), new Coordinates(1, 2)],
         [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(0, 0)],
         [new Coordinates(1, 0), new Coordinates(2, 0), new Coordinates(1, 1), new Coordinates(1, 2)]
-      ]));
+      ], blockJ, "J"));
       
       // Square block
       tetrominos.push(new Tetromino([
         [new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 2), new Coordinates(2, 2)]
-      ]));
+      ], blockSQ, "sq"));
       
       // L block
       tetrominos.push(new Tetromino([
@@ -217,19 +215,19 @@ function createTetrominos(): void {
         [new Coordinates(1, 0), new Coordinates(0, 0), new Coordinates(1, 1), new Coordinates(1, 2)],
         [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(2, 0)],
         [new Coordinates(1, 0), new Coordinates(2, 2), new Coordinates(1, 1), new Coordinates(1, 2)]
-      ]));
+      ], blockL, "L"));
       
       // S block
       tetrominos.push(new Tetromino([
         [new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(0, 2), new Coordinates(1, 2)],
         [new Coordinates(1, 1), new Coordinates(2, 1), new Coordinates(1, 0), new Coordinates(2, 2)]
-      ]));
+      ], blockS, "S"));
       
       // Z block
       tetrominos.push(new Tetromino([
         [new Coordinates(0, 1), new Coordinates(1, 1), new Coordinates(1, 2), new Coordinates(2, 2)],
         [new Coordinates(2, 0), new Coordinates(1, 1), new Coordinates(1, 2), new Coordinates(2, 1)]
-      ]));
+      ], blockZ, "Z"));
   }
 
 export let startXDefault = 4, startX = startXDefault;
@@ -371,7 +369,7 @@ export function drawCurTetrominoAndCheckGameOver(): void {
         let coorX = coordinateArray[y][x].x;
         let coorY = coordinateArray[y][x].y;
         //draw the square
-        ctx.drawImage(curTetrominoImage, coorX, coorY)
+        ctx.drawImage(curTetromino.image, coorX, coorY)
         //Check for Game Over -- when two pieces overlap eachother
         if (pieceCollision(x, y)) {
             gameOverCheck = true;
@@ -400,7 +398,7 @@ function drawNextTetromino(): void {
         let coorX = nextTetrominoCoordinateArray[y][x].x;
         let coorY = nextTetrominoCoordinateArray[y][x].y;
         //draw the square
-        ctx.drawImage(nextTetrominoImage, coorX, coorY);
+        ctx.drawImage(nextTetromino.image, coorX, coorY);
     }
 }
 
@@ -422,7 +420,6 @@ export function deleteTetromino(): void {
 }
 
 export let curTetromino: Tetromino;//number[][][] = [];
-export let curTetrominoImage: CanvasImageSource;
 //TODO:curTetrominoProps {startX: , startY: , rotationIndex: , image: ,}
 export function createTetrominoFromNext(): void {
     downPressAllowed = false; //kill downward momentum when new piece spawns
@@ -430,18 +427,15 @@ export function createTetrominoFromNext(): void {
     startY = startYDefault;
     rotationIndex = 0;
     curTetromino = nextTetromino;
-    curTetrominoImage = nextTetrominoImage;
     loadRandomTetrominoIntoNext();
     drawNextTetromino();
 }
 
 let nextTetromino: Tetromino;
-let nextTetrominoImage: CanvasImageSource;
 function loadRandomTetrominoIntoNext(): void {
     let randomTetromino = Math.floor(Math.random() * tetrominos.length);
     nextTetromino = tetrominos[randomTetromino];
     console.log("next", nextTetromino)
-    nextTetrominoImage = tetrominoImages[randomTetromino];
 }
 
 export function checkForCompletedRows(): void {

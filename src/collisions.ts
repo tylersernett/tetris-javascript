@@ -1,4 +1,4 @@
-import { gBArrayHeight, gBArrayWidth, stoppedShapeArray, startX, startY, curTetromino, curTetrominoImage, rotationIndex, 
+import { gBArrayHeight, gBArrayWidth, stoppedShapeArray, startX, startY, curTetromino, rotationIndex, 
     mod,
     checkForCompletedRows,
     createTetrominoFromNext,
@@ -76,7 +76,7 @@ export function verticalCollision(val: number): boolean {
             let square = tetrominoCopy[i];
             let x = square.x + startX;
             let y = square.y + startY;
-            stoppedShapeArray[y][x] = curTetrominoImage;
+            stoppedShapeArray[y][x] = curTetromino.image;
         }
         checkForCompletedRows();
         createTetrominoFromNext();
