@@ -6,7 +6,7 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1">
     <title>TypeScript Tetris</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="./tetris.js"></script>
+    <script src="./dist/bundle.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
@@ -17,9 +17,8 @@
 
 <body>
     <div class="full-container">
-
-
         <div class="right-col">
+
             <h1>
                 <!-- use non-breaking hyphen below -->
                 TS&#8209;<div class="title-break"></div>etris
@@ -43,35 +42,31 @@
                 z: rotate CCW<br />
                 x: rotate CW
             </div>
-            <div id="restart-container">
-                <button onclick='initializeGame()' class='option-button '>Restart</button>
-            </div>
 
+            <div id="restart-container">
+                <button id="restart-button" class='option-button '>Restart</button>
+            </div>
             <div id="highscore-container">
-                <!-- <form action='http://localhost:8080/highscores' method="GET"> -->
-                <button class='option-button' type='submit' onclick='toggleHighscores()' class='option-button'>
-                    <div class="title-hide">High</div>scores
+                <button id='highscore-button' class='option-button' type='submit'>
+                    <div class="title-hide">High</div>scores<!-- don't show 'high' on small screens -->
                 </button>
-                <!-- </form> -->
             </div>
 
         </div>
+
         <div class="container">
             <canvas id='my-canvas'></canvas>
-
         </div>
+
         <div class="mobile-controls">
             <div class="rot-controls">
-                <button class='rot-button' id="rot-ccw" onclick="rotateTetromino(-1)">⟲</button>
-                <button class='rot-button' id="rot-cw" onclick="rotateTetromino(1)">⟳</button>
+                <button class='rot-button' id="rot-ccw">⟲</button>
+                <button class='rot-button' id="rot-cw">⟳</button>
             </div>
             <div class="dir-controls">
-                <button class='dir-button' id="move-left" onpointerdown="hspeed=-1" onpointerup="hspeed=0"
-                    onpointerleave="hspeed=0">←</button>
-                <button class='dir-button' id="move-down" onpointerdown="handleDownPress()"
-                    onpointerup="handleDownRelease()" onpointerleave="handleDownRelease()">↓</button>
-                <button class='dir-button' id="move-right" onpointerdown="hspeed=1" onpointerup="hspeed=0"
-                    onpointerleave="hspeed=0">→</button>
+                <button class='dir-button' id="move-left">←</button>
+                <button class='dir-button' id="move-down">↓</button>
+                <button class='dir-button' id="move-right">→</button>
             </div>
         </div>
 
@@ -85,8 +80,8 @@
 
             <div class='highscore-prompt shadowed' id='highscore-prompt' style="visibility: hidden">
                 <h3>New High Score</h3>
-                <form id='score-form' onsubmit='submitScore(event)'>
-                    <input type="text" name="name" id='name-submit' placeholder="name">
+                <form id='score-form'>
+                    <input type="text" name="name" id='name-submit' placeholder="name" maxlength="10"/>
                     <br />
                     <button id='score-form-submit' type='submit' class="option-button">Submit</button>
                 </form>
