@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "CommonJS",
+        "module": "ES2015",
         "moduleResolution": "classic",
         "allowJs": true,
         "target": "ES2020",
