@@ -243,7 +243,7 @@ let gameloop: NodeJS.Timeout, gravity: ReturnType<typeof setInterval> | undefine
 let frameRate = 60;
 let bgColor = '#f8f8f8', textColor = 'black';
 export let downPressAllowed: boolean;
-export let rotationIndex = 0;
+//export let rotationIndex = 0;
 
 function initializeGame() {
     showHighscores = false;
@@ -351,10 +351,10 @@ function setGravity(): void {
 //     startY++;
 // }
 
-export function changeRotationIndex(val: number): void {
-    rotationIndex += val;
-    rotationIndex = mod(rotationIndex, curTetromino.rotLength); //keep inside Array bounds
-}
+// export function changeRotationIndex(val: number): void {
+//     rotationIndex += val;
+//     rotationIndex = mod(rotationIndex, curTetromino.rotLength); //keep inside Array bounds
+// }
 
 export function setDownPressAllowed(bool: boolean): void {
     downPressAllowed = bool;
@@ -362,9 +362,10 @@ export function setDownPressAllowed(bool: boolean): void {
 
 export function drawCurTetrominoAndCheckGameOver(): void {
     let gameOverCheck = false;
-    for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
-        let x = curTetromino.rotations[rotationIndex][i].x + curTetromino.gridX;
-        let y = curTetromino.rotations[rotationIndex][i].y + curTetromino.gridY;
+    //?!?!?!?!
+    for (let i = 0; i < curTetromino.rotations[curTetromino.rotationIndex].length; i++) {
+        let x = curTetromino.rotations[curTetromino.rotationIndex][i].x + curTetromino.gridX;
+        let y = curTetromino.rotations[curTetromino.rotationIndex][i].y + curTetromino.gridY;
         gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
 
         //transcribe xy info to coordinateArray pixels
@@ -407,10 +408,10 @@ function drawNextTetromino(): void {
 export function deleteTetromino(): void {
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
     let marg = 0.5;
-    for (let i = 0; i < curTetromino.rotations[rotationIndex].length; i++) {
+    for (let i = 0; i < curTetromino.rotations[curTetromino.rotationIndex].length; i++) {
         //clear gameBoardArray:
-        let x = curTetromino.rotations[rotationIndex][i].x + curTetromino.gridX;
-        let y = curTetromino.rotations[rotationIndex][i].y + curTetromino.gridY;
+        let x = curTetromino.rotations[curTetromino.rotationIndex][i].x + curTetromino.gridX;
+        let y = curTetromino.rotations[curTetromino.rotationIndex][i].y + curTetromino.gridY;
         gameBoardArray[y][x] = 0;
         //undraw:
         let coorX = coordinateArray[y][x].x;
@@ -427,7 +428,7 @@ export function createTetrominoFromNext(): void {
     curTetromino = nextTetromino;
     curTetromino.gridX = gridXDefault;
     curTetromino.gridY = gridYDefault;
-    rotationIndex = 0;
+    curTetromino.rotationIndex = 0;
     loadRandomTetrominoIntoNext();
     drawNextTetromino();
 }
