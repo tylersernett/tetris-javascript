@@ -1,5 +1,6 @@
-import { frameCount, downPressAllowed, gameOver, drawCurTetrominoAndCheckGameOver, deleteTetromino, setDownPressAllowed, curTetromino, mod } from './tetris'
-import { rotationCollision, horizontalCollision, verticalCollision } from './collisions';
+import { frameCount, downPressAllowed, gameOver, setDownPressAllowed, curTetromino } from './tetris'
+import { rotationCollision, horizontalCollision, verticalCollision, mod } from './collisions';
+import { deleteTetromino, drawCurTetrominoAndCheckGameOver } from './draws';
 //-------------\\
 //  MOVEMENT    \\
 //---------------\\

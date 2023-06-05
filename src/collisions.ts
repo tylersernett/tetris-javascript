@@ -1,12 +1,15 @@
+import { drawCurTetrominoAndCheckGameOver } from './draws';
 import { gBArrayHeight, gBArrayWidth, stoppedShapeArray, curTetromino, 
-    mod,
     checkForCompletedRows,
-    createTetrominoFromNext,
-    drawCurTetrominoAndCheckGameOver, } from './tetris'
+    createTetrominoFromNext, } from './tetris'
 
 //-------------\\
 //  COLLISIONS  \\
 //---------------\\
+export function mod(n: number, m: number): number {
+    return ((n % m) + m) % m;
+}
+
 function floorCollision(y: number): boolean {
     return y >= gBArrayHeight;
 }
