@@ -1,9 +1,12 @@
 {
   "name": "tetris-javascript",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "homepage": "https://tylersernett.github.io/tetris-javascript/",
   "description": "## issues",
   "main": "tetris.js",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,7 +20,6 @@
   "bugs": {
     "url": "https://github.com/tylersernett/tetris-javascript/issues"
   },
-  "homepage": "https://github.com/tylersernett/tetris-javascript#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -27,6 +29,7 @@
     "mongoose": "^7.0.1"
   },
   "devDependencies": {
+    "gh-pages": "^5.0.0",
     "ts-loader": "^9.4.3",
     "typescript": "^5.0.4",
     "webpack": "^5.85.0",
