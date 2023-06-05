@@ -1,5 +1,5 @@
 import { pieceCollision, } from './collisions';
-
+import { displayHighscores, getHighscores, submitScore, toggleHighscores } from './highscores';
 import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown, rotateTetromino, handleDownPress, handleDownRelease, tetSpeeds } from './movement'
 
 export function mod(n: number, m: number): number {
@@ -15,19 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
     getHighscores();
 });
 
-let canvasEl: HTMLCanvasElement,
-    highscoreOuterEl: HTMLElement,
+let canvasEl: HTMLCanvasElement;
+export let highscoreOuterEl: HTMLElement,
     highscoreDisplayEl: HTMLElement,
     highscorePromptEl: HTMLElement,
-    highscoreButtonEl: HTMLButtonElement,
+    scoreFormSubmitEl: HTMLButtonElement,
+    nameSubmitEl: HTMLInputElement;
+let highscoreButtonEl: HTMLButtonElement,
     restartButtonEl: HTMLButtonElement,
     scoreFormEl: HTMLFormElement,
-    scoreFormSubmitEl: HTMLButtonElement,
     gameOverEl: HTMLElement,
     scoreEl: HTMLElement,
     linesEl: HTMLElement,
-    levelEl: HTMLElement,
-    nameSubmitEl: HTMLInputElement;
+    levelEl: HTMLElement;
 let mobileButtonRotCCWEl: HTMLButtonElement,
     mobileButtonRotCWEl: HTMLButtonElement,
     mobileButtonLeft: HTMLButtonElement,
@@ -233,21 +233,16 @@ function createTetrominos(): void {
       ], blockZ, "Z"));
   }
 
-let score = 0, level = 1, lines = 0;
+export let scoreData = {show: false, score: 0, level: 1, lines: 0}
 export let gameOver = false
-let showHighscores = false;
 let gameloop: NodeJS.Timeout, gravity: ReturnType<typeof setInterval> | undefined, gravityFrames: number;
 let frameRate = 60;
 let bgColor = '#f8f8f8', textColor = 'black';
 export let downPressAllowed: boolean;
-//export let rotationIndex = 0;
 
 function initializeGame() {
-    showHighscores = false;
     scoreFormSubmitEl.disabled = false;
-    score = 0;
-    level = 1;
-    lines = 0;
+    scoreData = {show: false, score: 0, level: 1, lines: 0}
     gameOver = false;
     updateScores();
     gravityFrames = 60;
@@ -289,7 +284,7 @@ function updateGame() {
 
 function setGravity(): void {
     let newGravityFrames: number;
-    switch (level) {
+    switch (scoreData.level) {
         case 1: newGravityFrames = 48; break;
         case 2: newGravityFrames = 43; break;
         case 3: newGravityFrames = 38; break;
@@ -445,9 +440,9 @@ export function checkForCompletedRows(): void {
         }
     }
     if (rowsToDelete > 0) {
-        score += rowClearBonus(rowsToDelete) * level;
-        lines += rowsToDelete;
-        level = Math.floor(lines / 10) + 1;
+        scoreData.score += rowClearBonus(rowsToDelete) * scoreData.level;
+        scoreData.lines += rowsToDelete;
+        scoreData.level = Math.floor(scoreData.lines / 10) + 1;
         setGravity();
         updateScores();
         redrawRows();
@@ -455,9 +450,9 @@ export function checkForCompletedRows(): void {
 }
 
 function updateScores(): void {
-    scoreEl.innerHTML = score.toString();
-    linesEl.innerHTML = lines.toString();
-    levelEl.innerHTML = level.toString();
+    scoreEl.innerHTML = scoreData.score.toString();
+    linesEl.innerHTML = scoreData.lines.toString();
+    levelEl.innerHTML = scoreData.level.toString();
 }
 
 function rowClearBonus(rows: number): number {
@@ -488,66 +483,3 @@ function redrawRows(): void {
         }
     }
 }
-
-//-------------\\
-//  HIGHSCORES  \\
-//---------------\\
-function toggleHighscores() {
-    showHighscores = !showHighscores;
-    if (showHighscores) {
-        displayHighscores(false);
-    } else {
-        highscoreOuterEl.style.visibility = 'hidden';
-    }
-}
-
-async function displayHighscores(checkNewScore: boolean) {
-    showHighscores = true;
-    const scores = await getHighscores();
-    const scoreListItems = scores
-        .map((score) => `<li>${score.name}: ${score.score}</li>`)
-        .join('');
-    highscoreDisplayEl.innerHTML = `<ol>${scoreListItems}</ol>`;
-    highscoreOuterEl.style.visibility = 'visible';
-    if (checkNewScore && (scores.length < 5 || score > scores[4]?.score)) {
-        highscorePromptEl.style.visibility = 'visible';
-    }
-}
-
-async function getHighscores() {
-    try {
-        const response = await fetch(
-            'https://tetris-javascript.onrender.com/highscores'
-        );
-        const scores = await response.json();
-        return scores;
-    } catch (error) {
-        console.error('Error getting scores:', error);
-        return [];
-    }
-}
-
-async function submitScore(event: Event) {
-    event.preventDefault();
-    scoreFormSubmitEl.disabled = true;
-    try {
-        await fetch('https://tetris-javascript.onrender.com/add-score', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: nameSubmitEl.value,
-                score,
-                lines,
-                level,
-            }),
-        });
-        highscorePromptEl.style.visibility = 'hidden';
-        displayHighscores(false);
-    } catch (error) {
-        console.error('Error submitting score:', error);
-    }
-}
-
-//TODO: profanity filter?
-//TODO: right align highscores
-//TODO: rate limit? https://github.com/tonikv/snake-highscore/blob/master/index.js
