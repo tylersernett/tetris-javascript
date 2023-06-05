@@ -233,5 +233,7 @@ change tsconfig output:
 
 change HTML script:
 ```html
-    <script src="./dist/bundle.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <!-- <script src="./dist/bundle.js"></script> -->
 ```
+Webpack will handle injecting the CSS and bundle, so don't reference them in the index.HTML
