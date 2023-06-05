@@ -1,5 +1,5 @@
-# JS Tetris
-A color-blind accessible port of the NES classic built with vanilla javascript and minimalist design.
+# TypeScript Tetris
+A color-blind accessible port of the NES classic built with vanilla TypeScript and minimalist design.
 ## Notes: Collision Checking
 
 Problem: pieces will often clip through walls, floors, or other pieces when rotated
@@ -223,3 +223,15 @@ fetch("http://localhost:8080/add-score", {
 })
 ```
 In the above, make sure to include headers and use stringify!
+
+## Notes: Webpack
+
+npx webpack --config webpack.config.js
+
+change tsconfig output:
+"outDir": "./dist",
+
+change HTML script:
+```html
+    <script src="./dist/bundle.js"></script>
+```
