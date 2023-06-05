@@ -155,9 +155,6 @@ function createCoordArrays(): void {
     }
 }
 
-//TODO: refactor tetromino class...
-//tetromino.rotation[rotationIndex][block#][0:x, 1:y]
-//TODO:curTetrominoProps {gridX: , gridY: , rotationIndex: , image: ,}
 export let gridXDefault = 4; 
 export let gridYDefault = 0;
 class Tetromino {
@@ -341,43 +338,29 @@ function setGravity(): void {
 //-------------\\
 //  GAME LOGIC  \\
 //---------------\\
-//maybe cleaner if these were properties of an object instead of standalone vars mod'd by a function
-//TODO: move draw functions to own file? need access to ctx, gameover, gameboardarray
-// export function changeStartX(val: number): void {
-//     startX += val;
-// }
-
-// export function incrementStartY(): void {
-//     startY++;
-// }
-
-// export function changeRotationIndex(val: number): void {
-//     rotationIndex += val;
-//     rotationIndex = mod(rotationIndex, curTetromino.rotLength); //keep inside Array bounds
-// }
-
 export function setDownPressAllowed(bool: boolean): void {
     downPressAllowed = bool;
 }
 
 export function drawCurTetrominoAndCheckGameOver(): void {
+    const { rotations, rotationIndex, gridX, gridY, image } = curTetromino;
+    const currentRotation = rotations[rotationIndex];
     let gameOverCheck = false;
-    //?!?!?!?!
-    for (let i = 0; i < curTetromino.rotations[curTetromino.rotationIndex].length; i++) {
-        let x = curTetromino.rotations[curTetromino.rotationIndex][i].x + curTetromino.gridX;
-        let y = curTetromino.rotations[curTetromino.rotationIndex][i].y + curTetromino.gridY;
-        gameBoardArray[y][x] = 1; //tell gameboard that block is present at coordinates
 
-        //transcribe xy info to coordinateArray pixels
-        let coorX = coordinateArray[y][x].x;
-        let coorY = coordinateArray[y][x].y;
-        //draw the square
-        ctx.drawImage(curTetromino.image, coorX, coorY)
-        //Check for Game Over -- when two pieces overlap eachother
+    currentRotation.forEach((square) => {
+        const x = square.x + gridX;
+        const y = square.y + gridY;
+        gameBoardArray[y][x] = 1; // Tell gameboard that block is present at coordinates
+
+        // Draw the square
+        const { x: coorX, y: coorY } = coordinateArray[y][x];
+        ctx.drawImage(image, coorX, coorY);
+
+        // Check for Game Over -- when two pieces overlap each other
         if (pieceCollision(x, y)) {
             gameOverCheck = true;
         }
-    }
+    });
 
     if (gameOverCheck) {
         gameOver = true;
@@ -389,29 +372,27 @@ export function drawCurTetrominoAndCheckGameOver(): void {
 
 function drawNextTetromino(): void {
     //draw white rectangle over old piece
-    let bgX = nextTetrominoCoordinateArray[0][0].x;
-    let bgY = nextTetrominoCoordinateArray[0][0].y;
+    let upperLeftX = nextTetrominoCoordinateArray[0][0].x;
+    let upperLeftY = nextTetrominoCoordinateArray[0][0].y;
     ctx.fillStyle = "white";
-    ctx.fillRect(bgX, bgY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
+    ctx.fillRect(upperLeftX, upperLeftY, (1 + blockDimension + 1) * 4, (1 + blockDimension + 1) * 3);
 
-    for (let i = 0; i < nextTetromino.rotations[0].length; i++) {
-        //use [0][ ][ ] for defaultRotation - no need to draw any other kind of rotation for the Next-block view.
-        let x = nextTetromino.rotations[0][i].x;
-        let y = nextTetromino.rotations[0][i].y;
-        let coorX = nextTetrominoCoordinateArray[y][x].x;
-        let coorY = nextTetrominoCoordinateArray[y][x].y;
-        //draw the square
+    nextTetromino.rotations[0].forEach((square) => {
+        const _x = square.x;
+        const _y = square.y
+        const { x: coorX, y: coorY } = nextTetrominoCoordinateArray[_y][_x];
         ctx.drawImage(nextTetromino.image, coorX, coorY);
-    }
+    });    
 }
 
 export function deleteTetromino(): void {
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
     let marg = 0.5;
-    for (let i = 0; i < curTetromino.rotations[curTetromino.rotationIndex].length; i++) {
+    const currentRotation = curTetromino.rotations[curTetromino.rotationIndex];
+    currentRotation.forEach((square) => {
         //clear gameBoardArray:
-        let x = curTetromino.rotations[curTetromino.rotationIndex][i].x + curTetromino.gridX;
-        let y = curTetromino.rotations[curTetromino.rotationIndex][i].y + curTetromino.gridY;
+        let x = square.x + curTetromino.gridX;
+        let y = square.y + curTetromino.gridY;
         gameBoardArray[y][x] = 0;
         //undraw:
         let coorX = coordinateArray[y][x].x;
@@ -419,7 +400,7 @@ export function deleteTetromino(): void {
 
         ctx.fillStyle = bgColor;
         ctx.fillRect(coorX - marg, coorY - marg, blockDimension + marg + 2, blockDimension + marg + 2);
-    }
+    })
 }
 
 export let curTetromino: Tetromino;//number[][][] = [];
@@ -451,14 +432,14 @@ export function checkForCompletedRows(): void {
         if (completed) {
             rowsToDelete++;
             //could add a check here for the greatest y value, then only redraw above that
-            for (let i = 0; i < gBArrayWidth; i++) {
+            for (let x = 0; x < gBArrayWidth; x++) {
                 // Update the arrays by zeroing out previously filled squares
-                stoppedShapeArray[y][i] = 0;
-                gameBoardArray[y][i] = 0;
+                stoppedShapeArray[y][x] = 0;
+                gameBoardArray[y][x] = 0;
             }
             //grab the row, clear it out, and add it to the TOP of the array
-            let removedRowColors = stoppedShapeArray.splice(y, 1);
-            stoppedShapeArray.unshift(...removedRowColors);
+            let removedRowImages = stoppedShapeArray.splice(y, 1);
+            stoppedShapeArray.unshift(...removedRowImages);
             let removedRowGBA = gameBoardArray.splice(y, 1);
             gameBoardArray.unshift(...removedRowGBA);
         }

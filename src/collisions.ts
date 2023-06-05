@@ -22,62 +22,32 @@ export function pieceCollision(x: number, y: number): boolean {
 
 // creates a rotated copy and checks if it fits
 export function rotationCollision(val: number): boolean {
-    // mod: keep index within bounds of array
     let newRotation = curTetromino.rotationIndex + val;
     let tetrominoCopy = curTetromino.rotations[mod(newRotation, curTetromino.rotLength)];
-    let collision = false;
-
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square.x + curTetromino.gridX;
-        let y = square.y + curTetromino.gridY;
-        if (wallCollision(x)) {
-            collision = true;
-            break;
-        }
-        if (floorCollision(y)) {
-            collision = true;
-            break;
-        }
-        if (pieceCollision(x, y)) {
-            collision = true;
-            break;
-        }
-    }
-    return collision;
-}
+  
+    return tetrominoCopy.some(square => {
+      let x = square.x + curTetromino.gridX;
+      let y = square.y + curTetromino.gridY;
+      return wallCollision(x) || floorCollision(y) || pieceCollision(x, y);
+    });
+  }
 
 // create a tetromino copy and see if it fits vertically
 export function verticalCollision(val: number): boolean {
-    let tetrominoCopy = curTetromino.rotations[curTetromino.rotationIndex];
-    let collision = false;
+    const tetrominoCopy = curTetromino.rotations[curTetromino.rotationIndex];
 
-    // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square.x + curTetromino.gridX;
-        let y = square.y + curTetromino.gridY;
-
-        // moving down: increment y to check for a collison
-        y += val;
-
-        // FloorCollision(x, y+1) for immediate stop...leave off +1 for some "sliding"
-        if (floorCollision(y) || pieceCollision(x, y)) {
-            // always check FloorCollision first, or you may hit array bounds error
-            collision = true;
-            break;
-        }
-    }
+    const collision = tetrominoCopy.some((square) => {
+        const x = square.x + curTetromino.gridX;
+        const y = square.y + curTetromino.gridY + val;
+        return floorCollision(y) || pieceCollision(x, y);
+    });
 
     if (collision) {
-        // place tetromino
-        for (let i = 0; i < tetrominoCopy.length; i++) {
-            let square = tetrominoCopy[i];
-            let x = square.x + curTetromino.gridX;
-            let y = square.y + curTetromino.gridY;
+        tetrominoCopy.forEach((square) => {
+            const x = square.x + curTetromino.gridX;
+            const y = square.y + curTetromino.gridY;
             stoppedShapeArray[y][x] = curTetromino.image;
-        }
+        });
         checkForCompletedRows();
         createTetrominoFromNext();
         drawCurTetrominoAndCheckGameOver();
@@ -91,24 +61,11 @@ export function verticalCollision(val: number): boolean {
 export function horizontalCollision(val: number): boolean {
     if (val === 0) { return false; }
     let tetrominoCopy = curTetromino.rotations[curTetromino.rotationIndex];
-    let collision = false;
 
     // Cycle through all Tetromino square blocks
-    for (let i = 0; i < tetrominoCopy.length; i++) {
-        let square = tetrominoCopy[i];
-        let x = square.x + curTetromino.gridX;
-        let y = square.y + curTetromino.gridY;
-        x += val;
-
-        if (wallCollision(x)) {
-            collision = true;
-            break;
-        }
-        if (pieceCollision(x, y)) {
-            collision = true;
-            break;
-        }
-    }
-
-    return collision;
+    return tetrominoCopy.some((square) => {
+        const x = square.x + curTetromino.gridX + val;
+        const y = square.y + curTetromino.gridY;
+        return wallCollision(x) || pieceCollision(x, y);
+    })
 }
