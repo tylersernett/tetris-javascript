@@ -29,6 +29,7 @@
     "mongoose": "^7.0.1"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
     "file-loader": "^6.2.0",
     "gh-pages": "^5.0.0",
