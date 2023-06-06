@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/tetris.ts',
@@ -7,6 +8,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '.' },
+      ],
     }),
   ],
   module: {
