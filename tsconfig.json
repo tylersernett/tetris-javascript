@@ -1,11 +1,14 @@
 {
     "compilerOptions": {
         "module": "ES2015",
-        "moduleResolution": "classic",
+        // "moduleResolution": "classic",
+        "moduleResolution":"node",
         "allowJs": true,
         "target": "ES2020",
         "sourceMap": true,
         "outDir": "./dist",
+        "esModuleInterop": true,
+        "types": ["node", "jest", "jest-fetch-mock"]
     },
     "include": ["src/**/*.ts"],
 }
