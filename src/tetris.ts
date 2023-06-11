@@ -2,14 +2,14 @@ import { drawCurTetrominoAndCheckGameOver, drawNextTetromino, redrawRows } from 
 import { displayHighscores, getHighscores, submitScore, toggleHighscores } from './highscores';
 import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown, rotateTetromino, handleDownPress, handleDownRelease, tetSpeeds } from './movement'
 //webpack imports:\\\\\\\\\\\\
-import './style.css';
-import './assets/block-i.png';
-import './assets/block-j.png';
-import './assets/block-l.png';
-import './assets/block-s.png';
-import './assets/block-sq.png';
-import './assets/block-t.png';
-import './assets/block-z.png';
+import '../src/style.css';
+import '../src/assets/block-i.png';
+import '../src/assets/block-j.png';
+import '../src/assets/block-l.png';
+import '../src/assets/block-s.png';
+import '../src/assets/block-sq.png';
+import '../src/assets/block-t.png';
+import '../src/assets/block-z.png';
 ////////////////\\\\\\\\\\\\\\\
 
 //-------------------\\
