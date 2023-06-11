@@ -35,25 +35,33 @@ export async function getHighscores() {
     }
 }
 
+async function postHighscores(nameSubmitEl, scoreData) {
+    await fetch('https://tetris-javascript.onrender.com/add-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: nameSubmitEl.value,
+            score: scoreData.score,
+            lines: scoreData.lines,
+            level: scoreData.level,
+        }),
+    });
+}
+
 export async function submitScore(event: Event) {
     event.preventDefault();
     scoreFormSubmitEl.disabled = true;
     try {
-        await fetch('https://tetris-javascript.onrender.com/add-score', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: nameSubmitEl.value,
-                score: scoreData.score,
-                lines: scoreData.lines,
-                level: scoreData.level,
-            }),
-        });
-        highscorePromptEl.style.visibility = 'hidden';
-        displayHighscores(false);
+        postHighscores(nameSubmitEl, scoreData);
     } catch (error) {
         console.error('Error submitting score:', error);
     }
+    highscorePromptEl.style.visibility = 'hidden';
+    displayHighscores(false); //refresh the score display
+}
+
+export const exportedForTesting = {
+    postHighscores
 }
 
 //TODO: profanity filter?
