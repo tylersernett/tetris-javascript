@@ -7,4 +7,8 @@ module.exports = {
     '/node_modules/',
     '\\.(css|scss|sass|less)$', // Match all CSS file extensions
   ],
+  moduleNameMapper: {
+    "\\.(css|less)$": "<rootDir>/__mocks__/empty-module.js",
+    "\\.(png)$": "<rootDir>/__mocks__/empty-module.js",
+  }
 };
