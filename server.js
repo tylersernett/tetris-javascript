@@ -3,14 +3,16 @@ const app = require('express')();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const cors = require('cors')
-let PORT = process.env.PORT;
+let PORT = process.env.PORT || 3232;
 let uri = process.env.MONGO_URI;
 
 //MIDDLEWARE
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({origin: 
-    ["https://tylersernett.github.io", "https://tylersernett.github.io/tetris-javascript"]})) //add url here later???
+app.use(cors({
+    origin:
+        ["https://tylersernett.github.io", "https://tylersernett.github.io/tetris-javascript"]
+}));
 
 async function connect() {
     try {
@@ -36,16 +38,10 @@ const scoreSchema = new Schema({
 }, { timestamps: true });
 const Highscore = mongoose.model('Highscore', scoreSchema);
 
-app.get('/', (req, res) => {
-})
-
 //https://www.geeksforgeeks.org/get-and-post-method-using-fetch-api/
-//tetris.js fetch()
-//.then(response => response.json())
-//.then(json => {
 app.get('/highscores', (req, res) => {
     console.log('getting...');
-    Highscore.find().sort({score: -1}).limit(5) //sort by score in descending order - return top 5
+    Highscore.find().sort({ score: -1 }).limit(5) //sort by score in descending order - return top 5
         .then((result) => {
             res.send(result)
         })
@@ -59,7 +55,7 @@ app.post('/add-score', (req, res) => {
     const scoreDoc = new Highscore({ name: req.body.name, score: req.body.score, lines: req.body.lines, level: req.body.level });
     scoreDoc.save()
         .then((result) => {
-            console.log({status: 'saved', doc: result})
+            console.log({ status: 'saved', doc: result })
             res.status(200);
             res.send(result)
         })
