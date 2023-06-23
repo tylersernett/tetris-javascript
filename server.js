@@ -11,7 +11,8 @@ app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
     origin:
-        ["https://tylersernett.github.io", "https://tylersernett.github.io/tetris-javascript"]
+        ["https://tylersernett.github.io", "https://tylersernett.github.io/tetris-javascript"],
+    methods: ['GET', 'POST'],
 }));
 
 async function connect() {
