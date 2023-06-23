@@ -51,15 +51,35 @@ app.get('/highscores', (req, res) => {
 })
 
 app.post('/add-score', (req, res) => {
-    console.log(req.body)
-    const scoreDoc = new Highscore({ name: req.body.name, score: req.body.score, lines: req.body.lines, level: req.body.level });
+    const { name, score, lines, level } = req.body;
+
+    if (!name || !score || !lines || !level) {
+        // Invalid request body, send an error response
+        res.status(400).json({ error: 'Invalid request body' });
+        return;
+    }
+
+    if (typeof name !== 'string' || typeof score !== 'number' || typeof lines !== 'number' || typeof level !== 'number') {
+        // Invalid data types, send an error response
+        res.status(400).json({ error: 'Invalid data types in request body' });
+        return;
+    }
+
+    // Valid request body, proceed with saving the high score
+    const scoreDoc = new Highscore({
+        name: name,
+        score: score,
+        lines: lines,
+        level: level
+    });
+
     scoreDoc.save()
         .then((result) => {
-            console.log({ status: 'saved', doc: result })
-            res.status(200);
-            res.send(result)
+            console.log({ status: 'saved', doc: result });
+            res.status(200).json(result);
         })
         .catch((err) => {
-            console.error(err)
-        })
-})
+            console.error(err);
+            res.status(500).json({ error: 'Internal server error' });
+        });
+});
