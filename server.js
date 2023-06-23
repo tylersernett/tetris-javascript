@@ -3,7 +3,7 @@ const app = require('express')();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const cors = require('cors')
-let PORT = process.env.PORT || 3232;
+let PORT = process.env.PORT || 8081;
 let uri = process.env.MONGO_URI;
 
 //MIDDLEWARE
@@ -38,17 +38,23 @@ const scoreSchema = new Schema({
 }, { timestamps: true });
 const Highscore = mongoose.model('Highscore', scoreSchema);
 
-//https://www.geeksforgeeks.org/get-and-post-method-using-fetch-api/
-app.get('/highscores', (req, res) => {
-    console.log('getting...');
-    Highscore.find().sort({ score: -1 }).limit(5) //sort by score in descending order - return top 5
+function fetchHighscores(res) {
+    Highscore.find()
+        .sort({ score: -1 })
+        .limit(5)
         .then((result) => {
-            res.send(result)
+            res.send(result);
         })
         .catch((err) => {
             console.error(err);
-        })
-})
+            res.status(500).json({ error: 'Internal server error' });
+        });
+}
+
+app.get('/highscores', (req, res) => {
+    console.log('getting...');
+    fetchHighscores(res);
+});
 
 app.post('/add-score', (req, res) => {
     const { name, score, lines, level } = req.body;
@@ -76,10 +82,11 @@ app.post('/add-score', (req, res) => {
     scoreDoc.save()
         .then((result) => {
             console.log({ status: 'saved', doc: result });
-            res.status(200).json(result);
+            // Fetch the updated highscores after saving the new highscore
+            fetchHighscores(res);
         })
         .catch((err) => {
             console.error(err);
             res.status(500).json({ error: 'Internal server error' });
         });
-});
+});  
