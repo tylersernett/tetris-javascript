@@ -53,11 +53,11 @@ export async function submitScore(event: Event) {
     scoreFormSubmitEl.disabled = true;
     try {
         postHighscores(nameSubmitEl, scoreData);
+        highscorePromptEl.style.visibility = 'hidden';
+        displayHighscores(false); //refresh the score display
     } catch (error) {
         console.error('Error submitting score:', error);
     }
-    highscorePromptEl.style.visibility = 'hidden';
-    displayHighscores(false); //refresh the score display
 }
 
 export const exportedForTesting = {
