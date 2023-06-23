@@ -1,4 +1,7 @@
 import { highscoreDisplayEl, highscoreOuterEl, highscorePromptEl, scoreFormSubmitEl, scoreData, nameSubmitEl } from "./tetris";
+import { config } from "./constants";
+
+const apiURL = config.url.API_URL;
 
 export function toggleHighscores() {
     scoreData.show = !scoreData.show;
@@ -12,20 +15,24 @@ export function toggleHighscores() {
 export async function displayHighscores(checkNewScore: boolean) {
     scoreData.show = true;
     const scoresDB = await getHighscores();
-    const scoreListItems = scoresDB
-        .map((entry: { name: string; score: number; }) => `<li>${entry.name}: ${entry.score}</li>`)
-        .join('');
-    highscoreDisplayEl.innerHTML = `<ol>${scoreListItems}</ol>`;
-    highscoreOuterEl.style.visibility = 'visible';
+    populateScoreEntries(scoresDB);
     if (checkNewScore && (scoresDB.length < 5 || scoreData.score > scoresDB[4]?.score)) {
         highscorePromptEl.style.visibility = 'visible';
     }
 }
 
+function populateScoreEntries(scoresDB) {
+    const scoreListItems = scoresDB
+        .map((entry: { name: string; score: number; }) => `<li>${entry.name}: ${entry.score}</li>`)
+        .join('');
+    highscoreDisplayEl.innerHTML = `<ol>${scoreListItems}</ol>`;
+    highscoreOuterEl.style.visibility = 'visible';
+}
+
 export async function getHighscores() {
     try {
         const response = await fetch(
-            'https://tetris-javascript.onrender.com/highscores'
+            `${apiURL}/highscores`
         );
         const scores = await response.json();
         return scores;
@@ -36,7 +43,7 @@ export async function getHighscores() {
 }
 
 async function postHighscores(nameSubmitEl, scoreData) {
-    await fetch('https://tetris-javascript.onrender.com/add-score', {
+    const response = await fetch(`${apiURL}/add-score`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -46,15 +53,17 @@ async function postHighscores(nameSubmitEl, scoreData) {
             level: scoreData.level,
         }),
     });
+    const scores = await response.json();
+    return scores;
 }
 
 export async function submitScore(event: Event) {
     event.preventDefault();
     scoreFormSubmitEl.disabled = true;
     try {
-        postHighscores(nameSubmitEl, scoreData);
+        const scoresDB = await postHighscores(nameSubmitEl, scoreData);
+        populateScoreEntries(scoresDB);
         highscorePromptEl.style.visibility = 'hidden';
-        displayHighscores(false); //refresh the score display
     } catch (error) {
         console.error('Error submitting score:', error);
     }
