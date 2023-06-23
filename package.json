@@ -5,7 +5,8 @@
   "description": "## issues",
   "main": "tetris.js",
   "scripts": {
-    "predeploy": "npm run build",
+    "develop": "NODE_ENV=development webpack",
+    "predeploy": "NODE_ENV=production npm run build",
     "deploy": "gh-pages -d dist",
     "build": "webpack",
     "test": "jest"
