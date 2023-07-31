@@ -103,12 +103,6 @@ h3 {
 .mobile-controls {
     margin: 0 5px;
     width: 349px;
-    /* Safari */
-    -webkit-user-select: none;
-    /* IE 10 and IE 11 */
-    -ms-user-select: none;
-    /* Standard syntax */
-    user-select: none;
 }
 
 input, button {
@@ -200,6 +194,12 @@ button:active {
     .full-container {
         width: 360px;
         margin: auto;
+        /* Safari */
+        -webkit-user-select: none;
+        /* IE 10 and IE 11 */
+        -ms-user-select: none;
+        /* Standard syntax */
+        user-select: none;
     }
 
     .right-col {
