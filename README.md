@@ -1,5 +1,19 @@
 # TypeScript Tetris
-A color-blind accessible port of the NES classic built with vanilla TypeScript and minimalist design.
+A colorblind accessible port of the NES classic built with vanilla TypeScript and minimalist design.
+
+[Live Site](https://tylersernett.github.io/tetris-javascript/)
+
+## Built With
+Frontend: TypeScript, HTML5 Canvas
+Backend (highscores): Express, MongoDB
+
+## Features
+Desktop keyboard controls
+Mobile button controls
+Highscore database
+Colorblind accessible design
+
+# Dev Notes:
 ## Notes: Collision Checking
 
 Problem: pieces will often clip through walls, floors, or other pieces when rotated
