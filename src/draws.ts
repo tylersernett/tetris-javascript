@@ -2,6 +2,7 @@ import { pieceCollision } from "./collisions";
 import { bgColor, blockDimension, coordinateArray, ctx, curTetromino, gBArrayHeight, gBArrayWidth, gameBoardArray, handleGameOver, nextTetromino, nextTetrominoCoordinateArray, stoppedShapeArray } from "./tetris";
 
 export function drawCurTetrominoAndCheckGameOver(): void {
+    if (!curTetromino) return
     const { rotations, rotationIndex, gridX, gridY, image } = curTetromino;
     const currentRotation = rotations[rotationIndex];
     let gameOverCheck = false;

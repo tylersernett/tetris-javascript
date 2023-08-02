@@ -10,6 +10,7 @@ let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 
 export function updateMovement(): void {
+    if (!curTetromino) return
     //control how fast button "holds" are registered
     if (tetSpeeds.hspeed !== 0) {
         if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
@@ -28,6 +29,7 @@ export function updateMovement(): void {
 }
 
 export function handleKeyPress(keyEvent: KeyboardEvent): void {
+    if (!curTetromino) return
     if (!gameOver) { // this check is a bit redundant, can clean up later
         if (keyEvent.key === 'ArrowLeft') {
             tetSpeeds.hspeed = -1;
@@ -79,6 +81,7 @@ export function rotateTetromino(val: number): void {
 }
 
 export function moveTetrominoDown(): void {
+    if (!curTetromino) return
     if (!gameOver) {
         if (!verticalCollision(1)) {
             deleteTetromino();

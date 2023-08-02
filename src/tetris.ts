@@ -253,7 +253,7 @@ function initializeGame() {
     gameOver = false;
     updateScores();
     gravityFrames = 60;
-    setGravity();
+    setGravity(scoreData.level);
     gameOverEl.style.visibility = "hidden";
     highscoreOuterEl.style.visibility = "hidden";
     highscorePromptEl.style.visibility = "hidden";
@@ -291,9 +291,10 @@ function updateGame() {
     }
 }
 
-function setGravity(): void {
+function setGravity(level): void {
     let newGravityFrames: number;
-    switch (scoreData.level) {
+    switch (level) {
+        case -1: newGravityFrames = 999999; break;
         case 1: newGravityFrames = 48; break;
         case 2: newGravityFrames = 43; break;
         case 3: newGravityFrames = 38; break;
@@ -367,38 +368,84 @@ function loadRandomTetrominoIntoNext(): void {
     nextTetromino = tetrominos[randomTetromino];
 }
 
-export function checkForCompletedRows(): void {
-    let rowsToDelete = 0;
-    for (let y = 0; y < gBArrayHeight; y++) {
-        let completed = false;
-        if (stoppedShapeArray[y].every((index) => index !== 0)) {
-            completed = true;
+function animateCompletedRow(rowIndex: number, callback: () => void): void {
+    const startTime = performance.now();
+
+    function animationLoop(currentTime: number) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / 300, 1); // Progress will be 0 to 1 over 200ms
+
+        // Draw a box from left to right with the given color
+        for (let col = 0; col < gBArrayWidth; col++) {
+            const coord = coordinateArray[rowIndex][col];
+            if (coord && gameBoardArray[rowIndex][col] === 1) {
+                const x = coord.x;
+                const y = coord.y;
+                const width = blockDimension * progress;
+                const height = blockDimension;
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(x, y, width, height);
+            }
         }
 
-        if (completed) {
-            rowsToDelete++;
-            //could add a check here for the greatest y value, then only redraw above that
-            for (let x = 0; x < gBArrayWidth; x++) {
-                // Update the arrays by zeroing out previously filled squares
-                stoppedShapeArray[y][x] = 0;
-                gameBoardArray[y][x] = 0;
+        if (progress < 1) {
+            requestAnimationFrame(animationLoop);
+        } else {
+            // Animation complete, reset the row values to 0
+            for (let col = 0; col < gBArrayWidth; col++) {
+                if (gameBoardArray[rowIndex][col] === 1) {
+                    gameBoardArray[rowIndex][col] = 0;
+                    stoppedShapeArray[rowIndex][col] = 0;
+                }
             }
             //grab the row, clear it out, and add it to the TOP of the array
-            let removedRowImages = stoppedShapeArray.splice(y, 1);
+            let removedRowImages = stoppedShapeArray.splice(rowIndex, 1);
             stoppedShapeArray.unshift(...removedRowImages);
-            let removedRowGBA = gameBoardArray.splice(y, 1);
+            let removedRowGBA = gameBoardArray.splice(rowIndex, 1);
             gameBoardArray.unshift(...removedRowGBA);
+            callback();
         }
     }
-    if (rowsToDelete > 0) {
-        scoreData.score += rowClearBonus(rowsToDelete) * scoreData.level;
-        scoreData.lines += rowsToDelete;
-        scoreData.level = Math.floor(scoreData.lines / 10) + 1;
-        setGravity();
-        updateScores();
-        redrawRows();
+    requestAnimationFrame(animationLoop);
+}
+
+export function checkForCompletedRows(): void {
+    let rowsToDelete: number[] = [];
+    for (let y = 0; y < gBArrayHeight; y++) {
+        if (stoppedShapeArray[y].every((index) => index !== 0)) {
+            rowsToDelete.push(y);
+        }
+    }
+
+    const animationsCompleted: number[] = [];
+
+    function handleAnimationComplete(rowIndex: number): void {
+        animationsCompleted.push(rowIndex);
+        if (animationsCompleted.length === rowsToDelete.length) {
+            // All animations are complete, perform subsequent actions
+            scoreData.score += rowClearBonus(rowsToDelete.length) * scoreData.level;
+            scoreData.lines += rowsToDelete.length;
+            scoreData.level = Math.floor(scoreData.lines / 10) + 1;
+            setGravity(scoreData.level);
+            updateScores();
+            createTetrominoFromNext();
+            redrawRows();
+        }
+    }
+
+    if (rowsToDelete.length > 0) {
+        curTetromino = null
+        setGravity(-1)
+        rowsToDelete.forEach((rowIndex) => {
+            animateCompletedRow(rowIndex, () => handleAnimationComplete(rowIndex));
+        });
+    } else {
+        //if no animation needs to happen, continue...
+        createTetrominoFromNext();
+        drawCurTetrominoAndCheckGameOver();
     }
 }
+
 
 function updateScores(): void {
     scoreEl.innerHTML = scoreData.score.toString();

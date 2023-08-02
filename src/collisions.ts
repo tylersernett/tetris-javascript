@@ -1,7 +1,5 @@
-import { drawCurTetrominoAndCheckGameOver } from './draws';
 import { gBArrayHeight, gBArrayWidth, stoppedShapeArray, curTetromino, 
-    checkForCompletedRows,
-    createTetrominoFromNext, } from './tetris'
+    checkForCompletedRows, } from './tetris'
 
 //-------------\\
 //  COLLISIONS  \\
@@ -51,9 +49,8 @@ export function verticalCollision(val: number): boolean {
             const y = square.y + curTetromino.gridY;
             stoppedShapeArray[y][x] = curTetromino.image;
         });
+        //pass 2 functions as callbacks in case line clear animation needs to run first
         checkForCompletedRows();
-        createTetrominoFromNext();
-        drawCurTetrominoAndCheckGameOver();
         return true;
     }
 
