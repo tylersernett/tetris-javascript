@@ -1,4 +1,4 @@
-import { drawCurTetrominoAndCheckGameOver, drawNextTetromino, redrawRows } from './draws';
+import { drawCurTetrominoAndCheckGameOver, drawNextTetromino, redrawRows, animateFinishedRow } from './draws';
 import { displayHighscores, getHighscores, submitScore, toggleHighscores } from './highscores';
 import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown, rotateTetromino, handleDownPress, handleDownRelease, tetSpeeds } from './movement'
 //webpack imports:\\\\\\\\\\\\
@@ -253,7 +253,7 @@ function initializeGame() {
     gameOver = false;
     updateScores();
     gravityFrames = 60;
-    setGravity();
+    setGravity(scoreData.level);
     gameOverEl.style.visibility = "hidden";
     highscoreOuterEl.style.visibility = "hidden";
     highscorePromptEl.style.visibility = "hidden";
@@ -291,9 +291,10 @@ function updateGame() {
     }
 }
 
-function setGravity(): void {
+function setGravity(level): void {
     let newGravityFrames: number;
-    switch (scoreData.level) {
+    switch (level) {
+        case -1: newGravityFrames = 999999; break;
         case 1: newGravityFrames = 48; break;
         case 2: newGravityFrames = 43; break;
         case 3: newGravityFrames = 38; break;
@@ -368,35 +369,38 @@ function loadRandomTetrominoIntoNext(): void {
 }
 
 export function checkForCompletedRows(): void {
-    let rowsToDelete = 0;
+    let rowsToDelete: number[] = [];
     for (let y = 0; y < gBArrayHeight; y++) {
-        let completed = false;
         if (stoppedShapeArray[y].every((index) => index !== 0)) {
-            completed = true;
-        }
-
-        if (completed) {
-            rowsToDelete++;
-            //could add a check here for the greatest y value, then only redraw above that
-            for (let x = 0; x < gBArrayWidth; x++) {
-                // Update the arrays by zeroing out previously filled squares
-                stoppedShapeArray[y][x] = 0;
-                gameBoardArray[y][x] = 0;
-            }
-            //grab the row, clear it out, and add it to the TOP of the array
-            let removedRowImages = stoppedShapeArray.splice(y, 1);
-            stoppedShapeArray.unshift(...removedRowImages);
-            let removedRowGBA = gameBoardArray.splice(y, 1);
-            gameBoardArray.unshift(...removedRowGBA);
+            rowsToDelete.push(y);
         }
     }
-    if (rowsToDelete > 0) {
-        scoreData.score += rowClearBonus(rowsToDelete) * scoreData.level;
-        scoreData.lines += rowsToDelete;
-        scoreData.level = Math.floor(scoreData.lines / 10) + 1;
-        setGravity();
-        updateScores();
-        redrawRows();
+
+    const animationsCompleted: number[] = [];
+    function handleAnimationComplete(row: number): void {
+        animationsCompleted.push(row);
+        if (animationsCompleted.length === rowsToDelete.length) {
+            // All animations are complete, perform subsequent actions
+            scoreData.score += rowClearBonus(rowsToDelete.length) * scoreData.level;
+            scoreData.lines += rowsToDelete.length;
+            scoreData.level = Math.floor(scoreData.lines / 10) + 1;
+            setGravity(scoreData.level);
+            updateScores();
+            createTetrominoFromNext();
+            redrawRows();
+        }
+    }
+
+    if (rowsToDelete.length > 0) {
+        curTetromino = null
+        setGravity(-1)
+        rowsToDelete.forEach((row) => {
+            animateFinishedRow(row, () => handleAnimationComplete(row));
+        });
+    } else {
+        //if no animation needs to happen, continue...
+        createTetrominoFromNext();
+        drawCurTetrominoAndCheckGameOver();
     }
 }
 
