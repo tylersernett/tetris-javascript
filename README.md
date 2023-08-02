@@ -4,14 +4,14 @@ A colorblind accessible port of the NES classic built with vanilla TypeScript an
 [Live Site](https://tylersernett.github.io/tetris-javascript/)
 
 ## Built With
-Frontend: TypeScript, HTML5 Canvas
-Backend (highscores): Express, MongoDB
+* Frontend: TypeScript, HTML5 Canvas
+* Backend (highscores): Express, MongoDB
 
 ## Features
-Desktop keyboard controls
-Mobile button controls
-Highscore database
-Colorblind accessible design
+* Desktop keyboard controls
+* Mobile button controls
+* Highscore database
+* Colorblind accessible design
 
 # Dev Notes:
 ## Notes: Collision Checking
