@@ -73,3 +73,44 @@ export function redrawRows(): void {
         }
     }
 }
+
+export function animateFinishedRow(row: number, callback: () => void): void {
+    const startTime = performance.now();
+
+    function animationLoop(currentTime: number) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / 300, 1); // Progress will be 0 to 1 over 200ms
+
+        // Draw a box from left to right with the given color
+        for (let col = 0; col < gBArrayWidth; col++) {
+            const coord = coordinateArray[row][col];
+            if (coord && gameBoardArray[row][col] === 1) {
+                const x = coord.x;
+                const y = coord.y;
+                const width = blockDimension * progress;
+                const height = blockDimension;
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(x, y, width, height);
+            }
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(animationLoop);
+        } else {
+            // Animation complete, reset the row values to 0
+            for (let col = 0; col < gBArrayWidth; col++) {
+                if (gameBoardArray[row][col] === 1) {
+                    gameBoardArray[row][col] = 0;
+                    stoppedShapeArray[row][col] = 0;
+                }
+            }
+            //grab the row, clear it out, and add it to the TOP of the array
+            let removedRowImages = stoppedShapeArray.splice(row, 1);
+            stoppedShapeArray.unshift(...removedRowImages);
+            let removedRowGBA = gameBoardArray.splice(row, 1);
+            gameBoardArray.unshift(...removedRowGBA);
+            callback();
+        }
+    }
+    requestAnimationFrame(animationLoop);
+}

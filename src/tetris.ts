@@ -1,4 +1,4 @@
-import { drawCurTetrominoAndCheckGameOver, drawNextTetromino, redrawRows } from './draws';
+import { drawCurTetrominoAndCheckGameOver, drawNextTetromino, redrawRows, animateFinishedRow } from './draws';
 import { displayHighscores, getHighscores, submitScore, toggleHighscores } from './highscores';
 import { updateMovement, handleKeyPress, keyUpHandler, moveTetrominoDown, rotateTetromino, handleDownPress, handleDownRelease, tetSpeeds } from './movement'
 //webpack imports:\\\\\\\\\\\\
@@ -368,47 +368,6 @@ function loadRandomTetrominoIntoNext(): void {
     nextTetromino = tetrominos[randomTetromino];
 }
 
-function animateCompletedRow(rowIndex: number, callback: () => void): void {
-    const startTime = performance.now();
-
-    function animationLoop(currentTime: number) {
-        const elapsedTime = currentTime - startTime;
-        const progress = Math.min(elapsedTime / 300, 1); // Progress will be 0 to 1 over 200ms
-
-        // Draw a box from left to right with the given color
-        for (let col = 0; col < gBArrayWidth; col++) {
-            const coord = coordinateArray[rowIndex][col];
-            if (coord && gameBoardArray[rowIndex][col] === 1) {
-                const x = coord.x;
-                const y = coord.y;
-                const width = blockDimension * progress;
-                const height = blockDimension;
-                ctx.fillStyle = bgColor;
-                ctx.fillRect(x, y, width, height);
-            }
-        }
-
-        if (progress < 1) {
-            requestAnimationFrame(animationLoop);
-        } else {
-            // Animation complete, reset the row values to 0
-            for (let col = 0; col < gBArrayWidth; col++) {
-                if (gameBoardArray[rowIndex][col] === 1) {
-                    gameBoardArray[rowIndex][col] = 0;
-                    stoppedShapeArray[rowIndex][col] = 0;
-                }
-            }
-            //grab the row, clear it out, and add it to the TOP of the array
-            let removedRowImages = stoppedShapeArray.splice(rowIndex, 1);
-            stoppedShapeArray.unshift(...removedRowImages);
-            let removedRowGBA = gameBoardArray.splice(rowIndex, 1);
-            gameBoardArray.unshift(...removedRowGBA);
-            callback();
-        }
-    }
-    requestAnimationFrame(animationLoop);
-}
-
 export function checkForCompletedRows(): void {
     let rowsToDelete: number[] = [];
     for (let y = 0; y < gBArrayHeight; y++) {
@@ -418,9 +377,8 @@ export function checkForCompletedRows(): void {
     }
 
     const animationsCompleted: number[] = [];
-
-    function handleAnimationComplete(rowIndex: number): void {
-        animationsCompleted.push(rowIndex);
+    function handleAnimationComplete(row: number): void {
+        animationsCompleted.push(row);
         if (animationsCompleted.length === rowsToDelete.length) {
             // All animations are complete, perform subsequent actions
             scoreData.score += rowClearBonus(rowsToDelete.length) * scoreData.level;
@@ -436,8 +394,8 @@ export function checkForCompletedRows(): void {
     if (rowsToDelete.length > 0) {
         curTetromino = null
         setGravity(-1)
-        rowsToDelete.forEach((rowIndex) => {
-            animateCompletedRow(rowIndex, () => handleAnimationComplete(rowIndex));
+        rowsToDelete.forEach((row) => {
+            animateFinishedRow(row, () => handleAnimationComplete(row));
         });
     } else {
         //if no animation needs to happen, continue...
@@ -445,7 +403,6 @@ export function checkForCompletedRows(): void {
         drawCurTetrominoAndCheckGameOver();
     }
 }
-
 
 function updateScores(): void {
     scoreEl.innerHTML = scoreData.score.toString();
