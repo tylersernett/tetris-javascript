@@ -79,7 +79,7 @@ export function animateFinishedRow(row: number, callback: () => void): void {
 
     function animationLoop(currentTime: number) {
         const elapsedTime = currentTime - startTime;
-        const progress = Math.min(elapsedTime / 300, 1); // Progress will be 0 to 1 over 200ms
+        const progress = Math.min(elapsedTime / 300, 1); // Progress will be 0 to 1 over 300ms
 
         // Draw a box from left to right with the given color
         for (let col = 0; col < gBArrayWidth; col++) {
