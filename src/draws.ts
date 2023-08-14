@@ -1,7 +1,9 @@
 import { pieceCollision } from "./collisions";
-import { bgColor, blockDimension, coordinateArray, ctx, curTetromino, gBArrayHeight, gBArrayWidth, gameBoardArray, handleGameOver, nextTetromino, nextTetrominoCoordinateArray, stoppedShapeArray } from "./tetris";
+import { bgColor, blockDimension, gBArrayHeight, gBArrayWidth, handleGameOver} from "./tetris";
 
-export function drawCurTetrominoAndCheckGameOver(): void {
+export function drawCurTetrominoAndCheckGameOver(gamestate, domstate): void {
+    const { coordinateArray, curTetromino } = gamestate
+    let {gameBoardArray, ctx} = gamestate
     if (!curTetromino) return
     const { rotations, rotationIndex, gridX, gridY, image } = curTetromino;
     const currentRotation = rotations[rotationIndex];
@@ -17,13 +19,13 @@ export function drawCurTetrominoAndCheckGameOver(): void {
         ctx.drawImage(image, coorX, coorY);
 
         // Check for Game Over -- when two pieces overlap each other
-        if (pieceCollision(x, y)) {
+        if (pieceCollision(gamestate, x, y)) {
             gameOverCheck = true;
         }
     });
 
     if (gameOverCheck) {
-        handleGameOver();
+        handleGameOver(gamestate, domstate);
     }
 }
 
@@ -39,10 +41,11 @@ export function drawNextTetromino(): void {
         const _y = square.y
         const { x: coorX, y: coorY } = nextTetrominoCoordinateArray[_y][_x];
         ctx.drawImage(nextTetromino.image, coorX, coorY);
-    });    
+    });
 }
 
-export function deleteTetromino(): void {
+export function undrawTetromino(gamestate): void {
+    const { coordinateArray } = gamestate
     //white space needs a bit of a margin to handle non-integer ctx.scale drawing
     let marg = 0.5;
     const currentRotation = curTetromino.rotations[curTetromino.rotationIndex];
@@ -60,7 +63,8 @@ export function deleteTetromino(): void {
     })
 }
 
-export function redrawRows(): void {
+export function redrawRows(gamestate): void {
+    const { coordinateArray, stoppedShapeArray, ctx } = gamestate
     // go through all cells in GBArray. Fill in occupied ones w/ image
     for (let row = 0; row < gBArrayHeight; row++) {
         for (let col = 0; col < gBArrayWidth; col++) {
@@ -74,7 +78,9 @@ export function redrawRows(): void {
     }
 }
 
-export function animateFinishedRow(row: number, callback: () => void): void {
+export function animateFinishedRow(gamestate, row: number, callback: () => void): void {
+    const { coordinateArray, gameBoardArray } = gamestate
+    let {stoppedShapeArray} = gamestate
     const startTime = performance.now();
 
     function animationLoop(currentTime: number) {

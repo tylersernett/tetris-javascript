@@ -1,6 +1,6 @@
-import { frameCount, downPressAllowed, gameOver, setDownPressAllowed, curTetromino } from './tetris'
+import { Gamestate } from './tetris'
 import { rotationCollision, horizontalCollision, verticalCollision, mod } from './collisions';
-import { deleteTetromino, drawCurTetrominoAndCheckGameOver } from './draws';
+import { undrawTetromino, drawCurTetrominoAndCheckGameOver } from './draws';
 //-------------\\
 //  MOVEMENT    \\
 //---------------\\
@@ -9,93 +9,62 @@ let horizontalMovementLimit = 6, verticalMovementLimit = 2, rotationMovementLimi
 let lastFrameWithHorizontalMovement = -horizontalMovementLimit;
 let lastFrameWithVerticalMovement = -verticalMovementLimit;
 
-export function updateMovement(): void {
+export function updateMovement(gamestate): void {
+    const {curTetromino, frameCount, downPressAllowed} = gamestate
     if (!curTetromino) return
     //control how fast button "holds" are registered
     if (tetSpeeds.hspeed !== 0) {
         if (frameCount - lastFrameWithHorizontalMovement >= horizontalMovementLimit) {
-            moveTetrominoHorizontal(tetSpeeds.hspeed);
+            moveTetrominoHorizontal(gamestate, tetSpeeds.hspeed);
             lastFrameWithHorizontalMovement = frameCount;
         }
     }
     if (tetSpeeds.vspeed !== 0) {
         if (frameCount - lastFrameWithVerticalMovement >= verticalMovementLimit) {
             if (downPressAllowed) { //disable downpress from carrying over when last piece is placed and new piece spawns
-                moveTetrominoDown();
+                moveTetrominoDown(gamestate);
                 lastFrameWithVerticalMovement = frameCount;
             }
         }
     }
 }
 
-export function handleKeyPress(keyEvent: KeyboardEvent): void {
-    if (!curTetromino) return
-    if (!gameOver) { // this check is a bit redundant, can clean up later
-        if (keyEvent.key === 'ArrowLeft') {
-            tetSpeeds.hspeed = -1;
-        } else if (keyEvent.key === 'ArrowRight') {
-            tetSpeeds.hspeed = 1;
-        } else if (keyEvent.key === 'ArrowDown') {
-            handleDownPress();
-        } else if (keyEvent.key === 'x') {
-            tetSpeeds.rspeed = 1;
-            rotateTetromino(1);
-        } else if (keyEvent.key === 'z') {
-            tetSpeeds.rspeed = -1;
-            rotateTetromino(-1);
-        }
-        // else if (keyEvent.key === 'ArrowUp') {
-        //     debugPosition();
-        // }
-    }
-}
-
-export function keyUpHandler(keyEvent: KeyboardEvent): void {
-    if (keyEvent.key === 'ArrowLeft' || keyEvent.key === 'ArrowRight') {
-        tetSpeeds.hspeed = 0;
-    } else if (keyEvent.key === 'ArrowDown') {
-        handleDownRelease();
-    } else if (keyEvent.key === 'x' || keyEvent.key === 'z') {
-        tetSpeeds.rspeed = 0;
-    }
-}
-
 export function handleDownPress(): void {
     tetSpeeds.vspeed = 1;
-}
+} 
 
-export function handleDownRelease(): void {
-    tetSpeeds.vspeed = 0;
-    setDownPressAllowed(true);
-}
-
-export function rotateTetromino(val: number): void {
+export function rotateTetromino(gamestate, val: number): void {
+    const {gameOver} = gamestate
+    let {curTetromino} = gamestate
     if (!gameOver) {
         if (!rotationCollision(val)) {
-            deleteTetromino();
+            undrawTetromino(gamestate);
             curTetromino.rotationIndex += val;
             curTetromino.rotationIndex = mod(curTetromino.rotationIndex, curTetromino.rotLength); //keep inside Array bounds
-            drawCurTetrominoAndCheckGameOver();
+            drawCurTetrominoAndCheckGameOver(gamestate);
         }
     }
 }
 
-export function moveTetrominoDown(): void {
+export function moveTetrominoDown(gamestate): void {
+    const {gameOver} = gamestate
+    let {curTetromino} = gamestate
     if (!curTetromino) return
     if (!gameOver) {
-        if (!verticalCollision(1)) {
-            deleteTetromino();
+        if (!verticalCollision(gamestate, 1)) {
+            undrawTetromino(gamestate);
             curTetromino.gridY++
-            drawCurTetrominoAndCheckGameOver();
+            drawCurTetrominoAndCheckGameOver(gamestate);
         }
     }
 }
 
-function moveTetrominoHorizontal(val: number): void {
+function moveTetrominoHorizontal(gamestate, val: number): void {
+    let {curTetromino} = gamestate
     if (!horizontalCollision(val)) {
-        deleteTetromino();
+        undrawTetromino(gamestate);
         curTetromino.gridX += val;
-        drawCurTetrominoAndCheckGameOver();
+        drawCurTetrominoAndCheckGameOver(gamestate);
     }
 }
 
